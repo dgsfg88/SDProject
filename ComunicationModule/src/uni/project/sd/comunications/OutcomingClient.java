@@ -27,13 +27,16 @@ public class OutcomingClient extends RmiStarter{
 		super(RequestState.class);
 		doCustomRmiHandling(serverID);
 	}
-
+	/**
+	 * Invia una richiesta ad un nodo con ID specifico
+	 */
 	@Override
 	public void doCustomRmiHandling(String serverID) {
 		Registry registry;
 		try {
 			registry = LocateRegistry.getRegistry();
 	        Compute compute = (Compute)registry.lookup(Compute.SERVICE_NAME+serverID);
+	        //Scelta del task da richiedere
 	        RequestState task = new RequestState();
 	        result = compute.executeTask(task);
 	        

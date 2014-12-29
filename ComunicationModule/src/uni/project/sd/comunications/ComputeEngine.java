@@ -7,7 +7,9 @@ import saqib.rasul.Task;
 
 public class ComputeEngine
 implements Compute {
-
+/**
+ * Esegue un task passato via RMI
+ */
 @Override
 public <T> T executeTask(Task<T> t)
     throws RemoteException {
