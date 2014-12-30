@@ -2,6 +2,7 @@ package uni.project.sd;
 
 import java.rmi.RemoteException;
 
+import uni.project.sd.Control.DummyController;
 import uni.project.sd.comunications.IncomingServer;
 import uni.project.sd.comunications.OutcomingClient;
 import uni.project.sd.comunications.ServerAddress;
@@ -15,6 +16,7 @@ public class MainClass {
  * Punto di avvio del programma
  * @param args	ID server come primo argomento, ID di tutti gli altri server dopo
  */
+	private static DummyController viewController;
 	public static void main(String[] args) {
 		if(args.length > 1) {
 			try {
@@ -41,6 +43,7 @@ public class MainClass {
 							OutcomingClient client = new OutcomingClient(address.getServer(k));
 							Integer result = client.getResult();
 							System.out.println(address.getServer(k)+": "+result);
+							viewController.printMessage(address.getServer(k)+": "+result);
 						}
 						try {
 							Thread.sleep(1000);
@@ -51,9 +54,25 @@ public class MainClass {
 					}
 				}
 			});
-			
+			new MainClass();
 			sendPing.start();
 		}
 	}
+
+	public MainClass() {
+		viewController = new DummyController(this);
+	}
+	
+public void relaseToken() {
+	// TODO Auto-generated method stub
+	
+}
+
+public void sendAction() {
+	// TODO Auto-generated method stub
+	
+}
+	
+	
 
 }
