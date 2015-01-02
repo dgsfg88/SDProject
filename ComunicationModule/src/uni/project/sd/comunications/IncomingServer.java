@@ -35,6 +35,7 @@ public class IncomingServer extends RmiStarter{
             registry.rebind(Compute.SERVICE_NAME + serverID, engineStub);
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(0);
 		}
 	}
 

@@ -1,6 +1,7 @@
 package uni.project.sd;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 
 import uni.project.sd.Control.DummyController;
 import uni.project.sd.comunications.IncomingServer;
@@ -21,9 +22,11 @@ public class MainClass {
 		if(args.length > 1) {
 			try {
 				//Creazione del server di ricezione
+				LocateRegistry.createRegistry(Integer.parseInt(args[0]));
 				new IncomingServer(args[0]);
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
+				System.exit(0);
 			}
 
 			//Creazione di una rubrica
