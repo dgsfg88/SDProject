@@ -18,6 +18,7 @@ public class MainClass {
  * @param args	ID server come primo argomento, ID di tutti gli altri server dopo
  */
 	private static DummyController viewController;
+	private ServerAddress address;
 	public static void main(String[] args) {
 		if(args.length > 1) {
 			try {
@@ -41,6 +42,24 @@ public class MainClass {
 				@Override
 				public void run() {
 					ServerAddress address = ServerAddress.getInstance();
+					boolean ready = false;
+					while(!ready) {
+						Integer result = 0;
+						for(int k = 0; k < address.serverNumber(); k++) {
+							OutcomingClient client = new OutcomingClient(address.getServer(k));
+							result += client.getResult();
+						}
+						if(result == address.serverNumber())
+							ready = true;
+						else {
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+					viewController.printMessage("All online, starting game");
 					while(true) {
 						for(int k = 0; k < address.serverNumber(); k++) {
 							//Invio di un messaggio di ping ad ogni altro nodo
@@ -52,9 +71,14 @@ public class MainClass {
 								address.setServerStatus(address.getServer(k), true);
 							System.out.println(address.getServer(k)+": "+result);
 							viewController.printMessage(address.getServer(k)+": "+result);
+							try {
+								viewController.printMessage("Me: " + address.getMyAddress() + " Next: " + address.getNextOnline());
+							} catch (Exception e) {
+								viewController.printMessage("I'm only online, I win");
+							}
 						}
 						try {
-							Thread.sleep(5000);
+							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -66,22 +90,52 @@ public class MainClass {
 			sendPing.start();
 		}
 	}
+	
 
 	public MainClass() {
 		viewController = new DummyController(this);
 		
+		boolean imfirst = true;
 		
+		address = ServerAddress.getInstance();
+		Integer me = Integer.parseInt(address.getMyAddress());
+		for(int k = 0; k < address.serverNumber(); k++) {
+			if(Integer.parseInt(address.getServer(k)) < me) {
+				imfirst = false;
+				break;
+			}
+		}
+		
+		if(imfirst)
+			viewController.takeToken();
 	}
 	
-public void relaseToken() {
-	// TODO Auto-generated method stub
-	
-}
+	public void relaseToken() {
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Integer result = 0;
+				while(result == 0) {
+					OutcomingClient client = new OutcomingClient(address.getNextOnline(),OutcomingClient.sendToken);
+					result = client.getResult();
+					viewController.printMessage("Token relased, result: "+result);
+					if(result == 0)
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				}
+			}
+		});
+		t.start();
+	}
 
-public void sendAction() {
-	// TODO Auto-generated method stub
+	public void sendAction() {
 	
-}
+	}
 	
 	
 

@@ -11,6 +11,9 @@ import java.util.LinkedList;
 public class ServerAddress {
 	private static ServerAddress addressBook = null;
 	private String myAddress;
+	private Integer nextServer = null;
+	
+	private Object lockServerOnline = new Object();
 	
 	private LinkedList<String> serverList;
 	private HashMap<String, Boolean> serverOnline;
@@ -41,7 +44,9 @@ public class ServerAddress {
 		serverOnline.put(server, true);
 	}
 	public void setServerStatus(String server, boolean status){
-		serverOnline.put(server,status);
+		synchronized (lockServerOnline) {
+			serverOnline.put(server,status);
+		}
 	}
 	/**
 	 * ottiene un server dalla rubrica
@@ -65,5 +70,40 @@ public class ServerAddress {
 	}
 	public void setMyAddress(String myAddress) {
 		this.myAddress = myAddress;
+	}
+	
+	public String getNextOnline() {
+		if(nextServer == null)
+			findNextServer();
+		else {
+			boolean online = false;
+			synchronized (lockServerOnline) {
+				online = serverOnline.get(getServer(nextServer));
+			}
+			if(!online)
+				findNextServer();
+		}
+		return getServer(nextServer);
+	}
+	private void findNextServer() {
+		synchronized (lockServerOnline) {
+			int me = Integer.parseInt(myAddress);
+			int k = 0;
+			while(!serverOnline.get(serverList.get(k)))
+				k++;
+			nextServer = k;
+			int d = Integer.parseInt(serverList.get(k)) - me;
+			
+			for(k++; k < serverList.size(); k++) {
+				if(serverOnline.get(serverList.get(k))) {
+					int dtemp = Integer.parseInt(serverList.get(k)) - me;
+					if(((dtemp < d || d < 0) && dtemp > 0) ||( dtemp < 0 && d < 0 && dtemp < d)) {
+						nextServer = k;
+						d = dtemp;
+					}
+				}
+			}
+			
+		}
 	}
 }
