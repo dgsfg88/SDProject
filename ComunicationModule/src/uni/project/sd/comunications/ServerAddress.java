@@ -1,15 +1,19 @@
 package uni.project.sd.comunications;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 /**
- * Rubrica indirizzi, è statica per poter funzionare in più thread
+ * Rubrica indirizzi, ï¿½ statica per poter funzionare in piï¿½ thread
  * TODO aggiungere controlli thread-safe
  * @author Andrea
  *
  */
 public class ServerAddress {
 	private static ServerAddress addressBook = null;
+	private String myAddress;
+	
 	private LinkedList<String> serverList;
+	private HashMap<String, Boolean> serverOnline;
 	/**
 	 * Serve a richiedere un istanza della rubrica
 	 * @return	istanza della rubrica
@@ -22,10 +26,11 @@ public class ServerAddress {
 	}
 	/**
 	 * costruttore
-	 * TODO forse si può fare anche privato
+	 * TODO forse si puï¿½ fare anche privato
 	 */
 	public ServerAddress() {
 		serverList = new LinkedList<String>();
+		serverOnline = new HashMap<String, Boolean>();
 	}
 	/**
 	 * Aggiunge un server alla rubrica
@@ -33,6 +38,10 @@ public class ServerAddress {
 	 */
 	public void addServer(String server) {
 		serverList.add(server);
+		serverOnline.put(server, true);
+	}
+	public void setServerStatus(String server, boolean status){
+		serverOnline.put(server,status);
 	}
 	/**
 	 * ottiene un server dalla rubrica
@@ -50,5 +59,11 @@ public class ServerAddress {
 	 */
 	public int serverNumber () {
 		return serverList.size();
+	}
+	public String getMyAddress() {
+		return myAddress;
+	}
+	public void setMyAddress(String myAddress) {
+		this.myAddress = myAddress;
 	}
 }

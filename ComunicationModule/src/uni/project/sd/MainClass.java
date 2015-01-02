@@ -31,6 +31,7 @@ public class MainClass {
 
 			//Creazione di una rubrica
 			ServerAddress book = ServerAddress.getInstance();
+			book.setMyAddress(args[0]);
 			for(int k = 1; k < args.length; k++) {
 				book.addServer(args[k]);
 			}
@@ -45,11 +46,15 @@ public class MainClass {
 							//Invio di un messaggio di ping ad ogni altro nodo
 							OutcomingClient client = new OutcomingClient(address.getServer(k));
 							Integer result = client.getResult();
+							if(result == 0)
+								address.setServerStatus(address.getServer(k), false);
+							else
+								address.setServerStatus(address.getServer(k), true);
 							System.out.println(address.getServer(k)+": "+result);
 							viewController.printMessage(address.getServer(k)+": "+result);
 						}
 						try {
-							Thread.sleep(1000);
+							Thread.sleep(5000);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -64,6 +69,8 @@ public class MainClass {
 
 	public MainClass() {
 		viewController = new DummyController(this);
+		
+		
 	}
 	
 public void relaseToken() {
