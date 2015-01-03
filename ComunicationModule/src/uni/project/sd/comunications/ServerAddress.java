@@ -14,6 +14,9 @@ public class ServerAddress {
 	private Integer nextServer = null;
 	
 	private Object lockServerOnline = new Object();
+	private Object lockTokenPosition = new Object();
+	
+	private int tokenPosition;
 	
 	private LinkedList<String> serverList;
 	private HashMap<String, Boolean> serverOnline;
@@ -104,6 +107,17 @@ public class ServerAddress {
 				}
 			}
 			
+		}
+	}
+	
+	public void setTokenPosition(String tokenPosition) {
+		synchronized (lockTokenPosition) {
+			this.tokenPosition = serverList.indexOf(tokenPosition);
+		}
+	}
+	public String getTokenPosition() {
+		synchronized (lockTokenPosition) {
+			return serverList.get(tokenPosition);
 		}
 	}
 }

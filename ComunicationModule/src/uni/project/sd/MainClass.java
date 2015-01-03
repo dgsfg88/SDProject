@@ -7,8 +7,9 @@ import uni.project.sd.Control.DummyController;
 import uni.project.sd.comunications.IncomingServer;
 import uni.project.sd.comunications.OutcomingClient;
 import uni.project.sd.comunications.ServerAddress;
+import uni.project.sd.comunications.entity.Message;
 /**
- * Classe di avvio, TODO va sostituita
+ * Classe di avvio, TODO aggiungere numerazione messaggi
  * @author Andrea
  *
  */
@@ -65,8 +66,12 @@ public class MainClass {
 							//Invio di un messaggio di ping ad ogni altro nodo
 							OutcomingClient client = new OutcomingClient(address.getServer(k));
 							Integer result = client.getResult();
-							if(result == 0)
+							if(result == 0) {
 								address.setServerStatus(address.getServer(k), false);
+								//TODO Caso in cui viene perso il token, implementare un'azione
+								if(address.getServer(k).equals(address.getTokenPosition()))
+									viewController.printMessage("\n\nTOKEN PERSO\n\n");
+							}
 							else
 								address.setServerStatus(address.getServer(k), true);
 							System.out.println(address.getServer(k)+": "+result);
@@ -78,6 +83,7 @@ public class MainClass {
 							}
 						}
 						try {
+							//TODO aggiungere controlli di terminazione
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
@@ -117,16 +123,35 @@ public class MainClass {
 			public void run() {
 				Integer result = 0;
 				while(result == 0) {
-					OutcomingClient client = new OutcomingClient(address.getNextOnline(),OutcomingClient.sendToken);
+					String receiver = address.getNextOnline();
+					OutcomingClient client = new OutcomingClient(receiver,OutcomingClient.sendToken);
 					result = client.getResult();
 					viewController.printMessage("Token relased, result: "+result);
 					if(result == 0)
 						try {
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
+							// TODO Aggiungere controlli di terminazione
 							e.printStackTrace();
 						}
+					else {
+						//TODO creare una classe Runnable che implementi la parte sotto
+						result = 0;
+						while(result == 0) {
+							Message m = new Message();
+							m.setMessage(receiver);
+							m.setSender(address.getMyAddress());
+							client = new OutcomingClient(ServerAddress.getInstance().getNextOnline(),OutcomingClient.notifyToken,m);
+							result = client.getResult();
+							if(result == 0)
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									// TODO Aggiungere controlli di terminazione
+									e.printStackTrace();
+								}
+						}
+					}
 				}
 			}
 		});
@@ -137,6 +162,8 @@ public class MainClass {
 	
 	}
 	
-	
+	private void notifyToken(String nodeID) {
+		
+	}
 
 }

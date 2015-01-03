@@ -16,4 +16,9 @@ public <T> T executeTask(Task<T> t)
     System.out.println("got compute task: " + t);
     return t.execute();
 }
+
+public Integer deliverMessage(DeliverMessage dm) throws RemoteException {
+	System.out.println("received message");
+	return dm.deliver();
+}
 }

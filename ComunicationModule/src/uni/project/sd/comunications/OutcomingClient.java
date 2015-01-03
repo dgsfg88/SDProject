@@ -8,6 +8,10 @@ import java.rmi.registry.Registry;
 import saqib.rasul.Compute;
 import saqib.rasul.RmiStarter;
 import saqib.rasul.Task;
+import uni.project.sd.comunications.entity.Message;
+import uni.project.sd.comunications.task.NotifyToken;
+import uni.project.sd.comunications.task.RequestState;
+import uni.project.sd.comunications.task.takeToken;
 /**
  * Classe che corrisponde ad un client RMI, serve ad inviare i messaggi in uscita 
  *  
@@ -17,11 +21,13 @@ import saqib.rasul.Task;
 public class OutcomingClient extends RmiStarter{
 	public final static int sendPing = 0;
 	public final static int sendToken = 1;
+	public final static int notifyToken = 2;
 	/**
 	 * Risultato del ping, TODO da sostituire con lo stato
 	 */
 	private Integer result = null;
 	private int taskType;
+	private Message m;
 	/**
 	 * Costruttore della classe, va inserito l'ID del server da richiamare
 	 * 
@@ -35,6 +41,12 @@ public class OutcomingClient extends RmiStarter{
 	public OutcomingClient(String serverID, int taskType) {
 		super(RequestState.class);
 		this.taskType = taskType;
+		doCustomRmiHandling(serverID);
+	}
+	public OutcomingClient(String serverID, int taskType, Message message) {
+		super(RequestState.class);
+		this.taskType = taskType;
+		this.m = message;
 		doCustomRmiHandling(serverID);
 	}
 	/**
@@ -55,10 +67,13 @@ public class OutcomingClient extends RmiStarter{
 			case sendToken:
 				task = new takeToken();
 				break;
+			case notifyToken:
+				task = new NotifyToken(m);
 			default:
 				break;
 			}
-	        result = compute.executeTask(task);
+	        if(task != null)
+	        	result = compute.executeTask(task);
 	        
 		} catch (RemoteException | NotBoundException e) {
 			result = 0;

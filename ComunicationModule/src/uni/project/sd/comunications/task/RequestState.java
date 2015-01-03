@@ -1,4 +1,4 @@
-package uni.project.sd.comunications;
+package uni.project.sd.comunications.task;
 
 import java.io.Serializable;
 
