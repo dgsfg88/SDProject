@@ -17,7 +17,6 @@ public class ServerAddress {
 	private Object lockTokenPosition = new Object();
 	
 	private int tokenPosition;
-	
 	private LinkedList<String> serverList;
 	private HashMap<String, Boolean> serverOnline;
 	/**

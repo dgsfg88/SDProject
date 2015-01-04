@@ -11,6 +11,7 @@ import saqib.rasul.Task;
 import uni.project.sd.comunications.entity.Message;
 import uni.project.sd.comunications.task.NotifyToken;
 import uni.project.sd.comunications.task.RequestState;
+import uni.project.sd.comunications.task.RequestToken;
 import uni.project.sd.comunications.task.takeToken;
 /**
  * Classe che corrisponde ad un client RMI, serve ad inviare i messaggi in uscita 
@@ -22,6 +23,7 @@ public class OutcomingClient extends RmiStarter{
 	public final static int sendPing = 0;
 	public final static int sendToken = 1;
 	public final static int notifyToken = 2;
+	public final static int requestToken = 3;
 	/**
 	 * Risultato del ping, TODO da sostituire con lo stato
 	 */
@@ -59,7 +61,7 @@ public class OutcomingClient extends RmiStarter{
 			registry = LocateRegistry.getRegistry();
 	        Compute compute = (Compute)registry.lookup(Compute.SERVICE_NAME+serverID);
 	        //Scelta del task da richiedere
-	        Task task = null;
+	        Task<Integer> task = null;
 	        switch (taskType) {
 			case sendPing:
 				task = new RequestState();
@@ -69,7 +71,13 @@ public class OutcomingClient extends RmiStarter{
 				break;
 			case notifyToken:
 				task = new NotifyToken(m);
+				break;
+			case requestToken:
+				task = new RequestToken();
+				((RequestToken)task).setMessage(m);
+				break;
 			default:
+				result = 1;
 				break;
 			}
 	        if(task != null)

@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
 import uni.project.sd.Control.DummyController;
+import uni.project.sd.comunications.ComunicationActions;
 import uni.project.sd.comunications.IncomingServer;
 import uni.project.sd.comunications.OutcomingClient;
 import uni.project.sd.comunications.ServerAddress;
@@ -20,6 +21,7 @@ public class MainClass {
  */
 	private static DummyController viewController;
 	private ServerAddress address;
+	private ComunicationActions actions;
 	public static void main(String[] args) {
 		if(args.length > 1) {
 			try {
@@ -69,8 +71,10 @@ public class MainClass {
 							if(result == 0) {
 								address.setServerStatus(address.getServer(k), false);
 								//TODO Caso in cui viene perso il token, implementare un'azione
-								if(address.getServer(k).equals(address.getTokenPosition()))
+								if(address.getServer(k).equals(address.getTokenPosition())) {
 									viewController.printMessage("\n\nTOKEN PERSO\n\n");
+									new ComunicationActions().requestToken();
+								}
 							}
 							else
 								address.setServerStatus(address.getServer(k), true);
@@ -100,7 +104,7 @@ public class MainClass {
 
 	public MainClass() {
 		viewController = new DummyController(this);
-		
+		this.actions = new ComunicationActions();
 		boolean imfirst = true;
 		
 		address = ServerAddress.getInstance();
@@ -112,8 +116,13 @@ public class MainClass {
 			}
 		}
 		
-		if(imfirst)
+		if(imfirst) {
+			Message m = new Message();
+			m.setMessage(address.getMyAddress());
+			m.setSender(address.getMyAddress());
+			actions.cicleToken(m);
 			viewController.takeToken();
+		}
 	}
 	
 	public void relaseToken() {
@@ -135,22 +144,10 @@ public class MainClass {
 							e.printStackTrace();
 						}
 					else {
-						//TODO creare una classe Runnable che implementi la parte sotto
-						result = 0;
-						while(result == 0) {
-							Message m = new Message();
-							m.setMessage(receiver);
-							m.setSender(address.getMyAddress());
-							client = new OutcomingClient(ServerAddress.getInstance().getNextOnline(),OutcomingClient.notifyToken,m);
-							result = client.getResult();
-							if(result == 0)
-								try {
-									Thread.sleep(1000);
-								} catch (InterruptedException e) {
-									// TODO Aggiungere controlli di terminazione
-									e.printStackTrace();
-								}
-						}
+						Message m = new Message();
+						m.setMessage(receiver);
+						m.setSender(address.getMyAddress());
+						actions.cicleToken(m);
 					}
 				}
 			}
@@ -162,8 +159,5 @@ public class MainClass {
 	
 	}
 	
-	private void notifyToken(String nodeID) {
-		
-	}
 
 }

@@ -28,14 +28,14 @@ public class DummyFront {
 	
 	public DummyFront(DummyController dummyController) {
 		mainWindow = new JFrame("Communication test");
-		mainWindow.setSize(650, 850);
+		mainWindow.setSize(400, 850);
 		myEntity = DummyFrontEntity.getInstance();
 		myController = dummyController;
 		
 		buttonPanel = new JPanel();
-		buttonPanel.setSize(650,300);
+		buttonPanel.setSize(400,300);
 		logPanel = new JPanel(new BorderLayout());
-		logPanel.setSize(650, 550);
+		logPanel.setSize(400, 550);
 		
 		mainWindow.getContentPane().setLayout(new GridLayout(2,1));
 		mainWindow.getContentPane().add(buttonPanel);
@@ -64,11 +64,11 @@ public class DummyFront {
 		
 		logArea = new JTextArea();
 		logArea.setEditable(false);
-		logArea.setSize(600, 500);
+		logArea.setSize(350, 500);
 		DefaultCaret caret = (DefaultCaret)logArea.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		JScrollPane scrollPane = new JScrollPane(logArea);
-		scrollPane.setSize(600, 500);
+		scrollPane.setSize(350, 500);
 		logPanel.add(scrollPane,BorderLayout.CENTER);
 		
 		//mainWindow.pack();
