@@ -21,10 +21,12 @@ public class NotifyToken extends MessageBase {
 		ServerAddress book = ServerAddress.getInstance();
 		//TODO fare in modo che il messaggio non vada in loop se il processo che lo ha inviato cade
 		if(!m.getSender().equals(book.getMyAddress())){
-			//TODO azione da intraprendere quando il token cambia
 			DummyFrontEntity.getInstance().addMessage("Il token è in mano a "+m.getMessage());
-			book.setTokenPosition(m.getMessage());
 			new ComunicationActions().cicleToken(m);
+			book.setTokenPosition(m.getMessage());
+		}
+		if(m.getMessage().equals(book.getMyAddress())) {
+			DummyFrontEntity.getInstance().setPlayerTurn(true);
 		}
 		return 1;
 	}

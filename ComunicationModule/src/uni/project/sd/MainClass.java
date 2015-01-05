@@ -70,10 +70,13 @@ public class MainClass {
 							Integer result = client.getResult();
 							if(result == 0) {
 								address.setServerStatus(address.getServer(k), false);
-								//TODO Caso in cui viene perso il token, implementare un'azione
-								if(address.getServer(k).equals(address.getTokenPosition())) {
-									viewController.printMessage("\n\nTOKEN PERSO\n\n");
-									new ComunicationActions().requestToken();
+								try {
+									if(address.getServer(k).equals(address.getTokenPosition())) {
+										viewController.printMessage("\n\nTOKEN PERSO\n\n");
+										new ComunicationActions().requestToken();
+									}}
+									catch (IndexOutOfBoundsException e){
+										//TODO Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
 								}
 							}
 							else
@@ -90,7 +93,6 @@ public class MainClass {
 							//TODO aggiungere controlli di terminazione
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -130,26 +132,12 @@ public class MainClass {
 			
 			@Override
 			public void run() {
-				Integer result = 0;
-				while(result == 0) {
-					String receiver = address.getNextOnline();
-					OutcomingClient client = new OutcomingClient(receiver,OutcomingClient.sendToken);
-					result = client.getResult();
-					viewController.printMessage("Token relased, result: "+result);
-					if(result == 0)
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// TODO Aggiungere controlli di terminazione
-							e.printStackTrace();
-						}
-					else {
-						Message m = new Message();
-						m.setMessage(receiver);
-						m.setSender(address.getMyAddress());
-						actions.cicleToken(m);
-					}
-				}
+				String receiver = address.getNextOnline();
+				address.setTokenPosition(receiver);
+				Message m = new Message();
+				m.setMessage(receiver);
+				m.setSender(address.getMyAddress());
+				actions.cicleToken(m);
 			}
 		});
 		t.start();

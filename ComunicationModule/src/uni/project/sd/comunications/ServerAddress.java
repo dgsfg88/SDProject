@@ -31,9 +31,9 @@ public class ServerAddress {
 	}
 	/**
 	 * costruttore
-	 * TODO forse si pu� fare anche privato
+	 * 
 	 */
-	public ServerAddress() {
+	protected ServerAddress() {
 		serverList = new LinkedList<String>();
 		serverOnline = new HashMap<String, Boolean>();
 	}
@@ -48,6 +48,11 @@ public class ServerAddress {
 	public void setServerStatus(String server, boolean status){
 		synchronized (lockServerOnline) {
 			serverOnline.put(server,status);
+		}
+	}
+	public boolean getServerStatus(String server) {
+		synchronized (lockServerOnline) {
+			return serverOnline.get(server);
 		}
 	}
 	/**

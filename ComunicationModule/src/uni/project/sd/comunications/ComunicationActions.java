@@ -16,6 +16,11 @@ public class ComunicationActions {
 		sendMessage(OutcomingClient.requestToken);
 	}
 	
+	public void resubmitTokenRequest(Message m) {
+		this.m = m;
+		sendMessage(OutcomingClient.requestToken);
+	}
+	
 	private void sendMessage(final int messageType) {
 		new Thread(new Runnable() {
 			
