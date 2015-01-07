@@ -2,6 +2,8 @@ package uni.project.sd.comunications.entity;
 
 import java.io.Serializable;
 
+import uni.project.sd.event.EventTime;
+
 /**
  * TODO Aggiungere message number basato sul numero di tutti
  * @author ianni
@@ -18,6 +20,7 @@ public class Message implements Serializable{
 	private String sender;
 	private String receiver;
 	private String message;
+	private EventTime myTime;
 	
 	public int getMessageType() {
 		return messageType;
@@ -48,5 +51,13 @@ public class Message implements Serializable{
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	
+	public void setMyTime(EventTime myTime) {
+		this.myTime = myTime;
+	}
+	
+	public EventTime getMyTime() {
+		return myTime;
 	}
 }

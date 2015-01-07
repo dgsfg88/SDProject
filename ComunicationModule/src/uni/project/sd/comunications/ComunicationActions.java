@@ -29,6 +29,7 @@ public class ComunicationActions {
 				Integer result = 0;
 				while(result == 0) {
 					OutcomingClient client = new OutcomingClient(ServerAddress.getInstance().getNextOnline(),messageType,m);
+
 					result = client.getResult();
 					if(result == 0)
 						try {

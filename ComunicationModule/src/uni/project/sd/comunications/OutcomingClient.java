@@ -21,6 +21,10 @@ import uni.project.sd.comunications.task.takeToken;
  */
 public class OutcomingClient extends RmiStarter{
 	public final static int sendPing = 0;
+	/**
+	 * @deprecated use notifyToken to pass token
+	 */
+	@Deprecated
 	public final static int sendToken = 1;
 	public final static int notifyToken = 2;
 	public final static int requestToken = 3;

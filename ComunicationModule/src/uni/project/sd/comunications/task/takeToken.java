@@ -2,6 +2,7 @@ package uni.project.sd.comunications.task;
 
 import java.io.Serializable;
 
+
 import saqib.rasul.Task;
 import uni.project.sd.Entity.DummyFrontEntity;
 

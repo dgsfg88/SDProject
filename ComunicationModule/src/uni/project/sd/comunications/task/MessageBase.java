@@ -5,6 +5,7 @@ import java.io.Serializable;
 import saqib.rasul.Task;
 import uni.project.sd.comunications.DeliverMessage;
 import uni.project.sd.comunications.entity.Message;
+import uni.project.sd.event.EventCounter;
 
 public abstract class MessageBase implements DeliverMessage, Serializable,
 		Task<Integer> {
@@ -19,6 +20,7 @@ public abstract class MessageBase implements DeliverMessage, Serializable,
 	@Override
 	public void setMessage(Message m) {
 		this.m = m;
+		this.m.setMyTime(EventCounter.getInstance(null).getNextEvent());
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import uni.project.sd.comunications.IncomingServer;
 import uni.project.sd.comunications.OutcomingClient;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.entity.Message;
+import uni.project.sd.event.EventCounter;
 /**
  * Classe di avvio, TODO aggiungere numerazione messaggi
  * @author Andrea
@@ -39,7 +40,7 @@ public class MainClass {
 			for(int k = 1; k < args.length; k++) {
 				book.addServer(args[k]);
 			}
-			
+			EventCounter.getInstance(book);
 			Thread sendPing = new Thread(new Runnable() {
 				
 				@Override
@@ -107,6 +108,7 @@ public class MainClass {
 	public MainClass() {
 		viewController = new DummyController(this);
 		this.actions = new ComunicationActions();
+		
 		boolean imfirst = true;
 		
 		address = ServerAddress.getInstance();

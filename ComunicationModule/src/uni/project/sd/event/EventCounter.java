@@ -1,7 +1,5 @@
 package uni.project.sd.event;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Set;
 
 import uni.project.sd.comunications.ServerAddress;
@@ -11,14 +9,10 @@ import uni.project.sd.comunications.ServerAddress;
  * @author ianni
  *
  */
-public class EventCounter implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1066848356844265592L;
+public class EventCounter {
+
 	private static EventCounter eventCounter;
-	private HashMap<String, Integer> counter;
-	private String me;
+	private EventTime myCounter;
 	/**
 	 * Restituisce l'oggetto istanziato
 	 * 
@@ -32,18 +26,19 @@ public class EventCounter implements Serializable{
 	}
 	
 	protected EventCounter(ServerAddress book) {
-		this.me = book.getMyAddress();
-		this.counter = new HashMap<String, Integer>(book.serverNumber());
+		this.myCounter = new EventTime(book.serverNumber(), book.getMyAddress());
+
 		for(int k = 0; k < book.serverNumber(); k++)
-			this.counter.put(book.getServer(k), 0);
+			this.myCounter.addNode(book.getServer(k));
 	}
 	/**
 	 * Aggiunge un valore al proprio contatore
-	 * 
+	 *  
 	 */
-	public void getNextEvent() {
-		synchronized (counter) {
-			this.counter.put(me, this.counter.get(me)+1);
+	public EventTime getNextEvent() {
+		synchronized (myCounter) {
+			this.myCounter.incrementMyCounter();
+			return myCounter;
 		}
 	}
 	/**
@@ -54,46 +49,29 @@ public class EventCounter implements Serializable{
 	 * @return							true se il contatore è aumentato, false altrimenti
 	 * @throws EventNotSameException	viene dato errore in caso i due contatori non contegano gli stessi nodi
 	 */
-	public boolean isNewEvent(EventCounter event) throws EventNotSameException {
+	public boolean isNewEvent(EventTime event) throws EventNotSameException {
 		boolean result = false;
-		synchronized (counter) {
-			Set<String> keys = counter.keySet();
+		synchronized (myCounter) {
+			Set<String> keys = myCounter.keySet();
 			for(String k: keys) {
 				Integer i = event.getEventAtNode(k);
 				if(i == null)
 					new EventNotSameException();
-				else if(i > counter.get(k)){
+				else if(i > myCounter.getEventAtNode(k)){
 					if(k.equals(event.getYourID())) 
 						result = true;
-					counter.put(k, i);
+					myCounter.updateNode(k, i);
 				}
 			}
 		}
 		return result;
 	}
-	/**
-	 * Restituisce il contatore per un nodo specifico
-	 * 
-	 * @param node	l'ID del nodo
-	 * @return		Il contatore per quel nodo
-	 */
-	public Integer getEventAtNode(String node) {
-		synchronized (counter) {
-			return counter.get(node);
-		}
-	}
-	/**
-	 * Restituisce l'ID del nodo 
-	 * @return ID del nodo
-	 */
-	public String getYourID() {
-		return me;
-	}
+	
 	
 	@Override
 	public String toString() {
-		synchronized (counter) {
-			return counter.toString();
+		synchronized (myCounter) {
+			return myCounter.toString();
 		}
 	}
 	/**
