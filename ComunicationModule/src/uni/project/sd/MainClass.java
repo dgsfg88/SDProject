@@ -70,6 +70,9 @@ public class MainClass {
 							OutcomingClient client = new OutcomingClient(address.getServer(k));
 							Integer result = client.getResult();
 							if(result == 0) {
+								if(address.getServerStatus(address.getServer(k))){
+									//TODO Avvenuto crash di un nodo, avviare azione di recovery
+								}
 								address.setServerStatus(address.getServer(k), false);
 								try {
 									if(address.getServer(k).equals(address.getTokenPosition())) {
