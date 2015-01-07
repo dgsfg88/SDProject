@@ -39,31 +39,25 @@ public class OutcomingClient extends RmiStarter{
 	 * 
 	 * @param serverID Server con cui si desidera comunicare
 	 */
-	public OutcomingClient(String serverID) {
+	public OutcomingClient() {
 		super(RequestState.class);
 		taskType = sendPing;
-		doCustomRmiHandling(serverID);
 	}
-	public OutcomingClient(String serverID, int taskType) {
+	public OutcomingClient(int taskType) {
 		super(RequestState.class);
 		this.taskType = taskType;
-		doCustomRmiHandling(serverID);
 	}
-	public OutcomingClient(String serverID, int taskType, Message message) {
+	public OutcomingClient(int taskType, Message message) {
 		super(RequestState.class);
 		this.taskType = taskType;
 		this.m = message;
-		doCustomRmiHandling(serverID);
 	}
 	/**
 	 * Invia una richiesta ad un nodo con ID specifico
 	 */
 	@Override
 	public void doCustomRmiHandling(String serverID) {
-		Registry registry;
-		try {
-			registry = LocateRegistry.getRegistry();
-	        Compute compute = (Compute)registry.lookup(Compute.SERVICE_NAME+serverID);
+		
 	        //Scelta del task da richiedere
 	        Task<Integer> task = null;
 	        switch (taskType) {
@@ -84,6 +78,15 @@ public class OutcomingClient extends RmiStarter{
 				result = 1;
 				break;
 			}
+	        
+	        doTask(serverID, task);
+	}
+	
+	protected void doTask(String serverID,Task<Integer> task) {
+		Registry registry;
+		try {
+			registry = LocateRegistry.getRegistry();
+	        Compute compute = (Compute)registry.lookup(Compute.SERVICE_NAME+serverID);
 	        if(task != null)
 	        	result = compute.executeTask(task);
 	        
@@ -92,6 +95,12 @@ public class OutcomingClient extends RmiStarter{
 		}
 	}
 	
+	protected int getTaskType() {
+		return taskType;
+	}
+	protected Message getM() {
+		return m;
+	}
 	public Integer getResult(){
 		return result;
 	}

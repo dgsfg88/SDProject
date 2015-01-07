@@ -15,7 +15,7 @@ import javax.swing.text.DefaultCaret;
 import uni.project.sd.Control.DummyController;
 import uni.project.sd.Entity.DummyFrontEntity;
 
-public class DummyFront {
+public class DummyFront implements FrontBoundary{
 	private JFrame mainWindow;
 	private JPanel buttonPanel;
 	private JPanel logPanel;
@@ -77,12 +77,12 @@ public class DummyFront {
 		
 		myEntity.addView(this);
 	}
-	
+	@Override
 	public void setButtonEnabled(boolean enabled) {
 		this.buttonRelaseToken.setEnabled(enabled);
 		this.buttonSendAction.setEnabled(enabled);
 	}
-	
+	@Override
 	public void addToLog(String string) {
 		this.logArea.append(string + "\n");
 	}

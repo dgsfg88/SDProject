@@ -2,11 +2,11 @@ package uni.project.sd.Entity;
 
 import java.util.LinkedList;
 
-import uni.project.sd.boundary.DummyFront;
+import uni.project.sd.boundary.FrontBoundary;
 
 public class DummyFrontEntity {
 	private static DummyFrontEntity entity = null;
-	private LinkedList<DummyFront> fronts;
+	private LinkedList<FrontBoundary> fronts;
 	private boolean isPlayerTurn = false;
 	
 	private Object lockPlayerTurn = new Object();
@@ -18,7 +18,7 @@ public class DummyFrontEntity {
 		return entity;
 	}
 
-	public void addView(DummyFront dummyFront) {
+	public void addView(FrontBoundary dummyFront) {
 		synchronized (lockViewList) {
 			if(fronts == null)
 				fronts =new LinkedList<>();
@@ -32,9 +32,10 @@ public class DummyFrontEntity {
 	
 	public void addMessage(String message) {
 		synchronized (lockViewList) {
-			for(DummyFront df: fronts) {
-				df.addToLog(message);
-			}
+			if(fronts!=null)
+				for(FrontBoundary df: fronts) {
+					df.addToLog(message);
+				}
 		}
 	}
 	
@@ -43,7 +44,7 @@ public class DummyFrontEntity {
 			this.isPlayerTurn = canPlay;
 		}
 		synchronized (lockViewList) {
-			for(DummyFront df: fronts) {
+			for(FrontBoundary df: fronts) {
 				df.setButtonEnabled(canPlay);
 			}
 		}

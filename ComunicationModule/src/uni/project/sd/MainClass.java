@@ -3,12 +3,13 @@ package uni.project.sd;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
-import uni.project.sd.Control.DummyController;
+import uni.project.sd.Control.BattleshipController;
+import uni.project.sd.Entity.DummyFrontEntity;
 import uni.project.sd.comunications.ComunicationActions;
 import uni.project.sd.comunications.IncomingServer;
 import uni.project.sd.comunications.OutcomingClient;
 import uni.project.sd.comunications.ServerAddress;
-import uni.project.sd.comunications.entity.Message;
+import uni.project.sd.comunications.battleship.BattleshipActions;
 import uni.project.sd.event.EventCounter;
 /**
  * Classe di avvio, TODO aggiungere numerazione messaggi
@@ -20,7 +21,6 @@ public class MainClass {
  * Punto di avvio del programma
  * @param args	ID server come primo argomento, ID di tutti gli altri server dopo
  */
-	private static DummyController viewController;
 	private ServerAddress address;
 	private ComunicationActions actions;
 	public static void main(String[] args) {
@@ -50,7 +50,8 @@ public class MainClass {
 					while(!ready) {
 						Integer result = 0;
 						for(int k = 0; k < address.serverNumber(); k++) {
-							OutcomingClient client = new OutcomingClient(address.getServer(k));
+							OutcomingClient client = new OutcomingClient(OutcomingClient.sendPing);
+							client.doCustomRmiHandling(address.getServer(k));
 							result += client.getResult();
 						}
 						if(result == address.serverNumber())
@@ -63,34 +64,48 @@ public class MainClass {
 							}
 						}
 					}
-					viewController.printMessage("All online, starting game");
+					DummyFrontEntity.getInstance().addMessage("All online, starting game");
+					
+					boolean imfirst = true;
+					
+					Integer me = Integer.parseInt(address.getMyAddress());
+					for(int k = 0; k < address.serverNumber(); k++) {
+						if(Integer.parseInt(address.getServer(k)) < me) {
+							imfirst = false;
+							break;
+						}
+					}
+					
+					if(imfirst) {
+						new ComunicationActions().cicleToken();
+						DummyFrontEntity.getInstance().setPlayerTurn(imfirst);
+					}
 					while(true) {
 						for(int k = 0; k < address.serverNumber(); k++) {
 							//Invio di un messaggio di ping ad ogni altro nodo
-							OutcomingClient client = new OutcomingClient(address.getServer(k));
-							Integer result = client.getResult();
-							if(result == 0) {
-								if(address.getServerStatus(address.getServer(k))){
+							if(address.getServerStatus(address.getServer(k))) {
+								OutcomingClient client = new OutcomingClient(OutcomingClient.sendPing);
+								client.doCustomRmiHandling(address.getServer(k));
+								Integer result = client.getResult();
+								if(result == 0) {
 									//TODO Avvenuto crash di un nodo, avviare azione di recovery
+									
+									address.setServerStatus(address.getServer(k), false);
+									BattleshipController.getInstance(null, 0).destroyPlayer(k);
+									try {
+										if(address.getServer(k).equals(address.getTokenPosition())) {
+											DummyFrontEntity.getInstance().addMessage("\n\nTOKEN PERSO\n\n");
+											new ComunicationActions().requestToken();
+										}}
+										catch (IndexOutOfBoundsException e){
+											//TODO Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
+									}
 								}
-								address.setServerStatus(address.getServer(k), false);
 								try {
-									if(address.getServer(k).equals(address.getTokenPosition())) {
-										viewController.printMessage("\n\nTOKEN PERSO\n\n");
-										new ComunicationActions().requestToken();
-									}}
-									catch (IndexOutOfBoundsException e){
-										//TODO Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
+									DummyFrontEntity.getInstance().addMessage("Me: " + address.getMyAddress() + " Next: " + address.getNextOnline());
+								} catch (Exception e) {
+									DummyFrontEntity.getInstance().addMessage("I'm only online, I win");
 								}
-							}
-							else
-								address.setServerStatus(address.getServer(k), true);
-							System.out.println(address.getServer(k)+": "+result);
-							viewController.printMessage(address.getServer(k)+": "+result);
-							try {
-								viewController.printMessage("Me: " + address.getMyAddress() + " Next: " + address.getNextOnline());
-							} catch (Exception e) {
-								viewController.printMessage("I'm only online, I win");
 							}
 						}
 						try {
@@ -109,47 +124,25 @@ public class MainClass {
 	
 
 	public MainClass() {
-		viewController = new DummyController(this);
+
+		address = ServerAddress.getInstance();
+		BattleshipController.getInstance(this, address.serverNumber() +1);
 		this.actions = new ComunicationActions();
 		
-		boolean imfirst = true;
-		
-		address = ServerAddress.getInstance();
-		Integer me = Integer.parseInt(address.getMyAddress());
-		for(int k = 0; k < address.serverNumber(); k++) {
-			if(Integer.parseInt(address.getServer(k)) < me) {
-				imfirst = false;
-				break;
-			}
-		}
-		
-		if(imfirst) {
-			Message m = new Message();
-			m.setMessage(address.getMyAddress());
-			m.setSender(address.getMyAddress());
-			actions.cicleToken(m);
-			viewController.takeToken();
-		}
 	}
 	
 	public void relaseToken() {
-		Thread t = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				String receiver = address.getNextOnline();
-				address.setTokenPosition(receiver);
-				Message m = new Message();
-				m.setMessage(receiver);
-				m.setSender(address.getMyAddress());
-				actions.cicleToken(m);
-			}
-		});
-		t.start();
+		actions.relaseToken();
 	}
 
 	public void sendAction() {
 	
+	}
+
+
+	public void relaseToken(int player, int row, int col) {
+		new BattleshipActions().sendHit(player, row, col);
+		relaseToken();
 	}
 	
 

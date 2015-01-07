@@ -92,6 +92,10 @@ public class ServerAddress {
 		}
 		return getServer(nextServer);
 	}
+	public int getServerNID(String ID) {
+		return serverList.indexOf(ID);
+	}
+	
 	private void findNextServer() {
 		synchronized (lockServerOnline) {
 			int me = Integer.parseInt(myAddress);
