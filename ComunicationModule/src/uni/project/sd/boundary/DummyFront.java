@@ -86,4 +86,9 @@ public class DummyFront implements FrontBoundary{
 	public void addToLog(String string) {
 		this.logArea.append(string + "\n");
 	}
+	@Override
+	public void disablePlayer(int k) {
+		// TODO Auto-generated method stub
+		
+	}
 }

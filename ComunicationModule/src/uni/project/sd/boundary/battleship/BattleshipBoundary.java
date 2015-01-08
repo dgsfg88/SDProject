@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 
 import uni.project.sd.Control.BattleshipController;
 import uni.project.sd.Entity.DummyFrontEntity;
-import uni.project.sd.boundary.BattleshipJButtonActionListener;
 import uni.project.sd.boundary.FrontBoundary;
 
 public class BattleshipBoundary implements FrontBoundary{
@@ -57,6 +56,7 @@ public class BattleshipBoundary implements FrontBoundary{
 		
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.pack();
+		mainWindow.setSize(500, 500);
 		mainWindow.setVisible(true);
 	}
 	
@@ -136,6 +136,7 @@ public class BattleshipBoundary implements FrontBoundary{
 		return result;
 	}
 
+	@Override
 	public void disablePlayer(int k) {
 		synchronized (playersIcons) {
 			for(JButton b: playersIcons.get(k+1)) {

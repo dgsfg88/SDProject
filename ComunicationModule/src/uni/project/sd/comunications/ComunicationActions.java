@@ -14,6 +14,18 @@ public class ComunicationActions {
 		sendMessage(OutcomingClient.notifyToken);
 	}
 	
+	public void nodeDown(String node) {
+		m = new Message();
+		m.setSender(ServerAddress.getInstance().getMyAddress());
+		m.setReceiver(ServerAddress.getInstance().getMyAddress());
+		m.setMessage(node);
+		sendMessage(OutcomingClient.nodeDown);
+	}
+	public void resendNodeDown(Message m) {
+		this.m = m;
+		sendMessage(OutcomingClient.nodeDown);
+	}
+	
 	public void requestToken() {
 		m = new Message();
 		m.setSender(ServerAddress.getInstance().getMyAddress());

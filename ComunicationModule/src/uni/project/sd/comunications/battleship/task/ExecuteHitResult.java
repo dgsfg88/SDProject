@@ -21,7 +21,6 @@ public class ExecuteHitResult extends MessageBase {
 		
 		if(m.getReceiver().equals(ServerAddress.getInstance().getMyAddress()))
 			new BattleshipActions().relaseToken();
-		
 		try {
 			if(!m.getSender().equals(ServerAddress.getInstance().getMyAddress()) && EventCounter.getInstance(null).isNewEvent(m.getMyTime()) ){
 				BattleshipController.getInstance(null, 0).updateGrid(ServerAddress.getInstance().getServerNID(m.getSender()),m.getX(),m.getY(),Boolean.parseBoolean(m.getMessage()));

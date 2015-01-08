@@ -9,6 +9,7 @@ import saqib.rasul.Compute;
 import saqib.rasul.RmiStarter;
 import saqib.rasul.Task;
 import uni.project.sd.comunications.entity.Message;
+import uni.project.sd.comunications.task.NodeDown;
 import uni.project.sd.comunications.task.NotifyToken;
 import uni.project.sd.comunications.task.RequestState;
 import uni.project.sd.comunications.task.RequestToken;
@@ -28,6 +29,7 @@ public class OutcomingClient extends RmiStarter{
 	public final static int sendToken = 1;
 	public final static int notifyToken = 2;
 	public final static int requestToken = 3;
+	public final static int nodeDown = 4;
 	/**
 	 * Risultato del ping, TODO da sostituire con lo stato
 	 */
@@ -73,6 +75,10 @@ public class OutcomingClient extends RmiStarter{
 			case requestToken:
 				task = new RequestToken();
 				((RequestToken)task).setMessage(m);
+				break;
+			case nodeDown:
+				task = new NodeDown();
+				((NodeDown)task).setMessage(m);
 				break;
 			default:
 				result = 1;

@@ -1,6 +1,7 @@
 package uni.project.sd.comunications.battleship.task;
 
 import uni.project.sd.Control.BattleshipController;
+import uni.project.sd.Entity.DummyFrontEntity;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;
 import uni.project.sd.comunications.battleship.entity.BattleshipMessage;
@@ -25,6 +26,9 @@ public class ExecuteHit extends MessageBase {
 		} else {
 			try {
 				if(m.getSender().equals(ServerAddress.getInstance().getMyAddress())) {
+					ServerAddress.getInstance().setServerStatus(m.getReceiver(), false);
+					DummyFrontEntity.getInstance().destroyPlayer(ServerAddress.getInstance().getServerNID(m.getReceiver()));
+					actions.nodeDown(m.getReceiver());
 					actions.cicleToken();
 				}
 				else if(EventCounter.getInstance(null).isNewEvent(m.getMyTime()))

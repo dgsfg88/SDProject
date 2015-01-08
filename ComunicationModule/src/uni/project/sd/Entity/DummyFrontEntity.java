@@ -49,4 +49,12 @@ public class DummyFrontEntity {
 			}
 		}
 	}
+
+	public void destroyPlayer(int serverNID) {
+		synchronized (lockViewList) {
+			for(FrontBoundary df: fronts) {
+				df.disablePlayer(serverNID);
+			}
+		}
+	}
 }

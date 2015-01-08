@@ -80,20 +80,23 @@ public class MainClass {
 						new ComunicationActions().cicleToken();
 						DummyFrontEntity.getInstance().setPlayerTurn(imfirst);
 					}
-					while(true) {
-						for(int k = 0; k < address.serverNumber(); k++) {
+					imfirst = true;
+					while(imfirst) {
+//						for(int k = 0; k < address.serverNumber(); k++) {
 							//Invio di un messaggio di ping ad ogni altro nodo
-							if(address.getServerStatus(address.getServer(k))) {
+//							if(address.getServerStatus(address.getServer(k))) {
+						try {
+						String k = address.getNextOnline();
 								OutcomingClient client = new OutcomingClient(OutcomingClient.sendPing);
-								client.doCustomRmiHandling(address.getServer(k));
+								client.doCustomRmiHandling(k);
 								Integer result = client.getResult();
 								if(result == 0) {
 									//TODO Avvenuto crash di un nodo, avviare azione di recovery
-									
-									address.setServerStatus(address.getServer(k), false);
-									BattleshipController.getInstance(null, 0).destroyPlayer(k);
+									new ComunicationActions().nodeDown(k);
+									address.setServerStatus(k, false);
+									DummyFrontEntity.getInstance().destroyPlayer(address.getServerNID(k));
 									try {
-										if(address.getServer(k).equals(address.getTokenPosition())) {
+										if(k.equals(address.getTokenPosition())) {
 											DummyFrontEntity.getInstance().addMessage("\n\nTOKEN PERSO\n\n");
 											new ComunicationActions().requestToken();
 										}}
@@ -101,13 +104,14 @@ public class MainClass {
 											//TODO Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
 									}
 								}
-								try {
+								
 									DummyFrontEntity.getInstance().addMessage("Me: " + address.getMyAddress() + " Next: " + address.getNextOnline());
 								} catch (Exception e) {
 									DummyFrontEntity.getInstance().addMessage("I'm only online, I win");
+									imfirst = false;
 								}
-							}
-						}
+//							}
+//						}
 						try {
 							//TODO aggiungere controlli di terminazione
 							Thread.sleep(1000);
