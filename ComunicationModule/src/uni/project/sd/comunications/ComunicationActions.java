@@ -10,7 +10,7 @@ public class ComunicationActions {
 		m = new Message();
 		m.setSender(ServerAddress.getInstance().getMyAddress());
 		m.setMessage(ServerAddress.getInstance().getMyAddress());
-		m.setReceiver(ServerAddress.getInstance().getNextOnline());
+		m.setReceiver(ServerAddress.getInstance().getMyAddress());
 		sendMessage(OutcomingClient.notifyToken);
 	}
 	

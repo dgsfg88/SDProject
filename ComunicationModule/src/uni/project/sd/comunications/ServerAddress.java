@@ -125,7 +125,10 @@ public class ServerAddress {
 	}
 	public String getTokenPosition() {
 		synchronized (lockTokenPosition) {
-			return serverList.get(tokenPosition);
+			if(tokenPosition >= 0)
+				return serverList.get(tokenPosition);
+			else
+				return myAddress;
 		}
 	}
 }
