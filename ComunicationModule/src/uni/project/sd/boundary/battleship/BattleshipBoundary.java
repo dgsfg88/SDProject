@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import uni.project.sd.Control.BattleshipController;
 import uni.project.sd.Entity.DummyFrontEntity;
 import uni.project.sd.boundary.FrontBoundary;
+import uni.project.sd.comunications.ServerAddress;
 
 public class BattleshipBoundary implements FrontBoundary{
 	public static final int Horizontal = 0;
@@ -99,7 +100,7 @@ public class BattleshipBoundary implements FrontBoundary{
 	
 	@Override
 	public void addToLog(String Message) {
-		System.out.println(Message);
+		System.out.println(ServerAddress.getInstance().getMyAddress() + ": " +Message);
 	}
 
 	@Override

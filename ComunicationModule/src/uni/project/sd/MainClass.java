@@ -82,36 +82,34 @@ public class MainClass {
 					}
 					imfirst = true;
 					while(imfirst) {
-//						for(int k = 0; k < address.serverNumber(); k++) {
-							//Invio di un messaggio di ping ad ogni altro nodo
-//							if(address.getServerStatus(address.getServer(k))) {
 						try {
-						String k = address.getNextOnline();
-								OutcomingClient client = new OutcomingClient(OutcomingClient.sendPing);
-								client.doCustomRmiHandling(k);
-								Integer result = client.getResult();
-								if(result == 0) {
-									//TODO Avvenuto crash di un nodo, avviare azione di recovery
-									new ComunicationActions().nodeDown(k);
-									address.setServerStatus(k, false);
-									DummyFrontEntity.getInstance().destroyPlayer(address.getServerNID(k));
-									try {
-										if(k.equals(address.getTokenPosition())) {
-											DummyFrontEntity.getInstance().addMessage("\n\nTOKEN PERSO\n\n");
-											new ComunicationActions().requestToken();
-										}}
-										catch (IndexOutOfBoundsException e){
-											//TODO Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
+							String k = address.getNextOnline();
+							OutcomingClient client = new OutcomingClient(OutcomingClient.sendPing);
+							client.doCustomRmiHandling(k);
+							Integer result = client.getResult();
+							if(result == 0) {
+								//TODO Avvenuto crash di un nodo, avviare azione di recovery
+								new ComunicationActions().nodeDown(k);
+								address.setServerStatus(k, false);
+								DummyFrontEntity.getInstance().addMessage("Node " + k + " is down, token position: " + address.getTokenPosition());
+								DummyFrontEntity.getInstance().destroyPlayer(address.getServerNID(k));
+								try {
+									if(k.equals(address.getTokenPosition())) {
+										DummyFrontEntity.getInstance().addMessage("\n\nTOKEN PERSO\n\n");
+										new ComunicationActions().requestToken();
 									}
+								} catch (Exception e){
+									//TODO Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
+									DummyFrontEntity.getInstance().addMessage("Possibile token perso");
+									new ComunicationActions().requestToken();
 								}
+							}
 								
-									DummyFrontEntity.getInstance().addMessage("Me: " + address.getMyAddress() + " Next: " + address.getNextOnline());
-								} catch (Exception e) {
-									DummyFrontEntity.getInstance().addMessage("I'm only online, I win");
-									imfirst = false;
-								}
-//							}
-//						}
+		//					DummyFrontEntity.getInstance().addMessage("Me: " + address.getMyAddress() + " Next: " + address.getNextOnline());
+							} catch (Exception e) {
+								DummyFrontEntity.getInstance().addMessage("I'm only online, I win");
+								imfirst = false;
+							}
 						try {
 							//TODO aggiungere controlli di terminazione
 							Thread.sleep(1000);
@@ -130,8 +128,9 @@ public class MainClass {
 	public MainClass() {
 
 		address = ServerAddress.getInstance();
-		BattleshipController.getInstance(this, address.serverNumber() +1);
 		this.actions = new ComunicationActions();
+		BattleshipController.getInstance(this, address.serverNumber() +1);
+
 		
 	}
 	

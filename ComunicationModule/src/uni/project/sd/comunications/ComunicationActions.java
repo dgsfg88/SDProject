@@ -54,6 +54,9 @@ public class ComunicationActions {
 				Integer result = 0;
 				if(client == null)
 					client = new OutcomingClient(messageType,m);
+				else {
+					client.setMessageAndType(m,messageType);
+				}
 				while(result == 0) {
 					client.doCustomRmiHandling(ServerAddress.getInstance().getNextOnline());
 					result = client.getResult();

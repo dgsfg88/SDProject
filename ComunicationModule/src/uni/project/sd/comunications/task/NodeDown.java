@@ -21,6 +21,7 @@ public class NodeDown extends MessageBase {
 				address.setServerStatus(m.getMessage(), false);
 				DummyFrontEntity.getInstance().destroyPlayer(address.getServerNID(m.getMessage()));
 				new ComunicationActions().resendNodeDown(m);
+				new ComunicationActions().requestToken();
 			}
 		} catch (EventNotSameException e) {
 			e.printStackTrace();

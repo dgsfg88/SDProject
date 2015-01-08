@@ -110,4 +110,8 @@ public class OutcomingClient extends RmiStarter{
 	public Integer getResult(){
 		return result;
 	}
+	public void setMessageAndType(Message message, int messageType) {
+		this.m = message;
+		this.taskType = messageType;
+	}
 }

@@ -8,7 +8,6 @@ import uni.project.sd.event.EventCounter;
 import uni.project.sd.event.EventCounter.EventNotSameException;
 
 public class NotifyToken extends MessageBase {
-
 	/**
 	 * 
 	 */
@@ -22,11 +21,13 @@ public class NotifyToken extends MessageBase {
 	public Integer deliver() {
 		ServerAddress book = ServerAddress.getInstance();
 		try {
-			if(!m.getSender().equals(book.getMyAddress()) && EventCounter.getInstance(null).isNewEvent(m.getMyTime())){
-				DummyFrontEntity.getInstance().addMessage("Il token è in mano a "+m.getMessage());
+			boolean newEvent = EventCounter.getInstance(null).isNewEvent(m.getMyTime());
+			DummyFrontEntity.getInstance().addMessage("Il token è in mano a "+m.getMessage());
+			book.setTokenPosition(m.getMessage());
+			if(!m.getSender().equals(book.getMyAddress()) /*&& newEvent*/ ){
 				new ComunicationActions().cicleToken(m);
-				book.setTokenPosition(m.getMessage());
-			}
+			} else
+				DummyFrontEntity.getInstance().addMessage("Fermo token: "+m.getMessage()+" "+newEvent );
 		} catch (EventNotSameException e) {
 			e.printStackTrace();
 		}
@@ -35,6 +36,5 @@ public class NotifyToken extends MessageBase {
 		}
 		return 1;
 	}
-
 
 }
