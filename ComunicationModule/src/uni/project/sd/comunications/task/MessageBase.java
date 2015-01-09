@@ -20,7 +20,8 @@ public abstract class MessageBase implements DeliverMessage, Serializable,
 	@Override
 	public void setMessage(Message m) {
 		this.m = m;
-		this.m.setMyTime(EventCounter.getInstance(null).getNextEvent());
+		if(this.m.getMyTime() == null)
+			this.m.setMyTime(EventCounter.getInstance(null).getNextEvent());
 	}
 
 	@Override

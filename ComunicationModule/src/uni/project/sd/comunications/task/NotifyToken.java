@@ -24,7 +24,7 @@ public class NotifyToken extends MessageBase {
 			boolean newEvent = EventCounter.getInstance(null).isNewEvent(m.getMyTime());
 			DummyFrontEntity.getInstance().addMessage("Il token è in mano a "+m.getMessage());
 			book.setTokenPosition(m.getMessage());
-			if(!m.getSender().equals(book.getMyAddress()) /*&& newEvent*/ ){
+			if(!m.getSender().equals(book.getMyAddress()) && newEvent ){
 				new ComunicationActions().cicleToken(m);
 			} else
 				DummyFrontEntity.getInstance().addMessage("Fermo token: "+m.getMessage()+" "+newEvent );
