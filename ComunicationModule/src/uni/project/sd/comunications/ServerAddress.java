@@ -19,6 +19,7 @@ public class ServerAddress {
 	private int tokenPosition;
 	private LinkedList<String> serverList;
 	private HashMap<String, Boolean> serverOnline;
+	private HashMap<String, String> serverLocation;
 	/**
 	 * Serve a richiedere un istanza della rubrica
 	 * @return	istanza della rubrica
@@ -36,14 +37,16 @@ public class ServerAddress {
 	protected ServerAddress() {
 		serverList = new LinkedList<String>();
 		serverOnline = new HashMap<String, Boolean>();
+		serverLocation = new HashMap<String,String>();
 	}
 	/**
 	 * Aggiunge un server alla rubrica
 	 * @param server	Indirizzo del server
 	 */
-	public void addServer(String server) {
+	public void addServer(String server, String location) {
 		serverList.add(server);
 		serverOnline.put(server, true);
+		serverLocation.put(server, location);
 	}
 	public void setServerStatus(String server, boolean status){
 		synchronized (lockServerOnline) {
@@ -130,5 +133,9 @@ public class ServerAddress {
 			else
 				return myAddress;
 		}
+	}
+	
+	public String getLocation(String server) {
+		return serverLocation.get(server);
 	}
 }

@@ -91,7 +91,7 @@ public class OutcomingClient extends RmiStarter{
 	protected void doTask(String serverID,Task<Integer> task) {
 		Registry registry;
 		try {
-			registry = LocateRegistry.getRegistry();
+			registry = LocateRegistry.getRegistry(ServerAddress.getInstance().getLocation(serverID));
 	        Compute compute = (Compute)registry.lookup(Compute.SERVICE_NAME+serverID);
 	        if(task != null)
 	        	result = compute.executeTask(task);

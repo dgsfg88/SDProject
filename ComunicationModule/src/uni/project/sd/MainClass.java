@@ -24,7 +24,7 @@ public class MainClass {
 	private ServerAddress address;
 	private ComunicationActions actions;
 	public static void main(String[] args) {
-		if(args.length > 1) {
+		if(args.length > 2) {
 			try {
 				//Creazione del server di ricezione
 				LocateRegistry.createRegistry(Integer.parseInt(args[0]));
@@ -37,8 +37,8 @@ public class MainClass {
 			//Creazione di una rubrica
 			ServerAddress book = ServerAddress.getInstance();
 			book.setMyAddress(args[0]);
-			for(int k = 1; k < args.length; k++) {
-				book.addServer(args[k]);
+			for(int k = 1; k < args.length; k+=2) {
+				book.addServer(args[k],args[k+1]);
 			}
 			EventCounter.getInstance(book);
 			Thread sendPing = new Thread(new Runnable() {
