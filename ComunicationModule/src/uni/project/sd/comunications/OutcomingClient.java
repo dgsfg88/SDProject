@@ -4,7 +4,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
 import saqib.rasul.Compute;
 import saqib.rasul.RmiStarter;
 import saqib.rasul.Task;
@@ -99,6 +98,7 @@ public class OutcomingClient extends RmiStarter{
 	        
 		} catch (RemoteException | NotBoundException e) {
 			result = 0;
+			System.out.println(e);
 		}
 	}
 	
