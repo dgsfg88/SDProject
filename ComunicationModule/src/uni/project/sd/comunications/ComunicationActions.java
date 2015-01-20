@@ -1,5 +1,6 @@
 package uni.project.sd.comunications;
 
+import uni.project.sd.Entity.DummyFrontEntity;
 import uni.project.sd.comunications.entity.Message;
 
 public class ComunicationActions {
@@ -20,6 +21,16 @@ public class ComunicationActions {
 		m.setReceiver(ServerAddress.getInstance().getMyAddress());
 		m.setMessage(node);
 		sendMessage(OutcomingClient.nodeDown);
+		try {
+			if(node.equals(ServerAddress.getInstance().getTokenPosition())) {
+				DummyFrontEntity.getInstance().addMessage("\n\nTOKEN PERSO\n\n");
+				requestToken();
+			}
+		} catch (Exception e){
+			//TODO Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
+			DummyFrontEntity.getInstance().addMessage("Possibile token perso");
+			requestToken();
+		}
 	}
 	public void resendNodeDown(Message m) {
 		this.m = m;
@@ -58,14 +69,20 @@ public class ComunicationActions {
 					client.setMessageAndType(m,messageType);
 				}
 				while(result == 0) {
-					client.doCustomRmiHandling(ServerAddress.getInstance().getNextOnline());
-					result = client.getResult();
-					if(result == 0)
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
+					try{
+						String next = ServerAddress.getInstance().getNextOnline();
+						client.doCustomRmiHandling(next);
+						result = client.getResult();
+						if(result == 0) {
+							nodeDown(next);
+							ServerAddress.getInstance().setServerStatus(next, false);
 						}
+					} catch (IndexOutOfBoundsException e){
+						//TODO routine di terminazione
+						System.out.println("Ho vinto!");
+						result = 1;
+					}
+						
 				}
 			}
 		}).start();
