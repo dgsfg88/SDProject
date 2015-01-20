@@ -11,18 +11,24 @@ import uni.project.sd.comunications.OutcomingClient;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;
 import uni.project.sd.event.EventCounter;
+
 /**
  * Classe di avvio, TODO aggiungere numerazione messaggi
+ * 
  * @author Andrea
  *
  */
 public class MainClass {
-/**
- * Punto di avvio del programma
- * @param args	ID server come primo argomento, ID di tutti gli altri server dopo
- */
+	/**
+	 * Punto di avvio del programma
+	 * 
+	 * @param args
+	 *            ID server come primo argomento, ID di tutti gli altri server
+	 *            dopo
+	 */
 	private ServerAddress address;
 	private ComunicationActions actions;
+
 	public static void main(String[] args) {
 		if(args.length > 2) {
 			try {
@@ -84,27 +90,18 @@ public class MainClass {
 					while(imfirst) {
 						try {
 							String k = address.getNextOnline();
-							OutcomingClient client = new OutcomingClient(OutcomingClient.sendPing);
-							client.doCustomRmiHandling(k);
-							Integer result = client.getResult();
-							if(result == 0) {
-								//TODO Avvenuto crash di un nodo, avviare azione di recovery
-								new ComunicationActions().nodeDown(k);
-								address.setServerStatus(k, false);
-								DummyFrontEntity.getInstance().addMessage("Node " + k + " is down, token position: " + address.getTokenPosition());
-								DummyFrontEntity.getInstance().destroyPlayer(address.getServerNID(k));
-								try {
-									if(k.equals(address.getTokenPosition())) {
-										DummyFrontEntity.getInstance().addMessage("\n\nTOKEN PERSO\n\n");
-										new ComunicationActions().requestToken();
-									}
-								} catch (Exception e){
-									//TODO Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
-									DummyFrontEntity.getInstance().addMessage("Possibile token perso");
-									new ComunicationActions().requestToken();
+							if(k.equals(address.getTokenPosition())){
+								OutcomingClient client = new OutcomingClient(OutcomingClient.sendPing);
+								client.doCustomRmiHandling(k);
+								Integer result = client.getResult();
+								if(result == 0) {
+									//TODO Avvenuto crash di un nodo, avviare azione di recovery
+									new ComunicationActions().nodeDown(k);
+									address.setServerStatus(k, false);
+									DummyFrontEntity.getInstance().addMessage("Node " + k + " is down, token position: " + address.getTokenPosition());
+									DummyFrontEntity.getInstance().destroyPlayer(address.getServerNID(k));
 								}
-							}
-								
+							}	
 		//					DummyFrontEntity.getInstance().addMessage("Me: " + address.getMyAddress() + " Next: " + address.getNextOnline());
 							} catch (Exception e) {
 								DummyFrontEntity.getInstance().addMessage("I'm only online, I win");
@@ -123,29 +120,25 @@ public class MainClass {
 			sendPing.start();
 		}
 	}
-	
 
 	public MainClass() {
 
 		address = ServerAddress.getInstance();
 		this.actions = new ComunicationActions();
-		BattleshipController.getInstance(this, address.serverNumber() +1);
+		BattleshipController.getInstance(this, address.serverNumber() + 1);
 
-		
 	}
-	
+
 	public void relaseToken() {
 		actions.relaseToken();
 	}
 
 	public void sendAction() {
-	
-	}
 
+	}
 
 	public void relaseToken(int player, int row, int col) {
 		new BattleshipActions().sendHit(player, row, col);
 	}
-	
 
 }
