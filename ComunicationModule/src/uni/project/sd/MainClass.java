@@ -27,7 +27,7 @@ public class MainClass {
 		if(args.length > 2) {
 			try {
 				//Creazione del server di ricezione
-				LocateRegistry.createRegistry(Integer.parseInt(args[0]));
+				LocateRegistry.createRegistry(1099);
 				new IncomingServer(args[0]);
 			} catch (RemoteException e1) {
 				e1.printStackTrace();

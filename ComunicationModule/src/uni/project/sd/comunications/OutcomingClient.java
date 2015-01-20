@@ -83,7 +83,7 @@ public class OutcomingClient extends RmiStarter{
 				result = 1;
 				break;
 			}
-	        
+
 	        doTask(serverID, task);
 	}
 	
@@ -98,7 +98,7 @@ public class OutcomingClient extends RmiStarter{
 	        
 		} catch (RemoteException | NotBoundException e) {
 			result = 0;
-			System.out.println(e);
+			//System.out.println(e);
 		}
 	}
 	
