@@ -31,7 +31,7 @@ public class IncomingServer extends RmiStarter{
 			Compute engine = new ComputeEngine();
 			Compute engineStub = (Compute)UnicastRemoteObject.exportObject(engine, 0);
 
-            Registry registry = LocateRegistry.getRegistry();
+            Registry registry = LocateRegistry.getRegistry(80);
             registry.rebind(Compute.SERVICE_NAME + serverID, engineStub);
 		} catch (Exception e) {
 			e.printStackTrace();
