@@ -7,24 +7,30 @@ public class OceanCoordinate implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 2843159364720464510L;
-	private int x, y, z;
+	private Integer[] coordinates;
 
 	public OceanCoordinate(int x, int y, int z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		coordinates = new Integer[3];
+		coordinates[0] = x;
+		coordinates[1] = y;
+		coordinates[2] = z;
 	}
 
 	public int getX() {
-		return x;
+		return coordinates[0];
 	}
 
 	public int getY() {
-		return y;
+		return coordinates[1];
 	}
 
 	public int getZ() {
-		return z;
+		return coordinates[2];
+	}
+
+	@Override
+	public int hashCode() {
+		return this.coordinates.hashCode();
 	}
 
 	@Override
@@ -32,8 +38,8 @@ public class OceanCoordinate implements Serializable {
 		boolean result = false;
 		try {
 			OceanCoordinate oc = (OceanCoordinate) obj;
-			if (oc.getX() == this.x && oc.getY() == this.y
-					&& oc.getZ() == this.z)
+			if (oc.getX() == coordinates[0] && oc.getY() == coordinates[1]
+					&& oc.getZ() == coordinates[2])
 				result = true;
 		} catch (Exception e) {
 			result = false;
