@@ -17,14 +17,15 @@ public class BattleshipBoundary implements FrontBoundary{
 	public static final int Horizontal = 0;
 	public static final int Vertical = 1;
 	
-	public final static int row = 15;
-	public final static int col = 15;
+	private int row;
+	private int col;
 	private JFrame mainWindow;
 	private ArrayList<ArrayList<JButton>> playersIcons;
 	
-	public BattleshipBoundary(BattleshipController controller, Integer playerNumber) {
+	public BattleshipBoundary(BattleshipController controller, Integer playerNumber, int d) {
 		mainWindow = new JFrame("Battleship");
 		mainWindow.getContentPane().setLayout(new GridLayout(0, 2,10,10));
+		this.row = col = d;
 
 		playersIcons = new ArrayList<ArrayList<JButton>>(playerNumber);
 		
@@ -61,37 +62,20 @@ public class BattleshipBoundary implements FrontBoundary{
 		mainWindow.setVisible(true);
 	}
 	
-	public boolean addShip(int length, int startX, int startY, int orient) {
-		boolean returnValue = false;
-		if((startX + length <= row && orient == Horizontal) || (startY + length <= col && orient == Vertical)) {
-			if(length == 0) {
-				try {
-					synchronized (playersIcons) {
-						returnValue = playersIcons.get(0).get(getCoordinate(startX, startY)).getBackground().equals(Color.BLUE);
-					}
-				} catch (IndexOutOfBoundsException e) {
-					returnValue = false;
-				}
-			} else {
-				switch (orient) {
-				case Horizontal:
-					startX++;
-					break;
-				case Vertical:
-					startY++;
-					break;
-				default:
-					returnValue = false;
-				}
-				returnValue = addShip(--length, startX, startY, orient);
+	public void addShip(int length, int startX, int startY, int orient) {
+		int x = startX;
+		int y = startY;
+		if (orient == Horizontal){
+			for (; x < startX + length; x++){
+				JButton b = playersIcons.get(0).get(getCoordinate(x, y));
+				b.setBackground(Color.GRAY);
 			}
-			
-			if(returnValue)
-				synchronized (playersIcons) {
-					playersIcons.get(0).get(getCoordinate(startX, startY)).setBackground(Color.GRAY);
-				}
+		} else {
+			for (; y < startY + length; y++){
+				JButton b = playersIcons.get(0).get(getCoordinate(x, y));
+				b.setBackground(Color.GRAY);
+			}
 		}
-		return returnValue;
 	}
 	
 	private int getCoordinate (int x, int y) {
