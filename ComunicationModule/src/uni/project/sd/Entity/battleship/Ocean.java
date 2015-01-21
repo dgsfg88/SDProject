@@ -3,6 +3,7 @@ package uni.project.sd.Entity.battleship;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Ocean {
@@ -22,9 +23,9 @@ public class Ocean {
 	private short mode;
 	private int d;
 	private int playersNumber;
-	private HashMap<OceanCoordinate, Ship> positions;
+	private HashMap<OceanCoordinate, LinkedList<Ship>> positions;
 	private ArrayList<OceanCoordinate> missed;
-	private LinkedHashMap<Ship, OceanCoordinate> hit;
+	private LinkedHashMap<Ship, LinkedList<OceanCoordinate>> hit;
 
 	public Ocean(short mode, int d, int playersNumber) {
 		this.positions = new HashMap<>();
@@ -35,15 +36,37 @@ public class Ocean {
 		this.playersNumber = playersNumber;
 	}
 
-	public short checkShot(OceanCoordinate position) {
-		Ship s;
-		if ((s = this.positions.remove(position)) != null) {
-			this.hit.put(s, position);
-			return s.setSunk();
-		} else {
-			this.missed.add(position);
-			return -1;
+	/**
+	 * This method check if the shot of a player, identified with his number,
+	 * hit or missed one or more (shared mode) enemy.
+	 * 
+	 * @param position
+	 *            the coordinates of the shot
+	 * @param playerN
+	 *            number of the player
+	 * @return return an HashMap empty if there were no hit or a set of Ships
+	 *         with their sunk result.
+	 */
+	public HashMap<Ship, Integer> checkShot(OceanCoordinate position,
+			int playerN) {
+		HashMap<Ship, Integer> result = new HashMap<>();
+		LinkedList<Ship> ships = this.positions.get(position);
+		if (ships != null) {
+			for (Ship s : ships) {
+				if (s.getPlayer() != playerN) {
+					if (this.hit.get(s) == null) {
+						this.hit.put(s, new LinkedList<OceanCoordinate>());
+					}
+					this.hit.get(s).add(position);
+					this.positions.get(position).remove(s);
+					result.put(s, s.setSunk());
+				}
+			}
 		}
+		if (result.isEmpty()) {
+			this.missed.add(position);
+		}
+		return result;
 	}
 
 	public boolean deployShip(List<OceanCoordinate> coordinates, Ship ship,
@@ -63,17 +86,33 @@ public class Ocean {
 
 		return result;
 	}
+	
+	public List<OceanCoordinate> getMissed(int from) {
+		if(from < 0 || from >= missed.size()-1){
+			return null;
+		}
+		return missed.subList(from, missed.size()-1);
+	}
+	
+	public LinkedHashMap<Ship, LinkedList<OceanCoordinate>> getHit(int from) {
+		return hit;
+	}
 
 	private boolean deployShipSplitted(List<OceanCoordinate> coordinates,
 			Ship ship, int playerN) {
+		LinkedList<Ship> ships;
 		OceanCoordinate oc = coordinates.remove(0);
 		if (isSplittedPositionValid(oc, playerN)) {
 			if (coordinates.size() == 0) {
-				this.positions.put(oc, ship);
+				ships = new LinkedList<>();
+				ships.add(ship);
+				this.positions.put(oc, ships);
 				return true;
 			} else {
 				if (deployShipSplitted(coordinates, ship, playerN)) {
-					this.positions.put(oc, ship);
+					ships = new LinkedList<>();
+					ships.add(ship);
+					this.positions.put(oc, ships);
 					return true;
 				}
 			}
@@ -81,13 +120,13 @@ public class Ocean {
 		return false;
 	}
 
-	// TODO ottimizzato per le due dimensioni, la terza si può aggiungere allo
+	// TODO ottimizzato per le due dimensioni, la terza si puï¿½ aggiungere allo
 	// stesso modo
 	private boolean isSplittedPositionValid(OceanCoordinate oc, int playerN) {
 		if (playerN < this.playersNumber) {
 			int playerLimitInf = playerN * d; // (P*D) + (P*D+D-1)
-			int playerLimitSup = playerLimitInf + d - 1;
-			int wantedPosition = oc.getY() + oc.getX() * d;
+			int playerLimitSup = playerLimitInf + d*d - 1;
+			int wantedPosition = oc.getX() + oc.getY() * d;
 			if (wantedPosition >= playerLimitInf
 					&& wantedPosition <= playerLimitSup
 					&& !this.positions.containsKey(oc)) {
@@ -102,13 +141,19 @@ public class Ocean {
 		OceanCoordinate oc = coordinates.remove(0);
 		if (coordinates.size() == 0) {
 			if (isSharedPositionValid(oc, playerN)) {
-				// TODO deploy shared ship!!
+				if(this.positions.get(oc) == null){
+					this.positions.put(oc, new LinkedList<Ship>());
+				}
+				this.positions.get(oc).add(ship);
 				return true;
 			}
 		} else {
 			if (isSharedPositionValid(oc, playerN)) {
 				if (deployShipShared(coordinates, ship, playerN)) {
-					// TODO deploy shared ship!!!
+					if(this.positions.get(oc) == null){
+						this.positions.put(oc, new LinkedList<Ship>());
+					}
+					this.positions.get(oc).add(ship);
 					return true;
 				}
 			}
@@ -116,16 +161,17 @@ public class Ocean {
 		return false;
 	}
 
-	// TODO da rivedere per il fatto che possono starci più navi nello stesso
-	// punto!!
 	private boolean isSharedPositionValid(OceanCoordinate oc, int playerN) {
 		if (oc.getX() < this.d && oc.getY() < this.d && oc.getZ() < this.d) {
-			Ship s;
-			if ((s = this.positions.get(oc)) != null)
-				if (s.getPlayer() != playerN)
-					return true;
-				else
-					return true;
+			LinkedList<Ship> ships = this.positions.get(oc);
+			if (ships != null) {
+				for (Ship s : ships) {
+					if (s.getPlayer() == playerN) {
+						return false;
+					}
+				}
+			}
+			return true;
 		}
 		return false;
 	}
