@@ -4,11 +4,13 @@ import saqib.rasul.Task;
 import uni.project.sd.comunications.OutcomingClient;
 import uni.project.sd.comunications.battleship.task.ExecuteHit;
 import uni.project.sd.comunications.battleship.task.ExecuteHitResult;
+import uni.project.sd.comunications.battleship.task.UpdateOcean;
 import uni.project.sd.comunications.entity.Message;
 
 public class BattleshipClient extends OutcomingClient {
 	public static final int sendHit = 18;
 	public static final int sendHitResult = 19;
+	public static final int sendOcean = 22;
 	
 	public BattleshipClient() {
 		super();
@@ -31,6 +33,10 @@ public class BattleshipClient extends OutcomingClient {
 		case sendHitResult:
 			task = new ExecuteHitResult();
 			((ExecuteHitResult)task).setMessage(getM());
+			break;
+		case sendOcean:
+			task = new UpdateOcean();
+			((UpdateOcean)task).setMessage(getM());
 			break;
 		default:
 			super.doCustomRmiHandling(serverID);

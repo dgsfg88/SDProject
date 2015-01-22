@@ -1,5 +1,8 @@
 package uni.project.sd.comunications;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 /**
@@ -20,6 +23,7 @@ public class ServerAddress {
 	private LinkedList<String> serverList;
 	private HashMap<String, Boolean> serverOnline;
 	private HashMap<String, String> serverLocation;
+	private HashMap<String, Integer> playerID;
 	/**
 	 * Serve a richiedere un istanza della rubrica
 	 * @return	istanza della rubrica
@@ -138,4 +142,34 @@ public class ServerAddress {
 	public String getLocation(String server) {
 		return serverLocation.get(server);
 	}
+	
+	public int getPlayerID(String player){
+		int id = -1;
+		if(playerID == null) {
+			
+			int i = 1;
+			LinkedList<String> pl = new LinkedList<>(this.serverList);
+			pl.add(myAddress);
+			String[] players = new String[pl.size()];
+			pl.toArray(players);
+			Arrays.sort(players);
+			playerID = new HashMap<>(players.length);
+			for(i = 0; i < players.length; i++) {
+				playerID.put(players[i], i);
+				System.out.println(players[i]+" -> "+i);
+			}
+		}
+		id = playerID.get(player);
+		return id;
+	}
+	    
+    public String sha1(String input) throws NoSuchAlgorithmException {
+        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+        byte[] result = mDigest.digest(input.getBytes());
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < result.length; i++) {
+            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
+    }
 }

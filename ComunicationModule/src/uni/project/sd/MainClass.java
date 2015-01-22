@@ -31,9 +31,9 @@ public class MainClass {
 	private ComunicationActions actions;
 
 	public static void main(String[] args) {
-		if(args.length > 2) {
+		if (args.length > 2) {
 			try {
-				//Creazione del server di ricezione
+				// Creazione del server di ricezione
 				LocateRegistry.createRegistry(1099);
 				new IncomingServer(args[0]);
 			} catch (RemoteException e1) {
@@ -41,27 +41,28 @@ public class MainClass {
 				System.exit(0);
 			}
 
-			//Creazione di una rubrica
+			// Creazione di una rubrica
 			ServerAddress book = ServerAddress.getInstance();
 			book.setMyAddress(args[0]);
-			for(int k = 1; k < args.length; k+=2) {
-				book.addServer(args[k],args[k+1]);
+			for (int k = 1; k < args.length; k += 2) {
+				book.addServer(args[k], args[k + 1]);
 			}
 			EventCounter.getInstance(book);
 			Thread sendPing = new Thread(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					ServerAddress address = ServerAddress.getInstance();
 					boolean ready = false;
-					while(!ready) {
+					while (!ready) {
 						Integer result = 0;
-						for(int k = 0; k < address.serverNumber(); k++) {
-							OutcomingClient client = new OutcomingClient(OutcomingClient.sendPing);
+						for (int k = 0; k < address.serverNumber(); k++) {
+							OutcomingClient client = new OutcomingClient(
+									OutcomingClient.sendPing);
 							client.doCustomRmiHandling(address.getServer(k));
 							result += client.getResult();
 						}
-						if(result == address.serverNumber())
+						if (result == address.serverNumber())
 							ready = true;
 						else {
 							try {
@@ -71,45 +72,55 @@ public class MainClass {
 							}
 						}
 					}
-					DummyFrontEntity.getInstance().addMessage("All online, starting game");
-					
+					DummyFrontEntity.getInstance().addMessage(
+							"All online, starting game");
+
 					boolean imfirst = true;
-					
+
 					Integer me = Integer.parseInt(address.getMyAddress());
-					for(int k = 0; k < address.serverNumber(); k++) {
-						if(Integer.parseInt(address.getServer(k)) < me) {
+					for (int k = 0; k < address.serverNumber(); k++) {
+						if (Integer.parseInt(address.getServer(k)) < me) {
 							imfirst = false;
 							break;
 						}
 					}
-					
-					if(imfirst) {
+
+					if (imfirst) {
 						new ComunicationActions().cicleToken();
 						DummyFrontEntity.getInstance().setPlayerTurn(imfirst);
 					}
 					imfirst = true;
-					while(imfirst) {
+					while (imfirst) {
 						try {
 							String k = address.getNextOnline();
-							if(k.equals(address.getTokenPosition())){
-								OutcomingClient client = new OutcomingClient(OutcomingClient.sendPing);
-								client.doCustomRmiHandling(k);
-								Integer result = client.getResult();
-								if(result == 0) {
-									//TODO Avvenuto crash di un nodo, avviare azione di recovery
-									new ComunicationActions().nodeDown(k);
-									address.setServerStatus(k, false);
-									DummyFrontEntity.getInstance().addMessage("Node " + k + " is down, token position: " + address.getTokenPosition());
-									DummyFrontEntity.getInstance().destroyPlayer(address.getServerNID(k));
-								}
-							}	
-		//					DummyFrontEntity.getInstance().addMessage("Me: " + address.getMyAddress() + " Next: " + address.getNextOnline());
-							} catch (Exception e) {
-								DummyFrontEntity.getInstance().addMessage("I'm only online, I win");
-								imfirst = false;
+
+							OutcomingClient client = new OutcomingClient(
+									OutcomingClient.sendPing);
+							client.doCustomRmiHandling(k);
+							Integer result = client.getResult();
+							if (result == 0) {
+								// TODO Avvenuto crash di un nodo, avviare
+								// azione di recovery
+								new ComunicationActions().nodeDown(k);
+								address.setServerStatus(k, false);
+								DummyFrontEntity.getInstance().addMessage(
+										"Node " + k
+												+ " is down, token position: "
+												+ address.getTokenPosition());
+								DummyFrontEntity.getInstance().destroyPlayer(
+										address.getServerNID(k));
 							}
+
+							// DummyFrontEntity.getInstance().addMessage("Me: "
+							// + address.getMyAddress() + " Next: " +
+							// address.getNextOnline());
+						} catch (Exception e) {
+							DummyFrontEntity.getInstance().addMessage(
+									"I'm only online, I win");
+							imfirst = false;
+						}
 						try {
-							//TODO aggiungere controlli di terminazione
+							// TODO aggiungere controlli di terminazione
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -126,8 +137,10 @@ public class MainClass {
 
 		address = ServerAddress.getInstance();
 		this.actions = new ComunicationActions();
-		BattleshipController controller = BattleshipController.getInstance(this,0, address.serverNumber() + 1);
-		controller.setOcean(new Ocean(Ocean.splitted, BattleshipController.d, address.serverNumber()+1));
+		BattleshipController controller = BattleshipController.getInstance(
+				this, address.getPlayerID(address.getMyAddress()), address.serverNumber() + 1);
+		controller.setOcean(new Ocean(Ocean.splitted, BattleshipController.d,
+				address.serverNumber() + 1));
 		controller.addRandomCraft();
 	}
 

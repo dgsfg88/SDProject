@@ -1,8 +1,10 @@
 package uni.project.sd.comunications.battleship;
 
+import uni.project.sd.Entity.battleship.Ocean;
 import uni.project.sd.comunications.ComunicationActions;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.entity.BattleshipMessage;
+import uni.project.sd.comunications.battleship.entity.OceanMessage;
 
 public class BattleshipActions extends ComunicationActions {
 	
@@ -37,5 +39,11 @@ public class BattleshipActions extends ComunicationActions {
 		this.m = m;
 		setOutcomingClient(new BattleshipClient(BattleshipClient.sendHitResult, this.m));
 		sendMessage(BattleshipClient.sendHitResult);
+	}
+	
+	public void sendOcean(Ocean myOcean){
+		this.m = new OceanMessage();
+		((OceanMessage)this.m).setOcean(myOcean);
+		sendMessage(BattleshipClient.sendOcean);
 	}
 }
