@@ -125,4 +125,8 @@ public class BattleshipController {
 	public void updateGrid(int ID, int x, int y, boolean result) {
 		myBoundary.setValue(ID, x, y, result);
 	}
+
+	public void updateOcean(Ocean newOcean) {
+		this.ocean.updateOcean(newOcean);
+	}
 }
