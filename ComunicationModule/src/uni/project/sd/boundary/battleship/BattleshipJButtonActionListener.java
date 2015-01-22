@@ -3,7 +3,7 @@ package uni.project.sd.boundary.battleship;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import uni.project.sd.Control.BattleshipController;
+import uni.project.sd.Control.battleship.BattleshipController;
 
 public class BattleshipJButtonActionListener implements ActionListener {
 	

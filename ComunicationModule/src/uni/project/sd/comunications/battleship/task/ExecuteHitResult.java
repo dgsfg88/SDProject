@@ -1,6 +1,6 @@
 package uni.project.sd.comunications.battleship.task;
 
-import uni.project.sd.Control.BattleshipController;
+import uni.project.sd.Control.battleship.BattleshipController;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;
 import uni.project.sd.comunications.battleship.entity.BattleshipMessage;
@@ -21,7 +21,7 @@ public class ExecuteHitResult extends MessageBase {
 
 		try {
 			if(!m.getSender().equals(ServerAddress.getInstance().getMyAddress()) && EventCounter.getInstance(null).isNewEvent(m.getMyTime()) ){
-				BattleshipController.getInstance(null, 0).updateGrid(ServerAddress.getInstance().getServerNID(m.getSender()),m.getX(),m.getY(),Boolean.parseBoolean(m.getMessage()));
+				BattleshipController.getInstance(null,0, 0).updateGrid(ServerAddress.getInstance().getServerNID(m.getSender()),m.getX(),m.getY(),Boolean.parseBoolean(m.getMessage()));
 				new BattleshipActions().resendHitResult(m);
 			}
 			if(m.getReceiver().equals(ServerAddress.getInstance().getMyAddress()))

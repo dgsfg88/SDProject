@@ -8,8 +8,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import uni.project.sd.Control.BattleshipController;
+import uni.project.sd.Control.battleship.BattleshipController;
 import uni.project.sd.Entity.DummyFrontEntity;
+import uni.project.sd.Entity.battleship.Ship;
 import uni.project.sd.boundary.FrontBoundary;
 import uni.project.sd.comunications.ServerAddress;
 
@@ -22,13 +23,20 @@ public class BattleshipBoundary implements FrontBoundary{
 	private JFrame mainWindow;
 	private ArrayList<ArrayList<JButton>> playersIcons;
 	
+	private ArrayList<Color> shipColors = new ArrayList<>();
+	
 	public BattleshipBoundary(BattleshipController controller, Integer playerNumber, int d) {
 		mainWindow = new JFrame("Battleship");
 		mainWindow.getContentPane().setLayout(new GridLayout(0, 2,10,10));
 		this.row = col = d;
 
-		playersIcons = new ArrayList<ArrayList<JButton>>(playerNumber);
+		Color[] colors = {Color.GRAY, Color.GREEN, Color.MAGENTA, Color.WHITE};
+		for(Color c: colors) {
+			shipColors.add(c);
+		}
 		
+		playersIcons = new ArrayList<ArrayList<JButton>>(playerNumber);
+
 		JPanel playerPanel = null;
 		ArrayList<JButton> buttons = null;
 		JButton singleButton = null;
@@ -65,15 +73,16 @@ public class BattleshipBoundary implements FrontBoundary{
 	public void addShip(int length, int startX, int startY, int orient) {
 		int x = startX;
 		int y = startY;
+		Color shipColor = shipColors.remove(0);
 		if (orient == Horizontal){
 			for (; x < startX + length; x++){
 				JButton b = playersIcons.get(0).get(getCoordinate(x, y));
-				b.setBackground(Color.GRAY);
+				b.setBackground(shipColor);
 			}
 		} else {
 			for (; y < startY + length; y++){
 				JButton b = playersIcons.get(0).get(getCoordinate(x, y));
-				b.setBackground(Color.GRAY);
+				b.setBackground(shipColor);
 			}
 		}
 	}

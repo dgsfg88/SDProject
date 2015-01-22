@@ -1,6 +1,6 @@
 package uni.project.sd.comunications.battleship.task;
 
-import uni.project.sd.Control.BattleshipController;
+import uni.project.sd.Control.battleship.BattleshipController;
 import uni.project.sd.Entity.DummyFrontEntity;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;
@@ -21,7 +21,7 @@ public class ExecuteHit extends MessageBase {
 		BattleshipMessage m = (BattleshipMessage)this.getMessage();
 		BattleshipActions actions = new BattleshipActions();
 		if(m.getReceiver().equals(ServerAddress.getInstance().getMyAddress())){
-			boolean result = BattleshipController.getInstance(null, 0).checkHit(m.getX(), m.getY());
+			boolean result = BattleshipController.getInstance(null,0, 0).checkHit(m.getX(), m.getY());
 			actions.sendHitResult(m.getX(),m.getY(),result,m.getSender());
 		} else {
 			try {

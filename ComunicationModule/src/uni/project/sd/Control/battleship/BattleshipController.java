@@ -1,4 +1,4 @@
-package uni.project.sd.Control;
+package uni.project.sd.Control.battleship;
 
 import java.util.LinkedList;
 import java.util.Random;
@@ -26,21 +26,21 @@ public class BattleshipController {
 
 	private int shipCounter = 0;
 
-	public static BattleshipController getInstance(MainClass main, int myPlayer) {
+	public static BattleshipController getInstance(MainClass main,
+			int myPlayer, int playerNumber) {
 		if (controller == null)
-			controller = new BattleshipController(main, myPlayer);
+			controller = new BattleshipController(main, myPlayer, playerNumber);
 		return controller;
 	}
 
-	private BattleshipController(MainClass main, int myPlayer) {
+	private BattleshipController(MainClass main, int myPlayer, int playerNumber) {
 		this.myMain = main;
 		this.myPlayer = myPlayer;
 
-		myBoundary = new BattleshipBoundary(this, myPlayer, d);
+		myBoundary = new BattleshipBoundary(this, playerNumber, d);
 
 		myEntity = DummyFrontEntity.getInstance();
 
-		addRandomCraft();
 	}
 
 	public void buttonClicked(int player, int row, int col) {
@@ -56,32 +56,53 @@ public class BattleshipController {
 		this.ocean = ocean;
 	}
 
-	private void addRandomCraft() {
-		Ship[] craft = {new PatrolBoat(this.myPlayer), new PatrolBoat(this.myPlayer), new Destroyer(this.myPlayer), new Battleship(this.myPlayer)};
+	public void addRandomCraft() {
+		Ship[] craft = { new PatrolBoat(this.myPlayer),
+				new PatrolBoat(this.myPlayer), new Destroyer(this.myPlayer),
+				new Battleship(this.myPlayer) };
 		int offset = this.myPlayer * d;
 		boolean result = false;
 		Random r = new Random();
-		for(Ship c: craft) {
+		for (Ship c : craft) {
 			result = false;
 			do {
 				int x = r.nextInt(d);
 				int y = r.nextInt(d);
 				int or = r.nextInt(2);
 				LinkedList<OceanCoordinate> shipPos = new LinkedList<>();
-				if (or == 0){
-					for (int i=x; i < x+c.getLength()-1; i++){
-						shipPos.add(new OceanCoordinate(i, y+offset, 0));
-					}
+				if (or == 0) {
+					if (x + c.getLength() < d)
+						for (int i = x; i < x + c.getLength(); i++) {
+							shipPos.add(new OceanCoordinate(i, y + offset, 0));
+//							System.out.println(shipPos.getLast().hashCode()
+//									+ " "
+//									+ new OceanCoordinate(new Integer(i),
+//											new Integer(y + offset),
+//											new Integer(0)).hashCode()
+//									+ " "
+//									+ shipPos.getLast().equals(
+//											new OceanCoordinate(new Integer(i),
+//													new Integer(y + offset),
+//													new Integer(0))));
+						}
 				} else {
-					for (int i=y+offset; i < y+offset+c.getLength()-1; i++){
-						shipPos.add(new OceanCoordinate(x, i, 0));
-					}
+					if (y + c.getLength() < d)
+						for (int i = y + offset; i < y + offset + c.getLength()
+								; i++) {
+							shipPos.add(new OceanCoordinate(x, i, 0));
+//							System.out.println(shipPos.getLast().hashCode()
+//									+ " "
+//									+ new OceanCoordinate(x, i, 0).hashCode()
+//									+ " "
+//									+ shipPos.getLast().equals(
+//											new OceanCoordinate(x, i, 0)));
+						}
 				}
-				if(this.ocean.deployShip(shipPos,c,this.myPlayer)){
+				if (this.ocean.deployShip(shipPos, c, this.myPlayer)) {
 					myBoundary.addShip(c.getLength(), x, y, or);
 					result = true;
 				}
-			}while(!result);
+			} while (!result);
 		}
 	}
 

@@ -3,8 +3,9 @@ package uni.project.sd;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
-import uni.project.sd.Control.BattleshipController;
+import uni.project.sd.Control.battleship.BattleshipController;
 import uni.project.sd.Entity.DummyFrontEntity;
+import uni.project.sd.Entity.battleship.Ocean;
 import uni.project.sd.comunications.ComunicationActions;
 import uni.project.sd.comunications.IncomingServer;
 import uni.project.sd.comunications.OutcomingClient;
@@ -125,8 +126,9 @@ public class MainClass {
 
 		address = ServerAddress.getInstance();
 		this.actions = new ComunicationActions();
-		BattleshipController.getInstance(this, address.serverNumber() + 1);
-
+		BattleshipController controller = BattleshipController.getInstance(this,0, address.serverNumber() + 1);
+		controller.setOcean(new Ocean(Ocean.splitted, BattleshipController.d, address.serverNumber()+1));
+		controller.addRandomCraft();
 	}
 
 	public void relaseToken() {
