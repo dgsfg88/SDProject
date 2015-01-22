@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 
 import uni.project.sd.Control.battleship.BattleshipController;
 import uni.project.sd.Entity.DummyFrontEntity;
-import uni.project.sd.Entity.battleship.Ship;
 import uni.project.sd.boundary.FrontBoundary;
 import uni.project.sd.comunications.ServerAddress;
 
