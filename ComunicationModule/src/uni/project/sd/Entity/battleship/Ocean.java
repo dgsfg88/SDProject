@@ -86,36 +86,40 @@ public class Ocean {
 
 		return result;
 	}
-	
+
 	public List<OceanCoordinate> getMissed(int from) {
-		if(from < 0 || from >= missed.size()-1){
+		if (from < 0 || from >= missed.size() - 1) {
 			return null;
 		}
-		return missed.subList(from, missed.size()-1);
+		return missed.subList(from, missed.size() - 1);
 	}
-	
+
 	public LinkedHashMap<Ship, LinkedList<OceanCoordinate>> getHit(int from) {
 		return hit;
 	}
 
 	private boolean deployShipSplitted(List<OceanCoordinate> coordinates,
 			Ship ship, int playerN) {
-		LinkedList<Ship> ships;
-		OceanCoordinate oc = coordinates.remove(0);
-		if (isSplittedPositionValid(oc, playerN)) {
-			if (coordinates.size() == 0) {
-				ships = new LinkedList<>();
-				ships.add(ship);
-				this.positions.put(oc, ships);
-				return true;
-			} else {
-				if (deployShipSplitted(coordinates, ship, playerN)) {
+		try {
+			LinkedList<Ship> ships;
+			OceanCoordinate oc = coordinates.remove(0);
+			if (isSplittedPositionValid(oc, playerN)) {
+				if (coordinates.size() == 0) {
 					ships = new LinkedList<>();
 					ships.add(ship);
 					this.positions.put(oc, ships);
 					return true;
+				} else {
+					if (deployShipSplitted(coordinates, ship, playerN)) {
+						ships = new LinkedList<>();
+						ships.add(ship);
+						this.positions.put(oc, ships);
+						return true;
+					}
 				}
 			}
+		} catch (IndexOutOfBoundsException e) {
+
 		}
 		return false;
 	}
@@ -125,7 +129,7 @@ public class Ocean {
 	private boolean isSplittedPositionValid(OceanCoordinate oc, int playerN) {
 		if (playerN < this.playersNumber) {
 			int playerLimitInf = playerN * d; // (P*D) + (P*D+D-1)
-			int playerLimitSup = playerLimitInf + d*d - 1;
+			int playerLimitSup = playerLimitInf + d * d - 1;
 			int wantedPosition = oc.getX() + oc.getY() * d;
 			if (wantedPosition >= playerLimitInf
 					&& wantedPosition <= playerLimitSup
@@ -141,7 +145,7 @@ public class Ocean {
 		OceanCoordinate oc = coordinates.remove(0);
 		if (coordinates.size() == 0) {
 			if (isSharedPositionValid(oc, playerN)) {
-				if(this.positions.get(oc) == null){
+				if (this.positions.get(oc) == null) {
 					this.positions.put(oc, new LinkedList<Ship>());
 				}
 				this.positions.get(oc).add(ship);
@@ -150,7 +154,7 @@ public class Ocean {
 		} else {
 			if (isSharedPositionValid(oc, playerN)) {
 				if (deployShipShared(coordinates, ship, playerN)) {
-					if(this.positions.get(oc) == null){
+					if (this.positions.get(oc) == null) {
 						this.positions.put(oc, new LinkedList<Ship>());
 					}
 					this.positions.get(oc).add(ship);

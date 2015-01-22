@@ -2,6 +2,9 @@ package uni.project.sd.Entity.battleship;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class OceanCoordinate implements Serializable {
 	/**
 	 * 
@@ -16,34 +19,33 @@ public class OceanCoordinate implements Serializable {
 		coordinates[2] = z;
 	}
 
-	public int getX() {
+	public Integer getX() {
 		return coordinates[0];
 	}
 
-	public int getY() {
+	public Integer getY() {
 		return coordinates[1];
 	}
 
-	public int getZ() {
+	public Integer getZ() {
 		return coordinates[2];
 	}
 
 	@Override
 	public int hashCode() {
-		return this.coordinates.hashCode();
+		return new HashCodeBuilder()
+			.append(coordinates).toHashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		boolean result = false;
-		try {
-			OceanCoordinate oc = (OceanCoordinate) obj;
-			if (oc.getX() == coordinates[0] && oc.getY() == coordinates[1]
-					&& oc.getZ() == coordinates[2])
-				result = true;
-		} catch (Exception e) {
-			result = false;
-		}
-		return result;
+		if(!(obj instanceof OceanCoordinate))
+			return false;
+		if(obj == this)
+			return true;
+		
+		OceanCoordinate oc = (OceanCoordinate)obj;
+		return new EqualsBuilder()
+			.append(coordinates, oc.coordinates).isEquals();
 	}
 }
