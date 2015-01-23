@@ -110,10 +110,6 @@ public class MainClass {
 								DummyFrontEntity.getInstance().destroyPlayer(
 										address.getServerNID(k));
 							}
-
-							// DummyFrontEntity.getInstance().addMessage("Me: "
-							// + address.getMyAddress() + " Next: " +
-							// address.getNextOnline());
 						} catch (Exception e) {
 							DummyFrontEntity.getInstance().addMessage(
 									"I'm only online, I win");
@@ -141,7 +137,6 @@ public class MainClass {
 				this, address.getPlayerID(address.getMyAddress()), address.serverNumber() + 1);
 		controller.setOcean(new Ocean(Ocean.splitted, BattleshipController.d,
 				address.serverNumber() + 1));
-		controller.addRandomCraft();
 	}
 
 	public void relaseToken() {

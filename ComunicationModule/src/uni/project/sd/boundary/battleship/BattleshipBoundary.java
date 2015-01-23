@@ -9,11 +9,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import uni.project.sd.Control.battleship.BattleshipController;
-import uni.project.sd.Entity.DummyFrontEntity;
-import uni.project.sd.boundary.FrontBoundary;
-import uni.project.sd.comunications.ServerAddress;
 
-public class BattleshipBoundary implements FrontBoundary{
+public class BattleshipBoundary {
 	public static final int Horizontal = 0;
 	public static final int Vertical = 1;
 	
@@ -61,7 +58,7 @@ public class BattleshipBoundary implements FrontBoundary{
 			playersIcons.add(buttons);
 		}
 		
-		DummyFrontEntity.getInstance().addView(this);
+		//DummyFrontEntity.getInstance().addView(this);
 		
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.pack();
@@ -90,12 +87,6 @@ public class BattleshipBoundary implements FrontBoundary{
 		return x*col+y;
 	}
 	
-	@Override
-	public void addToLog(String Message) {
-		System.out.println(ServerAddress.getInstance().getMyAddress() + ": " +Message);
-	}
-
-	@Override
 	public void setButtonEnabled(boolean enabled) {
 		synchronized (playersIcons) {
 			for(int k = 1; k < playersIcons.size(); k++) {
@@ -129,7 +120,6 @@ public class BattleshipBoundary implements FrontBoundary{
 		return result;
 	}
 
-	@Override
 	public void disablePlayer(int k) {
 		synchronized (playersIcons) {
 			for(JButton b: playersIcons.get(k+1)) {

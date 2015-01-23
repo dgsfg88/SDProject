@@ -11,9 +11,14 @@ import uni.project.sd.Entity.battleship.Ocean;
 import uni.project.sd.Entity.battleship.OceanCoordinate;
 import uni.project.sd.Entity.battleship.PatrolBoat;
 import uni.project.sd.Entity.battleship.Ship;
+import uni.project.sd.boundary.FrontBoundary;
 import uni.project.sd.boundary.battleship.BattleshipBoundary;
+import uni.project.sd.comunications.battleship.BattleshipActions;
 
-public class BattleshipController {
+public class BattleshipController implements FrontBoundary {
+	private boolean oceanShared = false;
+	private boolean haveToken = false;
+
 	private static BattleshipController controller;
 
 	public static final int d = 10;
@@ -37,9 +42,9 @@ public class BattleshipController {
 		this.myMain = main;
 		this.myPlayer = myPlayer;
 
-		myBoundary = new BattleshipBoundary(this, playerNumber, d);
-
 		myEntity = DummyFrontEntity.getInstance();
+		myEntity.addView(this);
+		myBoundary = new BattleshipBoundary(this, playerNumber, d);
 
 	}
 
@@ -77,8 +82,7 @@ public class BattleshipController {
 						}
 				} else {
 					if (y + c.getLength() < d)
-						for (int i = y + offset; i < y + offset + c.getLength()
-								; i++) {
+						for (int i = y + offset; i < y + offset + c.getLength(); i++) {
 							shipPos.add(new OceanCoordinate(x, i, 0));
 						}
 				}
@@ -88,6 +92,9 @@ public class BattleshipController {
 				}
 			} while (!result);
 		}
+
+		new BattleshipActions().sendOcean(this.ocean);
+		this.oceanShared = true;
 	}
 
 	public boolean checkHit(int x, int y) {
@@ -112,5 +119,28 @@ public class BattleshipController {
 
 	public void updateOcean(Ocean newOcean) {
 		this.ocean.updateOcean(newOcean);
+	}
+
+	@Override
+	public void addToLog(String Message) {
+		System.out.println(Message);
+	}
+
+	@Override
+	public void setButtonEnabled(boolean enabled) {
+		this.haveToken = enabled;
+		if (haveToken && !oceanShared) {
+			// XXX l'oceano non è ancora stato condiviso (implementare evento
+			// nel caso in cui si tratti di un token recuperato)
+			addRandomCraft();
+		} else {
+			// TODO azione comune da svolgere quando è il proprio turno
+		}
+	}
+
+	@Override
+	public void disablePlayer(int k) {
+		// TODO Richiamato quando un giocatore viene disabilitato
+
 	}
 }
