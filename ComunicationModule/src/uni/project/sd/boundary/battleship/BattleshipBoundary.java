@@ -48,7 +48,7 @@ public class BattleshipBoundary {
 					if(k == 0)
 						singleButton.setEnabled(false);
 					else
-						singleButton.addActionListener(new BattleshipJButtonActionListener(controller, r, c, k-1));
+						singleButton.addActionListener(new BattleshipJButtonActionListener(controller, c, r, k-1));
 					
 					buttons.add(singleButton);
 					playerPanel.add(singleButton);
@@ -84,7 +84,7 @@ public class BattleshipBoundary {
 	}
 	
 	private int getCoordinate (int x, int y) {
-		return x*col+y;
+		return y*col+x;
 	}
 	
 	public void setButtonEnabled(boolean enabled) {
@@ -104,20 +104,6 @@ public class BattleshipBoundary {
 					}
 			}
 		}
-	}
-
-	public boolean hit(int x, int y) {
-		boolean result = false;
-		synchronized (playersIcons) {
-			JButton b = playersIcons.get(0).get(getCoordinate(x, y));
-			
-			result = b.getBackground().equals(Color.GRAY);
-			if(result) 
-				b.setBackground(Color.RED);
-			else
-				b.setBackground(Color.YELLOW);
-		}
-		return result;
 	}
 
 	public void disablePlayer(int k) {

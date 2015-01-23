@@ -1,5 +1,6 @@
 package uni.project.sd.Entity.battleship;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -7,7 +8,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class Ocean {
+public class Ocean implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8419489917076487169L;
 	/**
 	 * Splitted ocean
 	 */
@@ -38,20 +43,22 @@ public class Ocean {
 	}
 
 	public void updateOcean(Ocean newOcean){
-		if (newOcean != null){
-			Set<OceanCoordinate> myCoordinates = newOcean.positions.keySet();
-			for (OceanCoordinate k: myCoordinates){
-				HashMap<Integer, Ship> foreignCoordinate = newOcean.positions.get(k);
-				if(foreignCoordinate != null){
-					HashMap<Integer, Ship> localCoordinate = this.positions.get(k);
-					if(localCoordinate == null){
-						this.positions.put(k, foreignCoordinate);
-					} else {
-						//XXX ricordati che qui se fai il put di un null ti infila il tuo null su quello che invece è tuo
-						this.positions.get(k).putAll(foreignCoordinate);
+		synchronized (positions) {
+			if (newOcean != null){
+				Set<OceanCoordinate> myCoordinates = newOcean.positions.keySet();
+				for (OceanCoordinate k: myCoordinates){
+					HashMap<Integer, Ship> foreignCoordinate = newOcean.positions.get(k);
+					if(foreignCoordinate != null){
+						HashMap<Integer, Ship> localCoordinate = this.positions.get(k);
+						if(localCoordinate == null){
+							this.positions.put(k, foreignCoordinate);
+						} else {
+							//XXX ricordati che qui se fai il put di un null ti infila il tuo null su quello che invece è tuo
+							this.positions.get(k).putAll(foreignCoordinate);
+						}
 					}
 				}
-			}
+			}	
 		}
 	}
 	/**
@@ -150,7 +157,7 @@ public class Ocean {
 	// stesso modo
 	private boolean isSplittedPositionValid(OceanCoordinate oc, int playerN) {
 		if (playerN < this.playersNumber) {
-			int playerLimitInf = playerN * d; // (P*D) + (P*D+D-1)
+			int playerLimitInf = playerN * d * d; // (P*D) + (P*D+D-1)
 			int playerLimitSup = playerLimitInf + d * d - 1;
 			int wantedPosition = oc.getX() + oc.getY() * d;
 			synchronized (positions) {

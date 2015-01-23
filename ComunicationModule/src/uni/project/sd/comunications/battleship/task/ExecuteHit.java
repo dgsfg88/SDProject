@@ -22,6 +22,7 @@ public class ExecuteHit extends MessageBase {
 		BattleshipActions actions = new BattleshipActions();
 		if(m.getReceiver().equals(ServerAddress.getInstance().getMyAddress())){
 			boolean result = BattleshipController.getInstance(null,0, 0).checkHit(m.getX(), m.getY());
+			//XXX Rimuovere l'istruzione successiva perché adesso bisogna fare il solo controllo in locale
 			actions.sendHitResult(m.getX(),m.getY(),result,m.getSender());
 		} else {
 			try {

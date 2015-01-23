@@ -1,5 +1,6 @@
 package uni.project.sd.Control.battleship;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -13,6 +14,7 @@ import uni.project.sd.Entity.battleship.PatrolBoat;
 import uni.project.sd.Entity.battleship.Ship;
 import uni.project.sd.boundary.FrontBoundary;
 import uni.project.sd.boundary.battleship.BattleshipBoundary;
+import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;
 
 public class BattleshipController implements FrontBoundary {
@@ -48,9 +50,13 @@ public class BattleshipController implements FrontBoundary {
 
 	}
 
-	public void buttonClicked(int player, int row, int col) {
+	public void buttonClicked(int player, int x, int y) {
 		myEntity.setPlayerTurn(false);
-		myMain.relaseToken(player, row, col);
+		ServerAddress serverAdd = ServerAddress.getInstance();
+		OceanCoordinate myShot = new OceanCoordinate(x, y + this.d * serverAdd.getPlayerID(serverAdd.getServer(player)),0);
+		HashMap<Ship, Integer> hit = ocean.checkShot(myShot, this.myPlayer);
+		myBoundary.setValue(player, x, y, !hit.isEmpty());
+		myMain.relaseToken(player, x, y);
 	}
 
 	public Ocean getOcean() {
@@ -98,15 +104,7 @@ public class BattleshipController implements FrontBoundary {
 	}
 
 	public boolean checkHit(int x, int y) {
-		boolean result = myBoundary.hit(x, y);
-
-		if (result) {
-			shipCounter--;
-			if (shipCounter == 0)
-				System.exit(0);
-		}
-
-		return result;
+		return true;
 	}
 
 	public void destroyPlayer(int k) {
@@ -130,11 +128,11 @@ public class BattleshipController implements FrontBoundary {
 	public void setButtonEnabled(boolean enabled) {
 		this.haveToken = enabled;
 		if (haveToken && !oceanShared) {
-			// XXX l'oceano non è ancora stato condiviso (implementare evento
+			// XXX l'oceano non ï¿½ ancora stato condiviso (implementare evento
 			// nel caso in cui si tratti di un token recuperato)
 			addRandomCraft();
 		} else {
-			// TODO azione comune da svolgere quando è il proprio turno
+			// TODO azione comune da svolgere quando ï¿½ il proprio turno
 		}
 	}
 
