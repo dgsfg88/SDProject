@@ -21,7 +21,6 @@ public class BattleshipActions extends ComunicationActions {
 
 	public void resendHit(BattleshipMessage m) {
 		this.m = m;
-		setOutcomingClient(new BattleshipClient(BattleshipClient.sendHit, this.m));
 		sendMessage(BattleshipClient.sendHit);
 	}
 
@@ -37,13 +36,21 @@ public class BattleshipActions extends ComunicationActions {
 
 	public void resendHitResult(BattleshipMessage m) {
 		this.m = m;
-		setOutcomingClient(new BattleshipClient(BattleshipClient.sendHitResult, this.m));
 		sendMessage(BattleshipClient.sendHitResult);
 	}
 	
 	public void sendOcean(Ocean myOcean){
 		this.m = new OceanMessage();
+		this.m.setMessage(ServerAddress.getInstance().getNextOnline());
+		this.m.setSender(ServerAddress.getInstance().getMyAddress());
+		this.m.setReceiver(this.m.getSender());
 		((OceanMessage)this.m).setOcean(myOcean);
 		sendMessage(BattleshipClient.sendOcean);
+	}
+	
+	@Override
+	protected void sendMessage(int messageType) {
+		setOutcomingClient(new BattleshipClient(messageType, this.m));
+		super.sendMessage(messageType);
 	}
 }

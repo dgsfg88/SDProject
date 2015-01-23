@@ -74,28 +74,12 @@ public class BattleshipController {
 					if (x + c.getLength() < d)
 						for (int i = x; i < x + c.getLength(); i++) {
 							shipPos.add(new OceanCoordinate(i, y + offset, 0));
-//							System.out.println(shipPos.getLast().hashCode()
-//									+ " "
-//									+ new OceanCoordinate(new Integer(i),
-//											new Integer(y + offset),
-//											new Integer(0)).hashCode()
-//									+ " "
-//									+ shipPos.getLast().equals(
-//											new OceanCoordinate(new Integer(i),
-//													new Integer(y + offset),
-//													new Integer(0))));
 						}
 				} else {
 					if (y + c.getLength() < d)
 						for (int i = y + offset; i < y + offset + c.getLength()
 								; i++) {
 							shipPos.add(new OceanCoordinate(x, i, 0));
-//							System.out.println(shipPos.getLast().hashCode()
-//									+ " "
-//									+ new OceanCoordinate(x, i, 0).hashCode()
-//									+ " "
-//									+ shipPos.getLast().equals(
-//											new OceanCoordinate(x, i, 0)));
 						}
 				}
 				if (this.ocean.deployShip(shipPos, c, this.myPlayer)) {

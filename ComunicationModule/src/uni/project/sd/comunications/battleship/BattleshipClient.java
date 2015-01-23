@@ -35,8 +35,7 @@ public class BattleshipClient extends OutcomingClient {
 			((ExecuteHitResult)task).setMessage(getM());
 			break;
 		case sendOcean:
-			task = new UpdateOcean();
-			((UpdateOcean)task).setMessage(getM());
+			task = new UpdateOcean(getM());
 			break;
 		default:
 			super.doCustomRmiHandling(serverID);
