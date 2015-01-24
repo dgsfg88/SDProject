@@ -17,7 +17,6 @@
 package org.apache.commons.lang3;
 
 import java.io.UnsupportedEncodingException;
-
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -3274,7 +3273,7 @@ public class StringUtils {
      * @since 2.0
      * @since 3.0 Changed signature to use varargs
      */
-    public static <T> String join(final T... elements) {
+    public static <T> String join(@SuppressWarnings("unchecked") final T... elements) {
         return join(elements, null);
     }
 

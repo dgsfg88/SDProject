@@ -1072,7 +1072,8 @@ public class StrBuilder implements CharSequence, Appendable, Serializable, Build
      * @return this, to enable chaining
      * @since 2.3
      */
-    public <T> StrBuilder appendAll(final T... array) {
+    @SuppressWarnings("unchecked")
+	public <T> StrBuilder appendAll(final T... array) {
         if (array != null && array.length > 0) {
             for (final Object element : array) {
                 append(element);
