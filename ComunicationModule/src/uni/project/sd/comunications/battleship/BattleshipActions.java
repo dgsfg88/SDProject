@@ -11,7 +11,7 @@ public class BattleshipActions extends ComunicationActions {
 	public void sendHit(int player, int x, int y) {
 		this.m = new BattleshipMessage();
 		String s = ServerAddress.getInstance().getServer(player);
-		this.m.setMessage("hit");
+		this.m.setMessage(s);
 		this.m.setSender(ServerAddress.getInstance().getMyAddress());
 		this.m.setReceiver(s);
 		((BattleshipMessage)this.m).setX(x);

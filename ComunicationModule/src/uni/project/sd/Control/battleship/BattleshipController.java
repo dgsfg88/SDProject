@@ -53,7 +53,7 @@ public class BattleshipController implements FrontBoundary {
 	public void buttonClicked(int player, int x, int y) {
 		myEntity.setPlayerTurn(false);
 		ServerAddress serverAdd = ServerAddress.getInstance();
-		OceanCoordinate myShot = new OceanCoordinate(x, y + this.d * serverAdd.getPlayerID(serverAdd.getServer(player)),0);
+		OceanCoordinate myShot = new OceanCoordinate(x, y + d * serverAdd.getPlayerID(serverAdd.getServer(player)),0);
 		HashMap<Ship, Integer> hit = ocean.checkShot(myShot, this.myPlayer);
 		myBoundary.setValue(player, x, y, !hit.isEmpty());
 		myMain.relaseToken(player, x, y);

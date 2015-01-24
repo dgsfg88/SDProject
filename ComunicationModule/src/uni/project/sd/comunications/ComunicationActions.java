@@ -27,7 +27,7 @@ public class ComunicationActions {
 				requestToken();
 			}
 		} catch (Exception e){
-			//TODO Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
+			//XXX Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
 			DummyFrontEntity.getInstance().addMessage("Possibile token perso");
 			requestToken();
 		}
