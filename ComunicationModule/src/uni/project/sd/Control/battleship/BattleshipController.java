@@ -16,9 +16,10 @@ import uni.project.sd.boundary.FrontBoundary;
 import uni.project.sd.boundary.battleship.BattleshipBoundary;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;
+import uni.project.sd.event.EventCounter;
 
 public class BattleshipController implements FrontBoundary {
-	private boolean oceanShared = false;
+	private short oceanShared = 2;
 	private boolean haveToken = false;
 
 	private static BattleshipController controller;
@@ -43,8 +44,8 @@ public class BattleshipController implements FrontBoundary {
 		this.myPlayer = myPlayer;
 
 		myEntity = DummyFrontEntity.getInstance();
-		myEntity.addView(this);
 		myBoundary = new BattleshipBoundary(this, playerNumber, d);
+		myEntity.addView(this);
 	}
 
 	public void buttonClicked(int player, int x, int y) {
@@ -92,9 +93,6 @@ public class BattleshipController implements FrontBoundary {
 				}
 			} while (!result);
 		}
-
-		new BattleshipActions().sendOcean(this.ocean);
-		this.oceanShared = true;
 	}
 
 	public boolean checkHit(int x, int y) {
@@ -116,6 +114,7 @@ public class BattleshipController implements FrontBoundary {
 	}
 
 	public void updateOcean(Ocean newOcean) {
+		System.out.println("Ricevuto oceano: " + EventCounter.getInstance(null).toString());
 		this.ocean.updateOcean(newOcean);
 	}
 
@@ -127,12 +126,18 @@ public class BattleshipController implements FrontBoundary {
 	@Override
 	public synchronized void setButtonEnabled(boolean enabled) {
 		this.haveToken = enabled;
-		if (haveToken && !oceanShared) {
-			// XXX l'oceano non � ancora stato condiviso (implementare evento
+		if (haveToken && oceanShared > 0) {
+			// l'oceano non � ancora stato condiviso (TODO implementare evento
 			// nel caso in cui si tratti di un token recuperato)
-			addRandomCraft();
+			if(oceanShared == 2)
+				addRandomCraft();
+			new BattleshipActions().sendOcean(this.ocean);
+
+			System.out.println("Condiviso oceano: " + EventCounter.getInstance(null).toString());
+			this.oceanShared--;
 		} else {
 			// TODO azione comune da svolgere quando � il proprio turno
+//			myBoundary.setButtonEnabled(enabled);
 		}
 	}
 

@@ -1,14 +1,17 @@
 package uni.project.sd.boundary.battleship;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import uni.project.sd.Control.battleship.BattleshipController;
+import uni.project.sd.comunications.ServerAddress;
 
 public class BattleshipBoundary {
 	public static final int Horizontal = 0;
@@ -34,10 +37,18 @@ public class BattleshipBoundary {
 		playersIcons = new ArrayList<ArrayList<JButton>>(playerNumber);
 
 		JPanel playerPanel = null;
+		JPanel playerHome = null;
 		ArrayList<JButton> buttons = null;
 		JButton singleButton = null;
+		ServerAddress address = ServerAddress.getInstance();
 		for(int k = 0; k < playerNumber; k++) {
+			playerHome = new JPanel(new BorderLayout());
+			if(k > 0)
+				playerHome.add(new JLabel(address.getServer(k-1)+"@"+address.getLocation(address.getServer(k-1))),BorderLayout.PAGE_START);
+			else
+				playerHome.add(new JLabel(address.getMyAddress()),BorderLayout.PAGE_START);
 			playerPanel = new JPanel(new GridLayout(row, col));
+			playerHome.add(playerPanel,BorderLayout.CENTER);
 			buttons = new ArrayList<JButton>(col*row);
 			
 			for(int r = 0; r < row; r++){
@@ -54,7 +65,7 @@ public class BattleshipBoundary {
 					playerPanel.add(singleButton);
 				}
 			}
-			mainWindow.add(playerPanel);
+			mainWindow.add(playerHome);
 			playersIcons.add(buttons);
 		}
 		
@@ -62,7 +73,7 @@ public class BattleshipBoundary {
 		
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.pack();
-		mainWindow.setSize(500, 500);
+		mainWindow.setSize(500, 250+250*((playerNumber-1)/2));
 		mainWindow.setVisible(true);
 	}
 	

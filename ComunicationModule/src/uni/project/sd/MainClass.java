@@ -93,7 +93,7 @@ public class MainClass {
 
 					if (imfirst) {
 						new ComunicationActions().cicleToken();
-						DummyFrontEntity.getInstance().setPlayerTurn(imfirst);
+						//DummyFrontEntity.getInstance().setPlayerTurn(imfirst);
 					}
 					imfirst = true;
 					while (imfirst) {

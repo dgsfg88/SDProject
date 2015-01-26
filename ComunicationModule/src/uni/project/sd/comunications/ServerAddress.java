@@ -156,7 +156,7 @@ public class ServerAddress {
 			playerID = new HashMap<>(players.length);
 			for(i = 0; i < players.length; i++) {
 				playerID.put(players[i], i);
-				System.out.println(players[i]+" -> "+i);
+//				System.out.println(players[i]+" -> "+i);
 			}
 		}
 		id = playerID.get(player);
