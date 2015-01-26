@@ -17,7 +17,7 @@ import uni.project.sd.event.EventCounter;
  * Classe di avvio, TODO aggiungere numerazione messaggi
  * 
  * @author Andrea
- *
+ * 
  */
 public class MainClass {
 	/**
@@ -31,11 +31,11 @@ public class MainClass {
 	private ComunicationActions actions;
 
 	public static void main(String[] args) {
-		if (args.length > 2) {			
+		if (args.length > 2) {
 			try {
 				// Creazione del server di ricezione
 				try {
-				LocateRegistry.createRegistry(1099);
+					LocateRegistry.createRegistry(1099);
 				} catch (RemoteException e) {
 					System.out.println("Port 1099 already in use");
 				}
@@ -46,7 +46,7 @@ public class MainClass {
 					book.addServer(args[k], args[k + 1]);
 				}
 				EventCounter.getInstance(book);
-				
+
 				new MainClass();
 				new IncomingServer(args[0]);
 			} catch (RemoteException e1) {
@@ -93,7 +93,7 @@ public class MainClass {
 
 					if (imfirst) {
 						new ComunicationActions().cicleToken();
-						//DummyFrontEntity.getInstance().setPlayerTurn(imfirst);
+						// DummyFrontEntity.getInstance().setPlayerTurn(imfirst);
 					}
 					imfirst = true;
 					while (imfirst) {
@@ -139,7 +139,8 @@ public class MainClass {
 		address = ServerAddress.getInstance();
 		this.actions = new ComunicationActions();
 		BattleshipController controller = BattleshipController.getInstance(
-				this, address.getPlayerID(address.getMyAddress()), address.serverNumber() + 1);
+				this, address.getPlayerID(address.getMyAddress()),
+				address.serverNumber() + 1);
 		controller.setOcean(new Ocean(Ocean.splitted, BattleshipController.d,
 				address.serverNumber() + 1));
 	}
@@ -154,6 +155,7 @@ public class MainClass {
 
 	public void relaseToken(int player, int row, int col) {
 		new BattleshipActions().sendHit(player, row, col);
+		// TODO Implementare un relase token
 	}
 
 }

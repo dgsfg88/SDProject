@@ -137,13 +137,12 @@ public class BattleshipController implements FrontBoundary {
 			this.oceanShared--;
 		} else {
 			// TODO azione comune da svolgere quando � il proprio turno
-//			myBoundary.setButtonEnabled(enabled);
+			myBoundary.setButtonEnabled(enabled);
 		}
 	}
 
 	@Override
 	public void disablePlayer(int k) {
-		// TODO Richiamato quando un giocatore viene disabilitato
-
+		myBoundary.disablePlayer(k);
 	}
 }
