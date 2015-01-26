@@ -120,7 +120,7 @@ public class BattleshipBoundary {
 		synchronized (playersIcons) {
 			if(result)
 				c = Color.RED;
-			playersIcons.get(iD+1).get(getCoordinate(x, y)).setBackground(c);
+			playersIcons.get(iD).get(getCoordinate(x, y)).setBackground(c);
 		}
 	}
 }

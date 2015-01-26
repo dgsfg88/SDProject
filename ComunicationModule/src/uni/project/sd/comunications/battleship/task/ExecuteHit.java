@@ -6,7 +6,6 @@ import uni.project.sd.comunications.battleship.BattleshipActions;
 import uni.project.sd.comunications.battleship.entity.BattleshipMessage;
 import uni.project.sd.comunications.task.MessageBase;
 import uni.project.sd.event.EventCounter;
-import uni.project.sd.event.EventCounter.EventNotSameException;
 
 public class ExecuteHit extends MessageBase {
 
@@ -45,18 +44,16 @@ public class ExecuteHit extends MessageBase {
 				}
 			} else if (EventCounter.getInstance(null).isNewEvent(m.getMyTime())) {
 				// se si tratta di un nuovo evento, REAL TIME
-				BattleshipController.getInstance(null, 0, 0).buttonClicked(
-						ServerAddress.getInstance().getServerNID(
-								m.getReceiver()), m.getX(), m.getY());
+				BattleshipController.getInstance(null, 0, 0).updateGrid(
+						m.getReceiver(), ServerAddress.getInstance().getPlayerID(m.getSender()), m.getX(), m.getY());
 				actions.resendHit(m);
 			} else {
 				// TODO ho già visto il messaggio, il mittente è offline,
 				// avviare un'azione adeguata
 			}
-		} catch (EventNotSameException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return 1;
 	}
 

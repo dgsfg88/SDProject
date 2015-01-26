@@ -31,23 +31,29 @@ public class MainClass {
 	private ComunicationActions actions;
 
 	public static void main(String[] args) {
-		if (args.length > 2) {
+		if (args.length > 2) {			
 			try {
 				// Creazione del server di ricezione
+				try {
 				LocateRegistry.createRegistry(1099);
+				} catch (RemoteException e) {
+					System.out.println("Port 1099 already in use");
+				}
+				// Creazione di una rubrica
+				ServerAddress book = ServerAddress.getInstance();
+				book.setMyAddress(args[0]);
+				for (int k = 1; k < args.length; k += 2) {
+					book.addServer(args[k], args[k + 1]);
+				}
+				EventCounter.getInstance(book);
+				
+				new MainClass();
 				new IncomingServer(args[0]);
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 				System.exit(0);
 			}
 
-			// Creazione di una rubrica
-			ServerAddress book = ServerAddress.getInstance();
-			book.setMyAddress(args[0]);
-			for (int k = 1; k < args.length; k += 2) {
-				book.addServer(args[k], args[k + 1]);
-			}
-			EventCounter.getInstance(book);
 			Thread sendPing = new Thread(new Runnable() {
 
 				@Override
@@ -124,7 +130,6 @@ public class MainClass {
 					}
 				}
 			});
-			new MainClass();
 			sendPing.start();
 		}
 	}

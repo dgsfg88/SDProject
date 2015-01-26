@@ -31,7 +31,7 @@ public class BattleshipController implements FrontBoundary {
 	private int myPlayer;
 	private Ocean ocean;
 
-	public static BattleshipController getInstance(MainClass main,
+	public synchronized static BattleshipController getInstance(MainClass main,
 			int myPlayer, int playerNumber) {
 		if (controller == null)
 			controller = new BattleshipController(main, myPlayer, playerNumber);
@@ -45,15 +45,11 @@ public class BattleshipController implements FrontBoundary {
 		myEntity = DummyFrontEntity.getInstance();
 		myEntity.addView(this);
 		myBoundary = new BattleshipBoundary(this, playerNumber, d);
-
 	}
 
 	public void buttonClicked(int player, int x, int y) {
 		myEntity.setPlayerTurn(false);
-		ServerAddress serverAdd = ServerAddress.getInstance();
-		OceanCoordinate myShot = new OceanCoordinate(x, y + d * serverAdd.getPlayerID(serverAdd.getServer(player)),0);
-		HashMap<Ship, Integer> hit = ocean.checkShot(myShot, this.myPlayer);
-		myBoundary.setValue(player, x, y, !hit.isEmpty());
+		updateGrid(ServerAddress.getInstance().getServer(player), this.myPlayer, x, y);
 		myMain.relaseToken(player, x, y);
 	}
 
@@ -109,8 +105,14 @@ public class BattleshipController implements FrontBoundary {
 		this.myBoundary.disablePlayer(k);
 	}
 
-	public void updateGrid(int ID, int x, int y, boolean result) {
-		myBoundary.setValue(ID, x, y, result);
+	public void updateGrid(String ID, int playerNumber, int x, int y) {
+		ServerAddress serverAdd = ServerAddress.getInstance();
+		OceanCoordinate myShot = new OceanCoordinate(x, y + d * serverAdd.getPlayerID(ID),0);
+		HashMap<Ship, Integer> hit = ocean.checkShot(myShot, playerNumber);
+		if(ID.equals(serverAdd.getMyAddress()))
+			myBoundary.setValue(0, x, y, !hit.isEmpty());
+		else
+			myBoundary.setValue(serverAdd.getServerNID(ID)+1, x, y, !hit.isEmpty());
 	}
 
 	public void updateOcean(Ocean newOcean) {
