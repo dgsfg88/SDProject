@@ -31,8 +31,6 @@ public class BattleshipController implements FrontBoundary {
 	private int myPlayer;
 	private Ocean ocean;
 
-	private int shipCounter = 0;
-
 	public static BattleshipController getInstance(MainClass main,
 			int myPlayer, int playerNumber) {
 		if (controller == null)
@@ -125,7 +123,7 @@ public class BattleshipController implements FrontBoundary {
 	}
 
 	@Override
-	public void setButtonEnabled(boolean enabled) {
+	public synchronized void setButtonEnabled(boolean enabled) {
 		this.haveToken = enabled;
 		if (haveToken && !oceanShared) {
 			// XXX l'oceano non � ancora stato condiviso (implementare evento
