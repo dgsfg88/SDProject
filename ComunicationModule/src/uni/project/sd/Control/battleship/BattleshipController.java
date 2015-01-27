@@ -18,7 +18,6 @@ import uni.project.sd.boundary.battleship.BattleshipBoundary;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;
 import uni.project.sd.comunications.battleship.entity.EventListItem;
-import uni.project.sd.event.EventCounter;
 
 public class BattleshipController implements FrontBoundary {
 	private short oceanShared = 2;
@@ -128,7 +127,6 @@ public class BattleshipController implements FrontBoundary {
 	}
 
 	public void updateOcean(Ocean newOcean) {
-		System.out.println("Ricevuto oceano: " + EventCounter.getInstance(null).toString());
 		this.ocean.updateOcean(newOcean);
 	}
 
@@ -147,7 +145,6 @@ public class BattleshipController implements FrontBoundary {
 				addRandomCraft();
 			new BattleshipActions().sendOcean(this.ocean);
 
-			System.out.println("Condiviso oceano: " + EventCounter.getInstance(null).toString());
 			this.oceanShared--;
 		} else {
 			if(enabled)
@@ -166,7 +163,6 @@ public class BattleshipController implements FrontBoundary {
 				ServerAddress address = ServerAddress.getInstance();
 				for(int i = 0; i < this.eventList.size(); i++) {
 					EventListItem item = eventList.get(i);
-					System.out.println(item.toString());
 					if(item.getBreeder().equals(address.getMyAddress()))
 						eventList.remove(i);
 					else {
