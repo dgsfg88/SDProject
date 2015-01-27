@@ -3,8 +3,6 @@ package uni.project.sd.comunications.task;
 import uni.project.sd.Entity.DummyFrontEntity;
 import uni.project.sd.comunications.ComunicationActions;
 import uni.project.sd.comunications.ServerAddress;
-import uni.project.sd.event.EventCounter;
-import uni.project.sd.event.EventCounter.EventNotSameException;
 
 public class NodeDown extends MessageBase {
 
@@ -23,23 +21,19 @@ public class NodeDown extends MessageBase {
 			int slpCounter = m.getMessageType();
 			if ((senderID < myID && lapCounter < slpCounter)
 					|| (senderID > myID && lapCounter == slpCounter)) {
-					new ComunicationActions().cicleToken();
+				new ComunicationActions().cicleToken();
 			}
 			m.setMessageType(-1);
 		}
-		try {
-			if (!m.getSender().equals(address.getMyAddress())
-					&& EventCounter.getInstance(null).isNewEvent(m.getMyTime())) {
-				address.setServerStatus(m.getMessage(), false);
-				DummyFrontEntity.getInstance().destroyPlayer(
-						address.getServerNID(m.getMessage()));
-				new ComunicationActions().resendNodeDown(m);
-				new ComunicationActions().requestToken();
-			}
-		} catch (EventNotSameException e) {
-			e.printStackTrace();
+		if (!m.getSender().equals(address.getMyAddress())
+				&& address.getServerStatus(m.getMessage())) {
+			address.setServerStatus(m.getMessage(), false);
+			DummyFrontEntity.getInstance().destroyPlayer(
+					address.getServerNID(m.getMessage()));
+			new ComunicationActions().resendNodeDown(m);
+			new ComunicationActions().requestToken();
 		}
-
+		System.out.println("Ho ricevuto il seguente morto " + m.getMessage());
 		return lapCounter;
 	}
 
