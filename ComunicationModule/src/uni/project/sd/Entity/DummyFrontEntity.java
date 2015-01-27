@@ -3,6 +3,7 @@ package uni.project.sd.Entity;
 import java.util.LinkedList;
 
 import uni.project.sd.boundary.FrontBoundary;
+import uni.project.sd.comunications.ServerAddress;
 
 public class DummyFrontEntity {
 	private static DummyFrontEntity entity = null;
@@ -42,6 +43,9 @@ public class DummyFrontEntity {
 	public void setPlayerTurn(boolean canPlay) {
 		synchronized (lockPlayerTurn) {
 			this.isPlayerTurn = canPlay;
+			if(canPlay){
+				ServerAddress.getInstance().incrementTokenLap();
+			}
 		}
 		synchronized (lockViewList) {
 			for(FrontBoundary df: fronts) {

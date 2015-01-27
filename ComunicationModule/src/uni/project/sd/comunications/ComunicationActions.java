@@ -1,6 +1,5 @@
 package uni.project.sd.comunications;
 
-import uni.project.sd.Entity.DummyFrontEntity;
 import uni.project.sd.comunications.entity.Message;
 
 public class ComunicationActions {
@@ -20,17 +19,8 @@ public class ComunicationActions {
 		m.setSender(ServerAddress.getInstance().getMyAddress());
 		m.setReceiver(ServerAddress.getInstance().getMyAddress());
 		m.setMessage(node);
+		m.setMessageType(ServerAddress.getInstance().getTokenLap());
 		sendMessage(OutcomingClient.nodeDown);
-		try {
-			if(node.equals(ServerAddress.getInstance().getTokenPosition())) {
-				DummyFrontEntity.getInstance().addMessage("\n\nTOKEN PERSO\n\n");
-				requestToken();
-			}
-		} catch (Exception e){
-			//XXX Non sono riuscito a capire cosa causa l'exception, ma il processo che riceverà il token inizia a farla
-			DummyFrontEntity.getInstance().addMessage("Possibile token perso");
-			requestToken();
-		}
 	}
 	public void resendNodeDown(Message m) {
 		this.m = m;

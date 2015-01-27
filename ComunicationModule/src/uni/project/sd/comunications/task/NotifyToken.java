@@ -16,22 +16,26 @@ public class NotifyToken extends MessageBase {
 	public NotifyToken(Message tokenInfo) {
 		setMessage(tokenInfo);
 	}
-	
+
 	@Override
 	public Integer deliver() {
 		ServerAddress book = ServerAddress.getInstance();
 		try {
-			boolean newEvent = EventCounter.getInstance(null).isNewEvent(m.getMyTime());
-			DummyFrontEntity.getInstance().addMessage("Il token è in mano a "+m.getMessage());
+			boolean newEvent = EventCounter.getInstance(null).isNewEvent(
+					m.getMyTime());
+			DummyFrontEntity.getInstance().addMessage(
+					"Il token è in mano a " + m.getMessage() + " "
+							+ EventCounter.getInstance(null).toString());
 			book.setTokenPosition(m.getMessage());
-			if(!m.getSender().equals(book.getMyAddress()) && newEvent ){
+			if (!m.getSender().equals(book.getMyAddress()) && newEvent) {
 				new ComunicationActions().cicleToken(m);
 			} else
-				DummyFrontEntity.getInstance().addMessage("Fermo token: "+m.getMessage()+" "+newEvent );
+				DummyFrontEntity.getInstance().addMessage(
+						"Fermo token: " + m.getMessage() + " " + newEvent);
 		} catch (EventNotSameException e) {
 			e.printStackTrace();
 		}
-		if(m.getMessage().equals(book.getMyAddress())) {
+		if (m.getMessage().equals(book.getMyAddress())) {
 			DummyFrontEntity.getInstance().setPlayerTurn(true);
 		}
 		return 1;

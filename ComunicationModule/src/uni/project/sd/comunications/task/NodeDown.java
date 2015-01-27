@@ -16,18 +16,31 @@ public class NodeDown extends MessageBase {
 	@Override
 	public Integer deliver() {
 		ServerAddress address = ServerAddress.getInstance();
+		int lapCounter = address.getTokenLap();
+		if (m.getMessageType() != -1) {
+			int myID = address.getPlayerID(address.getMyAddress());
+			int senderID = address.getPlayerID(m.getSender());
+			int slpCounter = m.getMessageType();
+			if ((senderID < myID && lapCounter < slpCounter)
+					|| (senderID > myID && lapCounter == slpCounter)) {
+					new ComunicationActions().cicleToken();
+			}
+			m.setMessageType(-1);
+		}
 		try {
-			if(!m.getSender().equals(address.getMyAddress()) && EventCounter.getInstance(null).isNewEvent(m.getMyTime())){
+			if (!m.getSender().equals(address.getMyAddress())
+					&& EventCounter.getInstance(null).isNewEvent(m.getMyTime())) {
 				address.setServerStatus(m.getMessage(), false);
-				DummyFrontEntity.getInstance().destroyPlayer(address.getServerNID(m.getMessage()));
+				DummyFrontEntity.getInstance().destroyPlayer(
+						address.getServerNID(m.getMessage()));
 				new ComunicationActions().resendNodeDown(m);
 				new ComunicationActions().requestToken();
 			}
 		} catch (EventNotSameException e) {
 			e.printStackTrace();
 		}
-		
-		return 1;
+
+		return lapCounter;
 	}
 
 }

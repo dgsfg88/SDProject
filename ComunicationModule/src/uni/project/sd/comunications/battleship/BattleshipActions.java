@@ -55,6 +55,7 @@ public class BattleshipActions extends ComunicationActions {
 	public void relaseToken(ArrayList<EventListItem> eventList) {
 		this.m = new BattleshipToken();
 		this.m.setMessage(ServerAddress.getInstance().getNextOnline());
+		System.out.println(this.m.getMessage());
 		this.m.setSender(ServerAddress.getInstance().getMyAddress());
 		this.m.setReceiver(this.m.getSender());
 		((BattleshipToken)this.m).setEventList(eventList);

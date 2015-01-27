@@ -38,7 +38,25 @@ public class EventCounter {
 	public EventTime getNextEvent() {
 		synchronized (myCounter) {
 			this.myCounter.incrementMyCounter();
+			System.out.println("ho incrementato il mio contatore, ora è "+myCounter.getEventAtNode(myCounter.getYourID()));
 			return myCounter;
+		}
+	}
+	
+	public EventTime getActualEvent(){
+		synchronized (myCounter) {
+			return myCounter;
+		}
+	}
+	
+	public boolean isNotActualEvent(EventTime event){
+		synchronized (myCounter) {
+			String node = myCounter.getYourID();
+			if(event.getEventAtNode(node).equals(myCounter.getEventAtNode(node))){
+				return false;
+			} else {
+				return true;
+			}
 		}
 	}
 	/**

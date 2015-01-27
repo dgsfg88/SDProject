@@ -13,6 +13,7 @@ public class ServerAddress {
 	private static ServerAddress addressBook = null;
 	private String myAddress;
 	private Integer nextServer = null;
+	private Integer tokenLap = 0;
 	
 	private Object lockServerOnline = new Object();
 	private Object lockTokenPosition = new Object();
@@ -159,6 +160,14 @@ public class ServerAddress {
 		}
 		id = playerID.get(player);
 		return id;
+	}
+	
+	public Integer getTokenLap() {
+		return tokenLap;
+	}
+	
+	public void incrementTokenLap() {
+		this.tokenLap++;
 	}
 
 }
