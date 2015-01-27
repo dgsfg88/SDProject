@@ -156,6 +156,7 @@ public class MainClass {
 	public void relaseToken(int player, int row, int col) {
 		new BattleshipActions().sendHit(player, row, col);
 		// TODO Implementare un relase token
+		
 	}
 
 }
