@@ -2,6 +2,7 @@ package uni.project.sd.comunications.battleship;
 
 import saqib.rasul.Task;
 import uni.project.sd.comunications.OutcomingClient;
+import uni.project.sd.comunications.battleship.task.BattleshipRelaseToken;
 import uni.project.sd.comunications.battleship.task.ExecuteHit;
 import uni.project.sd.comunications.battleship.task.ExecuteHitResult;
 import uni.project.sd.comunications.battleship.task.UpdateOcean;
@@ -36,6 +37,9 @@ public class BattleshipClient extends OutcomingClient {
 			break;
 		case sendOcean:
 			task = new UpdateOcean(getM());
+			break;
+		case OutcomingClient.notifyToken:
+			task = new BattleshipRelaseToken(getM());
 			break;
 		default:
 			super.doCustomRmiHandling(serverID);

@@ -1,9 +1,13 @@
 package uni.project.sd.comunications.battleship;
 
+import java.util.ArrayList;
+
 import uni.project.sd.Entity.battleship.Ocean;
 import uni.project.sd.comunications.ComunicationActions;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.entity.BattleshipMessage;
+import uni.project.sd.comunications.battleship.entity.BattleshipToken;
+import uni.project.sd.comunications.battleship.entity.EventListItem;
 import uni.project.sd.comunications.battleship.entity.OceanMessage;
 
 public class BattleshipActions extends ComunicationActions {
@@ -46,6 +50,16 @@ public class BattleshipActions extends ComunicationActions {
 		this.m.setReceiver(this.m.getSender());
 		((OceanMessage)this.m).setOcean(myOcean);
 		sendMessage(BattleshipClient.sendOcean);
+	}
+	
+	public void relaseToken(ArrayList<EventListItem> eventList) {
+		this.m = new BattleshipToken();
+		this.m.setMessage(ServerAddress.getInstance().getNextOnline());
+		this.m.setSender(ServerAddress.getInstance().getMyAddress());
+		this.m.setReceiver(this.m.getSender());
+		((BattleshipToken)this.m).setEventList(eventList);
+		setOutcomingClient(new BattleshipClient(BattleshipClient.notifyToken,this.m));
+		sendMessage(BattleshipClient.notifyToken);
 	}
 	
 	@Override

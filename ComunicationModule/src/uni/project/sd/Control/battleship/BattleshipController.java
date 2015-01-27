@@ -1,5 +1,6 @@
 package uni.project.sd.Control.battleship;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
@@ -16,6 +17,7 @@ import uni.project.sd.boundary.FrontBoundary;
 import uni.project.sd.boundary.battleship.BattleshipBoundary;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;
+import uni.project.sd.comunications.battleship.entity.EventListItem;
 import uni.project.sd.event.EventCounter;
 
 public class BattleshipController implements FrontBoundary {
@@ -32,6 +34,9 @@ public class BattleshipController implements FrontBoundary {
 	private int myPlayer;
 	private Ocean ocean;
 
+	private ArrayList<EventListItem> eventList;
+	private ArrayList<EventListItem> processedEvents;
+	
 	public synchronized static BattleshipController getInstance(MainClass main,
 			int myPlayer, int playerNumber) {
 		if (controller == null)
@@ -42,7 +47,8 @@ public class BattleshipController implements FrontBoundary {
 	private BattleshipController(MainClass main, int myPlayer, int playerNumber) {
 		this.myMain = main;
 		this.myPlayer = myPlayer;
-
+		this.processedEvents = new ArrayList<>();
+		
 		myEntity = DummyFrontEntity.getInstance();
 		myBoundary = new BattleshipBoundary(this, playerNumber, d);
 		myEntity.addView(this);
@@ -50,7 +56,11 @@ public class BattleshipController implements FrontBoundary {
 
 	public void buttonClicked(int player, int x, int y) {
 		myEntity.setPlayerTurn(false);
-		updateGrid(ServerAddress.getInstance().getServer(player), this.myPlayer, x, y);
+		ServerAddress address = ServerAddress.getInstance();
+		updateGrid(address.getServer(player), this.myPlayer, x, y);
+		synchronized (eventList) {
+			eventList.add(new EventListItem(address.getMyAddress(), address.getServer(player), x, y));
+		}
 		myMain.relaseToken(player, x, y);
 	}
 
@@ -107,10 +117,14 @@ public class BattleshipController implements FrontBoundary {
 		ServerAddress serverAdd = ServerAddress.getInstance();
 		OceanCoordinate myShot = new OceanCoordinate(x, y + d * serverAdd.getPlayerID(ID),0);
 		HashMap<Ship, Integer> hit = ocean.checkShot(myShot, playerNumber);
+
+		this.processedEvents.add(new EventListItem("", ID, x, y));
+		
 		if(ID.equals(serverAdd.getMyAddress()))
 			myBoundary.setValue(0, x, y, !hit.isEmpty());
-		else
+		else {
 			myBoundary.setValue(serverAdd.getServerNID(ID)+1, x, y, !hit.isEmpty());
+		}
 	}
 
 	public void updateOcean(Ocean newOcean) {
@@ -136,8 +150,37 @@ public class BattleshipController implements FrontBoundary {
 			System.out.println("Condiviso oceano: " + EventCounter.getInstance(null).toString());
 			this.oceanShared--;
 		} else {
+			if(enabled)
+				if (eventList == null)
+						eventList = new ArrayList<>();
+
 			// TODO azione comune da svolgere quando � il proprio turno
 			myBoundary.setButtonEnabled(enabled);
+		}
+	}
+	
+	public void setEventList(ArrayList<EventListItem> eventList) {
+		synchronized (eventList) {
+			this.eventList = eventList;
+			if(this.eventList != null) {
+				ServerAddress address = ServerAddress.getInstance();
+				for(int i = 0; i < this.eventList.size(); i++) {
+					EventListItem item = eventList.get(i);
+					System.out.println(item.toString());
+					if(item.getBreeder().equals(address.getMyAddress()))
+						eventList.remove(i);
+					else {
+						if(!this.processedEvents.contains(item))
+							updateGrid(item.getReceiver(), address.getPlayerID(item.getBreeder()), item.getX(), item.getY());
+					}
+				}
+			}
+		}
+	}
+	
+	public ArrayList<EventListItem> getEventList() {
+		synchronized (eventList) {
+			return eventList;
 		}
 	}
 
