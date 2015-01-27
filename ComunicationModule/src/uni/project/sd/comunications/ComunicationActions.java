@@ -1,5 +1,6 @@
 package uni.project.sd.comunications;
 
+import uni.project.sd.Entity.DummyFrontEntity;
 import uni.project.sd.comunications.entity.Message;
 
 public class ComunicationActions {
@@ -7,11 +8,7 @@ public class ComunicationActions {
 	private OutcomingClient client = null;
 	
 	public void cicleToken() {
-		m = new Message();
-		m.setSender(ServerAddress.getInstance().getMyAddress());
-		m.setMessage(ServerAddress.getInstance().getMyAddress());
-		m.setReceiver(ServerAddress.getInstance().getMyAddress());
-		sendMessage(OutcomingClient.notifyToken);
+		DummyFrontEntity.getInstance().setPlayerTurn(true);
 	}
 	
 	public void nodeDown(String node) {
@@ -20,6 +17,8 @@ public class ComunicationActions {
 		m.setReceiver(ServerAddress.getInstance().getMyAddress());
 		m.setMessage(node);
 		m.setMessageType(ServerAddress.getInstance().getTokenLap());
+		ServerAddress.getInstance().setServerStatus(node, false);
+		DummyFrontEntity.getInstance().destroyPlayer(ServerAddress.getInstance().getServerNID(node));
 		sendMessage(OutcomingClient.nodeDown);
 	}
 	public void resendNodeDown(Message m) {
@@ -64,8 +63,7 @@ public class ComunicationActions {
 						client.doCustomRmiHandling(next);
 						result = client.getResult();
 						if(result == 0) {
-							nodeDown(next);
-							ServerAddress.getInstance().setServerStatus(next, false);
+							new ComunicationActions().nodeDown(next);
 						}
 					} catch (IndexOutOfBoundsException e){
 						//TODO routine di terminazione
