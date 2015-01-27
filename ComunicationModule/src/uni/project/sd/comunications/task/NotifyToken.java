@@ -27,11 +27,11 @@ public class NotifyToken extends MessageBase {
 					"Il token è in mano a " + m.getMessage() + " "
 							+ EventCounter.getInstance(null).toString());
 			book.setTokenPosition(m.getMessage());
-			if (!m.getSender().equals(book.getMyAddress()) && newEvent) {
-				new ComunicationActions().cicleToken(m);
-			} else
-				DummyFrontEntity.getInstance().addMessage(
-						"Fermo token: " + m.getMessage() + " " + newEvent);
+//			if (!m.getSender().equals(book.getMyAddress()) && newEvent) {
+//				new ComunicationActions().cicleToken(m);
+//			} else
+//				DummyFrontEntity.getInstance().addMessage(
+//						"Fermo token: " + m.getMessage() + " " + newEvent);
 		} catch (EventNotSameException e) {
 			e.printStackTrace();
 		}
