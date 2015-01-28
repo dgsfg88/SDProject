@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,7 +30,7 @@ public class BattleshipBoundary {
 		mainWindow.getContentPane().setLayout(new GridLayout(0, 2,10,10));
 		this.row = col = d;
 
-		Color[] colors = {Color.GRAY, Color.GREEN, Color.MAGENTA, Color.WHITE};
+		Color[] colors = {Color.ORANGE, Color.GREEN, Color.MAGENTA, Color.WHITE};
 		for(Color c: colors) {
 			shipColors.add(c);
 		}
@@ -41,6 +42,10 @@ public class BattleshipBoundary {
 		ArrayList<JButton> buttons = null;
 		JButton singleButton = null;
 		ServerAddress address = ServerAddress.getInstance();
+		
+		ImageIcon icon = new ImageIcon("texture/sea.png");
+		icon = new ImageIcon(icon.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
+		
 		for(int k = 0; k < playerNumber; k++) {
 			playerHome = new JPanel(new BorderLayout());
 			if(k > 0)
@@ -55,6 +60,8 @@ public class BattleshipBoundary {
 				for(int c = 0; c < col; c++) {
 					singleButton = new JButton();
 					singleButton.setSize(5, 5);
+					singleButton.setIcon(icon);
+					singleButton.setDisabledIcon(icon);
 					singleButton.setBackground(Color.BLUE);
 					if(k == 0)
 						singleButton.setEnabled(false);
@@ -80,16 +87,34 @@ public class BattleshipBoundary {
 	public void addShip(int length, int startX, int startY, int orient) {
 		int x = startX;
 		int y = startY;
+		
+		String texturePath = "texture/l"+ length +"/";
+		
+		int c = 1;
+		
+		ImageIcon icon = null;
+		
+		
 		Color shipColor = shipColors.remove(0);
 		if (orient == Horizontal){
 			for (; x < startX + length; x++){
 				JButton b = playersIcons.get(0).get(getCoordinate(x, y));
 				b.setBackground(shipColor);
+				icon = new ImageIcon(texturePath + "p"+c+"h.png");
+				c++;
+				icon = new ImageIcon(icon.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
+				b.setIcon(icon);
+				b.setDisabledIcon(icon);
 			}
 		} else {
 			for (; y < startY + length; y++){
 				JButton b = playersIcons.get(0).get(getCoordinate(x, y));
 				b.setBackground(shipColor);
+				icon = new ImageIcon(texturePath + "p"+c+".png");
+				c++;
+				icon = new ImageIcon(icon.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
+				b.setIcon(icon);
+				b.setDisabledIcon(icon);
 			}
 		}
 	}
