@@ -1,7 +1,6 @@
 package uni.project.sd.comunications.task;
 
 import uni.project.sd.Entity.DummyFrontEntity;
-import uni.project.sd.comunications.ComunicationActions;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.entity.Message;
 import uni.project.sd.event.EventCounter;
@@ -21,7 +20,7 @@ public class NotifyToken extends MessageBase {
 	public Integer deliver() {
 		ServerAddress book = ServerAddress.getInstance();
 		try {
-			boolean newEvent = EventCounter.getInstance(null).isNewEvent(
+			EventCounter.getInstance(null).isNewEvent(
 					m.getMyTime());
 			DummyFrontEntity.getInstance().addMessage(
 					"Il token è in mano a " + m.getMessage() + " "
