@@ -5,11 +5,13 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import uni.project.sd.Control.battleship.BattleshipController;
 import uni.project.sd.comunications.ServerAddress;
@@ -27,7 +29,30 @@ public class BattleshipBoundary {
 	
 	public BattleshipBoundary(BattleshipController controller, Integer playerNumber, int d) {
 		mainWindow = new JFrame("Battleship");
-		mainWindow.getContentPane().setLayout(new GridLayout(0, 2,10,10));
+		mainWindow.getContentPane().setLayout(new BorderLayout());
+		JPanel gamePanel = new JPanel(new GridLayout(0, 2,10,10));
+		JPanel optionPanel = new JPanel(new GridLayout(0, 1));
+		
+		optionPanel.setSize(250, 250+250*((playerNumber-1)/2));
+		ButtonGroup shipGroup = new ButtonGroup();
+		ButtonGroup orietationGroup = new ButtonGroup();
+		int[] shipsLength = {2,2,3,4};		
+		
+		for(int k = 0; k < 4; k++) {
+			ImageIcon icon = new ImageIcon("texture/l" + shipsLength[k] + "/all.png");
+			icon = new ImageIcon(icon.getImage().getScaledInstance(20+20*shipsLength[k], 20, java.awt.Image.SCALE_SMOOTH));
+			JRadioButton ss = new JRadioButton();
+			ss.add(new JLabel(icon));
+			shipGroup.add(ss);
+			optionPanel.add(ss);
+		}
+		JRadioButton h = new JRadioButton("Horizontal");
+		JRadioButton v = new JRadioButton("Vertical");
+		orietationGroup.add(v);
+		orietationGroup.add(h);
+		optionPanel.add(v);
+		optionPanel.add(h);
+		
 		this.row = col = d;
 
 		Color[] colors = {Color.ORANGE, Color.GREEN, Color.MAGENTA, Color.WHITE};
@@ -72,15 +97,18 @@ public class BattleshipBoundary {
 					playerPanel.add(singleButton);
 				}
 			}
-			mainWindow.add(playerHome);
+			gamePanel.add(playerHome);
 			playersIcons.add(buttons);
 		}
 		
-		//DummyFrontEntity.getInstance().addView(this);
+		gamePanel.setSize(500, 250+250*((playerNumber-1)/2));
+		
+		mainWindow.add(optionPanel,BorderLayout.LINE_START);
+		mainWindow.add(gamePanel, BorderLayout.CENTER);
 		
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.pack();
-		mainWindow.setSize(500, 250+250*((playerNumber-1)/2));
+		mainWindow.setSize(550, 250+250*((playerNumber-1)/2));
 		mainWindow.setVisible(true);
 	}
 	
