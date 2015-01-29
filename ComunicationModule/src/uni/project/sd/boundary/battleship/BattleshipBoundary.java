@@ -13,8 +13,10 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 
 import uni.project.sd.Control.battleship.BattleshipController;
 import uni.project.sd.Entity.battleship.Ship;
@@ -54,8 +56,8 @@ public class BattleshipBoundary {
 		optionPanel.setSize(250, 250 + 250 * ((playerNumber - 1) / 2));
 		ButtonGroup shipGroup = new ShipsButtonGroup();
 		ButtonGroup orietationGroup = new ButtonGroup();
-		
-		JPanel tempPanel = new JPanel(new GridLayout(6, 1));
+
+		JPanel tempPanel = new JPanel(new GridLayout(0, 1));
 		
 		this.playerControls = new ArrayList<>();
 		this.shipRadioButtons = new HashMap<>(ships.size());
@@ -77,7 +79,7 @@ public class BattleshipBoundary {
 			shipGroup.add(ss);
 			tempPanel.add(ss);
 		}
-		optionPanel.add(tempPanel);
+		optionPanel.add(new JScrollPane(tempPanel));
 		tempPanel = new JPanel(new GridLayout(0, 1));
 		JPanel orietPanel = new JPanel(new GridLayout(6, 1));
 		
@@ -175,7 +177,7 @@ public class BattleshipBoundary {
 
 		ImageIcon icon = null;
 
-		Color shipColor = shipColors.remove(0);
+		Color shipColor = shipColors.get(length-2);
 		if (orient == Horizontal) {
 			for (; x < startX + length; x++) {
 				JButton b = playersIcons.get(0).get(getCoordinate(x, y));
@@ -281,6 +283,7 @@ public class BattleshipBoundary {
 		synchronized (playersIcons) {
 			for (JButton b : playersIcons.get(k + 1)) {
 				b.setBackground(Fog);
+				b.setDisabledIcon(null);
 				b.setEnabled(false);
 			}
 		}
@@ -296,6 +299,15 @@ public class BattleshipBoundary {
 	}
 	
 	public void disableShip(Ship s) {
+		this.shipRadioButtons.get(s).setSelected(false);
 		this.shipRadioButtons.get(s).setEnabled(false);
+	}
+
+	public void showAlert(String message, int i) {
+		JOptionPane.showMessageDialog(null, message);		
+	}
+	
+	public void showAlert(String message) {
+		JOptionPane.showMessageDialog(null, message);
 	}
 }

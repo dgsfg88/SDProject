@@ -34,7 +34,7 @@ public class NodeDown extends MessageBase {
 			new ComunicationActions().requestToken();
 		}
 		System.out.println("Ho ricevuto il seguente morto " + m.getMessage());
-		return lapCounter;
+		return 1;
 	}
 
 }

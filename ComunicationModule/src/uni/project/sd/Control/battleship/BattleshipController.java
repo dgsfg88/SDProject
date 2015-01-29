@@ -9,6 +9,7 @@ import java.util.Set;
 
 import uni.project.sd.MainClass;
 import uni.project.sd.Entity.DummyFrontEntity;
+import uni.project.sd.Entity.battleship.AircraftCarrier;
 import uni.project.sd.Entity.battleship.Battleship;
 import uni.project.sd.Entity.battleship.Destroyer;
 import uni.project.sd.Entity.battleship.Ocean;
@@ -29,6 +30,7 @@ public class BattleshipController implements FrontBoundary {
 
 	public static final int d = 10;
 	private MainClass myMain;
+	private Boolean gameOver = false;
 
 	private DummyFrontEntity myEntity;
 	private BattleshipBoundary myBoundary;
@@ -40,8 +42,9 @@ public class BattleshipController implements FrontBoundary {
 	private ArrayList<Ship> ships;
 	private Ship shipSelected;
 	private int orientationSelected = 0;
-	private int shipToPlace, shipsRemaining;
+	private int shipToPlace;
 	private boolean oceanCompleted = false;
+	private Integer[] shipsRemaining;
 
 	private Object sendOceanLock = new Object();
 
@@ -57,9 +60,17 @@ public class BattleshipController implements FrontBoundary {
 		this.myPlayer = myPlayer;
 		this.processedEvents = new ArrayList<>();
 		this.ships = new ArrayList<Ship>(Arrays.asList(new PatrolBoat(
+				this.myPlayer), new PatrolBoat(this.myPlayer), new PatrolBoat(
 				this.myPlayer), new PatrolBoat(this.myPlayer), new Destroyer(
-				this.myPlayer), new Battleship(this.myPlayer)));
-		this.shipToPlace = this.shipsRemaining = this.ships.size();
+				this.myPlayer), new Destroyer(this.myPlayer), new Destroyer(
+				this.myPlayer), new Battleship(this.myPlayer), new Battleship(
+				this.myPlayer), new Battleship(this.myPlayer),
+				new AircraftCarrier(this.myPlayer)));
+		this.shipToPlace = this.ships.size();
+		this.shipsRemaining = new Integer[playerNumber];
+		for (int i = 0; i < playerNumber; i++) {
+			this.shipsRemaining[i] = ships.size();
+		}
 		myEntity = DummyFrontEntity.getInstance();
 		myBoundary = new BattleshipBoundary(this, playerNumber, d, this.ships);
 		myBoundary.setPlayerButtonEnabled(false);
@@ -82,7 +93,7 @@ public class BattleshipController implements FrontBoundary {
 				eventList.add(new EventListItem(address.getMyAddress(), address
 						.getServer(player), x, y));
 			}
-			myMain.relaseToken(player, x, y);
+			myMain.releaseToken(player, x, y);
 		}
 	}
 
@@ -178,22 +189,31 @@ public class BattleshipController implements FrontBoundary {
 			Set<Ship> shipsHit = hit.keySet();
 			for (Ship s : shipsHit) {
 				if (s.getHealth() <= 0) {
-					shipsRemaining--;
-					if (shipsRemaining == 0)
-						// TODO da cambiare
-						System.exit(0);
+					shipsRemaining[0]--;
+					if (shipsRemaining[0] <= 0)
+						synchronized (this.gameOver) {
+							if (this.haveToken) {
+								myMain.releaseToken();
+							}
+							this.gameOver = true;
+							myBoundary.showAlert("Hai perso!");
+						}
 				}
 			}
 		} else {
-			myBoundary.setValue(serverAdd.getServerNID(ID) + 1, x, y,
-					!hit.isEmpty());
+			int enemyID = serverAdd.getServerNID(ID);
+			myBoundary.setValue(enemyID + 1, x, y, !hit.isEmpty());
 			Set<Ship> shipsHit = hit.keySet();
 			for (Ship s : shipsHit) {
 				if (s.getHealth() <= 0) {
+					shipsRemaining[enemyID + 1]--;
 					myBoundary.showEnemyShip(s.getLength(), s
 							.getFirstCoordinate().getX(), s
 							.getFirstCoordinate().getY(), s.getOrientation(),
-							serverAdd.getServerNID(ID));
+							enemyID);
+					if (shipsRemaining[enemyID + 1] <= 0) {
+						disablePlayer(enemyID);
+					}
 				}
 			}
 		}
@@ -222,12 +242,17 @@ public class BattleshipController implements FrontBoundary {
 				sendOcean();
 
 		} else {
+			synchronized (this.gameOver) {
+				if (this.haveToken && this.gameOver) {
+					myMain.releaseToken();
+					myBoundary.setButtonEnabled(false);
+				} else {
+					myBoundary.setButtonEnabled(enabled);
+				}
+			}
 			if (enabled)
 				if (eventList == null)
 					eventList = new ArrayList<>();
-
-			// TODO azione comune da svolgere quando � il proprio turno
-			myBoundary.setButtonEnabled(enabled);
 		}
 	}
 
@@ -271,7 +296,17 @@ public class BattleshipController implements FrontBoundary {
 
 	@Override
 	public void disablePlayer(int k) {
+		boolean result = true;
 		myBoundary.disablePlayer(k);
+		this.shipsRemaining[k + 1] = 0;
+		for (int i = 1; i < this.shipsRemaining.length; i++) {
+			if (!(this.shipsRemaining[i] <= 0)) {
+				result = false;
+			}
+		}
+		if (result) {
+			myBoundary.showAlert("Hai Vinto!");
+		}
 	}
 
 	public void setShipSelected(Ship myShip) {

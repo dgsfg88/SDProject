@@ -28,7 +28,6 @@ public class MainClass {
 	 *            dopo
 	 */
 	private ServerAddress address;
-	private ComunicationActions actions;
 
 	public static void main(String[] args) {
 		if (args.length > 2) {
@@ -138,7 +137,6 @@ public class MainClass {
 	public MainClass() {
 
 		address = ServerAddress.getInstance();
-		this.actions = new ComunicationActions();
 		BattleshipController controller = BattleshipController.getInstance(
 				this, address.getPlayerID(address.getMyAddress()),
 				address.serverNumber() + 1);
@@ -146,17 +144,12 @@ public class MainClass {
 				address.serverNumber() + 1));
 	}
 
-	public void relaseToken() {
-		actions.relaseToken();
-	}
-
-	public void sendAction() {
-
-	}
-
-	public void relaseToken(int player, int row, int col) {
+	public void releaseToken(int player, int row, int col) {
 		new BattleshipActions().sendHit(player, row, col);
-		// TODO Implementare un relase token
+		new BattleshipActions().relaseToken(BattleshipController.getInstance(null, 0, 0).getEventList());
+	}
+	
+	public void releaseToken(){
 		new BattleshipActions().relaseToken(BattleshipController.getInstance(null, 0, 0).getEventList());
 	}
 
