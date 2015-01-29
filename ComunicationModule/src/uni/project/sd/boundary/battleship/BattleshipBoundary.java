@@ -2,20 +2,19 @@ package uni.project.sd.boundary.battleship;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.border.EmptyBorder;
 
 import uni.project.sd.Control.battleship.BattleshipController;
 import uni.project.sd.Entity.battleship.Ship;
@@ -25,14 +24,24 @@ public class BattleshipBoundary {
 	public static final int Horizontal = 0;
 	public static final int Vertical = 1;
 
-	private static final Color Blue = new Color(0, 127, 255, 100);
+	private static final Color Blue = new Color(0, 127, 255, 0);
 	private static final Color LightBlue = new Color(41, 189, 217, 150);
+	private static final Color Red = new Color(255, 0, 0, 180);
+	private static final Color Yellow = new Color(255, 255, 0, 180);
+	private static final Color Orange = new Color(255, 165, 0, 180);
+	private static final Color Green = new Color(0, 255, 0, 180);
+	private static final Color Magenta = new Color(255, 0, 255, 180);
+	private static final Color White = new Color(255, 255, 255, 180);
 	private int row;
 	private int col;
 	private JFrame mainWindow;
 	private ArrayList<ArrayList<JButton>> playersIcons;
 
 	private ArrayList<Color> shipColors = new ArrayList<>();
+	
+	ArrayList<JComponent> playerControls;
+	
+	private HashMap<Ship, JRadioButton> shipRadioButtons;
 
 	public BattleshipBoundary(BattleshipController controller,
 			Integer playerNumber, int d, ArrayList<Ship> ships) {
@@ -45,6 +54,10 @@ public class BattleshipBoundary {
 		ButtonGroup shipGroup = new ShipsButtonGroup();
 		ButtonGroup orietationGroup = new ButtonGroup();
 		
+		JPanel tempPanel = new JPanel(new GridLayout(6, 1));
+		
+		this.playerControls = new ArrayList<>();
+		this.shipRadioButtons = new HashMap<>(ships.size());
 		for (Ship s: ships) {
 			ImageIcon icon = new ImageIcon(getClass().getResource(
 					"/texture/l" + s.getLength() + "/all.png"));
@@ -58,22 +71,39 @@ public class BattleshipBoundary {
 			ss.setIcon(icon);
 			ss.setSelectedIcon(iconSelected);
 			ss.addActionListener(new ShipActionListener(s));
+			this.shipRadioButtons.put(s, ss);
+			this.playerControls.add(ss);
 			shipGroup.add(ss);
-			optionPanel.add(ss);
+			tempPanel.add(ss);
 		}
-		JRadioButton h = new JRadioButton("Horizontal");
+		optionPanel.add(tempPanel);
+		tempPanel = new JPanel(new GridLayout(0, 1));
+		JPanel orietPanel = new JPanel(new GridLayout(6, 1));
+		
+		JRadioButton h = new JRadioButton("Horizontal",true);
 		JRadioButton v = new JRadioButton("Vertical");
 		v.addActionListener(new OrientationActionListener(BattleshipBoundary.Vertical));
 		h.addActionListener(new OrientationActionListener(BattleshipBoundary.Horizontal));
+		this.playerControls.add(v);
+		this.playerControls.add(h);
 		orietationGroup.add(v);
 		orietationGroup.add(h);
-		optionPanel.add(v);
-		optionPanel.add(h);
+		orietPanel.add(h);
+		orietPanel.add(v);
+		
+		tempPanel.add(orietPanel);
+		
+		JButton setShipRandom = new JButton("Random positions");
+		setShipRandom.addActionListener(new RandomShipPositionActionListener());
+		this.playerControls.add(setShipRandom);
+		tempPanel.add(setShipRandom);
 
+		optionPanel.add(tempPanel);
+		
 		this.row = col = d;
 
-		Color[] colors = { Color.ORANGE, Color.GREEN, Color.MAGENTA,
-				Color.WHITE };
+		Color[] colors = { Orange, Green, Magenta,
+				White };
 		for (Color c : colors) {
 			shipColors.add(c);
 		}
@@ -88,9 +118,7 @@ public class BattleshipBoundary {
 
 		String background = "/texture/sea" + (new Random().nextInt(4) + 1)
 				+ ".png";
-		// icon = new ImageIcon(icon.getImage().getScaledInstance(20, 20,
-		// java.awt.Image.SCALE_SMOOTH));
-
+		
 		for (int k = 0; k < playerNumber; k++) {
 			playerHome = new JPanel(new BorderLayout());
 			if (k > 0)
@@ -102,7 +130,7 @@ public class BattleshipBoundary {
 						BorderLayout.PAGE_START);
 			GridLayout layout = new GridLayout(row, col);
 			playerPanel = new JPanelBackground(background, layout);
-			playerPanel.setBorder(new EmptyBorder(new Insets(0, 0, 0, 0)));
+			((GridLayout)playerPanel.getLayout()).setVgap(0);
 			playerHome.add(playerPanel, BorderLayout.CENTER);
 			buttons = new ArrayList<JButton>(col * row);
 
@@ -111,14 +139,11 @@ public class BattleshipBoundary {
 					singleButton = new JButtonBackground();
 					singleButton.setSize(5, 5);
 					singleButton.setOpaque(false);
-					singleButton.setBackground(this.Blue);
+					singleButton.setBackground(Blue);
 					singleButton.setContentAreaFilled(false);
-					if (k == 0)
-						singleButton.setEnabled(false);
-					else
-						singleButton
+					singleButton
 								.addActionListener(new BattleshipJButtonActionListener(
-										controller, c, r, k - 1));
+										controller, c, r, k));
 					buttons.add(singleButton);
 					playerPanel.add(singleButton);
 				}
@@ -131,7 +156,8 @@ public class BattleshipBoundary {
 
 		mainWindow.add(optionPanel, BorderLayout.LINE_START);
 		mainWindow.add(gamePanel, BorderLayout.CENTER);
-
+		
+		mainWindow.setResizable(false);
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.pack();
 		mainWindow.setSize(550, 250 + 250 * ((playerNumber - 1) / 2));
@@ -180,23 +206,36 @@ public class BattleshipBoundary {
 		return y * col + x;
 	}
 
+
+	public void setPlayerButtonEnabled(boolean enabled) {
+		synchronized (playersIcons) {
+			enablePlayer(0, enabled);
+		}
+		for(JComponent component: this.playerControls)
+			component.setEnabled(enabled);
+	}
+	
 	public void setButtonEnabled(boolean enabled) {
 		synchronized (playersIcons) {
 			for (int k = 1; k < playersIcons.size(); k++) {
-				for (JButton b : playersIcons.get(k))
-					if (enabled) {
-						if (b.getBackground().equals(this.Blue)) {
-							b.setEnabled(enabled);
-							b.setBackground(this.LightBlue);
-						}
-					} else {
-						if (b.getBackground().equals(this.LightBlue)) {
-							b.setBackground(this.Blue);
-						}
-						b.setEnabled(false);
-					}
+				enablePlayer(k, enabled);
 			}
 		}
+	}
+	
+	private void enablePlayer(int player, boolean enabled) {
+		for (JButton b : playersIcons.get(player))
+			if (enabled) {
+				if (b.getBackground().equals(Blue)) {
+					b.setEnabled(enabled);
+					b.setBackground(LightBlue);
+				}
+			} else {
+				if (b.getBackground().equals(LightBlue)) {
+					b.setBackground(Blue);
+				}
+				b.setEnabled(false);
+			}
 	}
 
 	public void disablePlayer(int k) {
@@ -209,11 +248,15 @@ public class BattleshipBoundary {
 	}
 
 	public void setValue(int iD, int x, int y, boolean result) {
-		Color c = Color.YELLOW;
+		Color c = Yellow;
 		synchronized (playersIcons) {
 			if (result)
-				c = Color.RED;
+				c = Red;
 			playersIcons.get(iD).get(getCoordinate(x, y)).setBackground(c);
 		}
+	}
+	
+	public void disableShip(Ship s) {
+		this.shipRadioButtons.get(s).setEnabled(false);
 	}
 }

@@ -45,6 +45,7 @@ public abstract class Ship implements Serializable {
 	public abstract int getLength();
 
 	public abstract int getCannons();
+
 	
 	
 

@@ -96,6 +96,7 @@ public class MainClass {
 						// DummyFrontEntity.getInstance().setPlayerTurn(imfirst);
 					}
 					imfirst = true;
+					BattleshipController.getInstance(null, 0, 0).gameReady();
 					while (imfirst) {
 						try {
 							String k = address.getNextOnline();

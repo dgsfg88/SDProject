@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Set;
 
 import uni.project.sd.MainClass;
 import uni.project.sd.Entity.DummyFrontEntity;
@@ -39,6 +40,10 @@ public class BattleshipController implements FrontBoundary {
 	private ArrayList<Ship> ships;
 	private Ship shipSelected;
 	private int orientationSelected = 0;
+	private int shipToPlace, shipsRemaining;
+	private boolean oceanCompleted = false;
+	
+	private Object sendOceanLock = new Object();
 
 	public synchronized static BattleshipController getInstance(MainClass main,
 			int myPlayer, int playerNumber) {
@@ -54,19 +59,22 @@ public class BattleshipController implements FrontBoundary {
 		this.ships = new ArrayList<Ship>(Arrays.asList(new PatrolBoat(
 				this.myPlayer), new PatrolBoat(this.myPlayer), new Destroyer(
 				this.myPlayer), new Battleship(this.myPlayer)));
+		this.shipToPlace = this.shipsRemaining = this.ships.size();
 		myEntity = DummyFrontEntity.getInstance();
 		myBoundary = new BattleshipBoundary(this, playerNumber, d, this.ships);
+		myBoundary.setPlayerButtonEnabled(false);
 		myEntity.addView(this);
 	}
 
+	public void gameReady() {
+		myBoundary.setPlayerButtonEnabled(true);
+	}
+	
 	public void buttonClicked(int player, int x, int y) {
 		if (player == 0) {
-			if (shipSelected != null){
-				if(addShip(x, y, orientationSelected, shipSelected)){
-					shipSelected = null;
-				}
-			}
+			placeShip(x, y);
 		} else {
+			player--;
 			myEntity.setPlayerTurn(false);
 			ServerAddress address = ServerAddress.getInstance();
 			updateGrid(address.getServer(player), this.myPlayer, x, y);
@@ -75,6 +83,25 @@ public class BattleshipController implements FrontBoundary {
 						.getServer(player), x, y));
 			}
 			myMain.relaseToken(player, x, y);
+		}
+	}
+	
+	private void placeShip (int x, int y) {
+		if (shipSelected != null){
+			if(addShip(x, y, orientationSelected, shipSelected)){
+				// TODO da rivedere
+				this.ships.remove(shipSelected);
+				
+				this.myBoundary.disableShip(shipSelected);
+				shipSelected = null;
+				this.shipToPlace--;
+				if(this.shipToPlace == 0) {
+					synchronized (sendOceanLock) {
+						oceanCompleted = true;
+					}
+					sendOcean();
+				}
+			}
 		}
 	}
 
@@ -98,6 +125,11 @@ public class BattleshipController implements FrontBoundary {
 				result = addShip(x,y,or,c);
 			} while (!result);
 		}
+		synchronized (sendOceanLock) {
+			this.oceanCompleted = true;
+		}
+		
+		sendOcean();
 	}
 	
 	public boolean addShip(int x, int y, int orient, Ship ship){
@@ -138,8 +170,18 @@ public class BattleshipController implements FrontBoundary {
 
 		this.processedEvents.add(new EventListItem("", ID, x, y));
 
-		if (ID.equals(serverAdd.getMyAddress()))
+		if (ID.equals(serverAdd.getMyAddress())) {
 			myBoundary.setValue(0, x, y, !hit.isEmpty());
+			Set<Ship> shipsHit = hit.keySet();
+			for(Ship s: shipsHit) {
+				if(s.getHealth() <= 0) {
+					shipsRemaining--;
+					if(shipsRemaining == 0)
+						//TODO da cambiare
+						System.exit(0);
+				}
+			}
+		}
 		else {
 			myBoundary.setValue(serverAdd.getServerNID(ID) + 1, x, y,
 					!hit.isEmpty());
@@ -157,15 +199,16 @@ public class BattleshipController implements FrontBoundary {
 
 	@Override
 	public synchronized void setButtonEnabled(boolean enabled) {
-		this.haveToken = enabled;
+		synchronized (sendOceanLock) {
+			this.haveToken = enabled;
+		}
 		if (haveToken && oceanShared > 0) {
 			// l'oceano non � ancora stato condiviso (TODO implementare evento
 			// nel caso in cui si tratti di un token recuperato)
-			if (oceanShared == 2)
-				addShipsRandom();
-			new BattleshipActions().sendOcean(this.ocean);
-
-			this.oceanShared--;
+			if (oceanShared == 2) {
+				sendOcean();
+			} else sendOcean();
+			
 		} else {
 			if (enabled)
 				if (eventList == null)
@@ -173,6 +216,18 @@ public class BattleshipController implements FrontBoundary {
 
 			// TODO azione comune da svolgere quando � il proprio turno
 			myBoundary.setButtonEnabled(enabled);
+		}
+	}
+	
+	private void sendOcean() {
+		synchronized (sendOceanLock) {
+			if(this.oceanShared == 2 && this.oceanCompleted)
+				this.myBoundary.setPlayerButtonEnabled(false);
+			if(haveToken && oceanCompleted) {
+				new BattleshipActions().sendOcean(this.ocean);
+
+				this.oceanShared--;
+			}
 		}
 	}
 
