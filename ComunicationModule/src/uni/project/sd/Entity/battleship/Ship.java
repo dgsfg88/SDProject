@@ -15,6 +15,9 @@ public abstract class Ship implements Serializable {
 	protected int cannons;
 	protected HashMap<Bomb, Integer> myAmmo;
 	
+	protected OceanCoordinate firstCoordinate;
+	protected int orientation;
+	
 	public Ship(int playerN) {
 		this.playerN = playerN;
 		this.length = getLength();
@@ -38,6 +41,22 @@ public abstract class Ship implements Serializable {
 	
 	public int getHealth() {
 		return health;
+	}
+	
+	public OceanCoordinate getFirstCoordinate() {
+		return firstCoordinate;
+	}
+
+	public void setFirstCoordinate(OceanCoordinate firstCoordinate) {
+		this.firstCoordinate = firstCoordinate;
+	}
+
+	public int getOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(int orientation) {
+		this.orientation = orientation;
 	}
 
 	public abstract HashMap<Bomb, Integer> getMyAmmo();

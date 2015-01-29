@@ -42,7 +42,7 @@ public class BattleshipController implements FrontBoundary {
 	private int orientationSelected = 0;
 	private int shipToPlace, shipsRemaining;
 	private boolean oceanCompleted = false;
-	
+
 	private Object sendOceanLock = new Object();
 
 	public synchronized static BattleshipController getInstance(MainClass main,
@@ -69,7 +69,7 @@ public class BattleshipController implements FrontBoundary {
 	public void gameReady() {
 		myBoundary.setPlayerButtonEnabled(true);
 	}
-	
+
 	public void buttonClicked(int player, int x, int y) {
 		if (player == 0) {
 			placeShip(x, y);
@@ -85,17 +85,17 @@ public class BattleshipController implements FrontBoundary {
 			myMain.relaseToken(player, x, y);
 		}
 	}
-	
-	private void placeShip (int x, int y) {
-		if (shipSelected != null){
-			if(addShip(x, y, orientationSelected, shipSelected)){
+
+	private void placeShip(int x, int y) {
+		if (shipSelected != null) {
+			if (addShip(x, y, orientationSelected, shipSelected)) {
 				// TODO da rivedere
 				this.ships.remove(shipSelected);
-				
+
 				this.myBoundary.disableShip(shipSelected);
 				shipSelected = null;
 				this.shipToPlace--;
-				if(this.shipToPlace == 0) {
+				if (this.shipToPlace == 0) {
 					synchronized (sendOceanLock) {
 						oceanCompleted = true;
 					}
@@ -122,17 +122,17 @@ public class BattleshipController implements FrontBoundary {
 				int x = r.nextInt(d);
 				int y = r.nextInt(d);
 				int or = r.nextInt(2);
-				result = addShip(x,y,or,c);
+				result = addShip(x, y, or, c);
 			} while (!result);
 		}
 		synchronized (sendOceanLock) {
 			this.oceanCompleted = true;
 		}
-		
+
 		sendOcean();
 	}
-	
-	public boolean addShip(int x, int y, int orient, Ship ship){
+
+	public boolean addShip(int x, int y, int orient, Ship ship) {
 		int offset = this.myPlayer * d;
 		boolean result = false;
 		LinkedList<OceanCoordinate> shipPos = new LinkedList<>();
@@ -147,7 +147,10 @@ public class BattleshipController implements FrontBoundary {
 					shipPos.add(new OceanCoordinate(x, i, 0));
 				}
 		}
+		OceanCoordinate first = new OceanCoordinate(x, y, 0);
 		if (this.ocean.deployShip(shipPos, ship, this.myPlayer)) {
+			ship.setOrientation(orient);
+			ship.setFirstCoordinate(first);
 			myBoundary.addShip(ship.getLength(), x, y, orient);
 			result = true;
 		}
@@ -173,18 +176,26 @@ public class BattleshipController implements FrontBoundary {
 		if (ID.equals(serverAdd.getMyAddress())) {
 			myBoundary.setValue(0, x, y, !hit.isEmpty());
 			Set<Ship> shipsHit = hit.keySet();
-			for(Ship s: shipsHit) {
-				if(s.getHealth() <= 0) {
+			for (Ship s : shipsHit) {
+				if (s.getHealth() <= 0) {
 					shipsRemaining--;
-					if(shipsRemaining == 0)
-						//TODO da cambiare
+					if (shipsRemaining == 0)
+						// TODO da cambiare
 						System.exit(0);
 				}
 			}
-		}
-		else {
+		} else {
 			myBoundary.setValue(serverAdd.getServerNID(ID) + 1, x, y,
 					!hit.isEmpty());
+			Set<Ship> shipsHit = hit.keySet();
+			for (Ship s : shipsHit) {
+				if (s.getHealth() <= 0) {
+					myBoundary.showEnemyShip(s.getLength(), s
+							.getFirstCoordinate().getX(), s
+							.getFirstCoordinate().getY(), s.getOrientation(),
+							serverAdd.getServerNID(ID));
+				}
+			}
 		}
 	}
 
@@ -207,8 +218,9 @@ public class BattleshipController implements FrontBoundary {
 			// nel caso in cui si tratti di un token recuperato)
 			if (oceanShared == 2) {
 				sendOcean();
-			} else sendOcean();
-			
+			} else
+				sendOcean();
+
 		} else {
 			if (enabled)
 				if (eventList == null)
@@ -218,12 +230,12 @@ public class BattleshipController implements FrontBoundary {
 			myBoundary.setButtonEnabled(enabled);
 		}
 	}
-	
+
 	private void sendOcean() {
 		synchronized (sendOceanLock) {
-			if(this.oceanShared == 2 && this.oceanCompleted)
+			if (this.oceanShared == 2 && this.oceanCompleted)
 				this.myBoundary.setPlayerButtonEnabled(false);
-			if(haveToken && oceanCompleted) {
+			if (haveToken && oceanCompleted) {
 				new BattleshipActions().sendOcean(this.ocean);
 
 				this.oceanShared--;

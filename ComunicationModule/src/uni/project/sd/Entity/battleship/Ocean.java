@@ -121,8 +121,8 @@ public class Ocean implements Serializable{
 		return missed.subList(from, missed.size() - 1);
 	}
 
-	public LinkedHashMap<Ship, LinkedList<OceanCoordinate>> getHit(int from) {
-		return hit;
+	public LinkedList<OceanCoordinate> getHit(Ship s) {
+		return hit.get(s);
 	}
 
 	private boolean deployShipSplitted(List<OceanCoordinate> coordinates,

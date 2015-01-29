@@ -32,6 +32,7 @@ public class BattleshipBoundary {
 	private static final Color Green = new Color(0, 255, 0, 180);
 	private static final Color Magenta = new Color(255, 0, 255, 180);
 	private static final Color White = new Color(255, 255, 255, 180);
+	private static final Color Fog = new Color(128, 128, 128, 180);
 	private int row;
 	private int col;
 	private JFrame mainWindow;
@@ -201,6 +202,44 @@ public class BattleshipBoundary {
 			}
 		}
 	}
+	
+	public void showEnemyShip (int length, int startX, int startY, int orient, int playerN) {
+		int x = startX;
+		int y = startY;
+
+		playerN++;
+		System.out.println("Il giocatore è il numero: "+playerN);
+		
+		String texturePath = "/texture/l" + length + "/";
+
+		int c = 1;
+
+		ImageIcon icon = null;
+
+		if (orient == Horizontal) {
+			for (; x < startX + length; x++) {
+				JButton b = playersIcons.get(playerN).get(getCoordinate(x, y));
+				icon = new ImageIcon(getClass().getResource(
+						texturePath + "p" + c + "h.png"));
+				c++;
+				icon = new ImageIcon(icon.getImage().getScaledInstance(20, 20,
+						java.awt.Image.SCALE_SMOOTH));
+				b.setIcon(icon);
+				b.setDisabledIcon(icon);
+			}
+		} else {
+			for (; y < startY + length; y++) {
+				JButton b = playersIcons.get(playerN).get(getCoordinate(x, y));
+				icon = new ImageIcon(getClass().getResource(
+						texturePath + "p" + c + ".png"));
+				c++;
+				icon = new ImageIcon(icon.getImage().getScaledInstance(20, 20,
+						java.awt.Image.SCALE_SMOOTH));
+				b.setIcon(icon);
+				b.setDisabledIcon(icon);
+			}
+		}
+	}
 
 	private int getCoordinate(int x, int y) {
 		return y * col + x;
@@ -241,7 +280,7 @@ public class BattleshipBoundary {
 	public void disablePlayer(int k) {
 		synchronized (playersIcons) {
 			for (JButton b : playersIcons.get(k + 1)) {
-				b.setBackground(Color.BLACK);
+				b.setBackground(Fog);
 				b.setEnabled(false);
 			}
 		}
