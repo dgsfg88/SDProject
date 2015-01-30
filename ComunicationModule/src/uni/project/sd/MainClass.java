@@ -47,7 +47,7 @@ public class MainClass {
 				EventCounter.getInstance(book);
 
 				new MainClass();
-				new IncomingServer(args[0]);
+				new IncomingServer().doCustomRmiHandling(args[0]);;
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 				System.exit(0);

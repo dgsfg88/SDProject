@@ -39,7 +39,7 @@ public abstract class RmiStarter {
      */
     public abstract void doCustomRmiHandling(String serverID);
     
-    private String getIP(){
+    public static String getIP(){
     	Enumeration<NetworkInterface> e = null;
     	String localIP = null;
 		try {

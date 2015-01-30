@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import uni.project.sd.comunications.entity.ServerLocation;
+
 /**
  * Rubrica indirizzi, � statica per poter funzionare in pi� thread TODO
  * aggiungere controlli thread-safe
@@ -23,7 +25,7 @@ public class ServerAddress {
 	private int tokenPosition;
 	private LinkedList<String> serverList;
 	private HashMap<String, Boolean> serverOnline;
-	private HashMap<String, String> serverLocation;
+	private HashMap<String, ServerLocation> serverLocation;
 	private HashMap<String, Integer> playerID;
 
 	/**
@@ -45,7 +47,7 @@ public class ServerAddress {
 	protected ServerAddress() {
 		serverList = new LinkedList<String>();
 		serverOnline = new HashMap<String, Boolean>();
-		serverLocation = new HashMap<String, String>();
+		serverLocation = new HashMap<String, ServerLocation>();
 	}
 
 	/**
@@ -55,9 +57,12 @@ public class ServerAddress {
 	 *            Indirizzo del server
 	 */
 	public void addServer(String server, String location) {
+		addServer(server, location, 1099);
+	}
+	public void addServer(String server, String location, int port) {
 		serverList.add(server);
 		serverOnline.put(server, true);
-		serverLocation.put(server, location);
+		serverLocation.put(server, new ServerLocation(location, port));
 	}
 
 	public void setServerStatus(String server, boolean status) {
@@ -162,7 +167,10 @@ public class ServerAddress {
 	}
 
 	public String getLocation(String server) {
-		return serverLocation.get(server);
+		return serverLocation.get(server).getIp();
+	}
+	public int getServerPort(String server) {
+		return serverLocation.get(server).getPort();
 	}
 
 	public int getPlayerID(String player) {

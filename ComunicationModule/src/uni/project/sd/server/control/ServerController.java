@@ -7,11 +7,20 @@ import uni.project.sd.server.entity.Player;
 
 public class ServerController {
 
+	private static ServerController controller = null;
+	
 	private String myIP;
 	private int portNumber;
 	private int nextID = 0;
 	private DefaultListModel<Player> playerOnline;
 	private ServerBoundary myBoundary;
+	
+	public static void setInstance(ServerController controller) {
+		ServerController.controller = controller;
+	}
+	public static ServerController getInstance() {
+		return controller;
+	}
 	
 	public ServerController(String myIP, int portNumber) {
 		super();
@@ -50,14 +59,4 @@ public class ServerController {
 		
 	}
 
-	public static void main(String[] args) {
-		ServerController controller = new ServerController("127.0.0.1", 1099);
-		
-		controller.addPlayer("Player_1", "127.0.0.1", 1099);
-		controller.addPlayer("Player_1", "127.0.0.1", 1099);
-		controller.addPlayer("Player_2", "127.0.0.1", 1099);
-		controller.addPlayer("Player_3", "127.0.0.1", 1099);
-		
-		controller.addPlayer("Player_1", "127.0.0.1", 1099);
-	}
 }
