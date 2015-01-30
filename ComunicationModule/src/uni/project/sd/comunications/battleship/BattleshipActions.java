@@ -9,8 +9,18 @@ import uni.project.sd.comunications.battleship.entity.BattleshipMessage;
 import uni.project.sd.comunications.battleship.entity.BattleshipToken;
 import uni.project.sd.comunications.battleship.entity.EventListItem;
 import uni.project.sd.comunications.battleship.entity.OceanMessage;
+import uni.project.sd.server.entity.RegisterMessage;
 
 public class BattleshipActions extends ComunicationActions {
+	
+	public void registerToServer(String myIP, int myPort) {
+		this.m = new RegisterMessage();
+		((RegisterMessage)this.m).setIp(myIP);
+		((RegisterMessage)this.m).setPort(myPort);
+		((RegisterMessage)this.m).setName(ServerAddress.getInstance().getMyAddress());
+		this.setOutcomingClient(new BattleshipClient(BattleshipClient.registerToServer, m));
+		this.sendMessage(BattleshipClient.registerToServer);
+	}
 	
 	public void sendHit(int player, int x, int y) {
 		this.m = new BattleshipMessage();

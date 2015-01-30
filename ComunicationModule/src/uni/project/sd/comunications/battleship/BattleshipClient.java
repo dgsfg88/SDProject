@@ -7,11 +7,13 @@ import uni.project.sd.comunications.battleship.task.ExecuteHit;
 import uni.project.sd.comunications.battleship.task.ExecuteHitResult;
 import uni.project.sd.comunications.battleship.task.UpdateOcean;
 import uni.project.sd.comunications.entity.Message;
+import uni.project.sd.server.task.RegisterPlayerTask;
 
 public class BattleshipClient extends OutcomingClient {
 	public static final int sendHit = 18;
 	public static final int sendHitResult = 19;
 	public static final int sendOcean = 22;
+	public static final int registerToServer = 24;
 	
 	public BattleshipClient() {
 		super();
@@ -37,6 +39,10 @@ public class BattleshipClient extends OutcomingClient {
 			break;
 		case sendOcean:
 			task = new UpdateOcean(getM());
+			break;
+		case registerToServer:
+			task = new RegisterPlayerTask();
+			((RegisterPlayerTask)task).setMessage(getM());
 			break;
 		case OutcomingClient.notifyToken:
 			task = new BattleshipRelaseToken(getM());
