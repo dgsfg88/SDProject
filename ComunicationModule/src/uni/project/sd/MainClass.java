@@ -135,7 +135,6 @@ public class MainClass {
 	}
 
 	public MainClass() {
-
 		address = ServerAddress.getInstance();
 		BattleshipController controller = BattleshipController.getInstance(
 				this, address.getPlayerID(address.getMyAddress()),
