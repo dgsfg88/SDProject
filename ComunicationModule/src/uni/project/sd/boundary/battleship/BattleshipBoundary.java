@@ -2,9 +2,11 @@ package uni.project.sd.boundary.battleship;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Random;
 
 import javax.swing.ButtonGroup;
@@ -45,6 +47,11 @@ public class BattleshipBoundary {
 	ArrayList<JComponent> playerControls;
 	
 	private HashMap<Ship, JRadioButton> shipRadioButtons;
+	
+	private int lengthSelected = 0;
+	private int orientationSelected = 0;
+	private LinkedList<Dimension> highlightPositions = new LinkedList<>();
+	private LinkedList<Color> oldColors = new LinkedList<>();
 
 	public BattleshipBoundary(BattleshipController controller,
 			Integer playerNumber, int d, ArrayList<Ship> ships) {
@@ -147,6 +154,8 @@ public class BattleshipBoundary {
 					singleButton
 								.addActionListener(new BattleshipJButtonActionListener(
 										controller, c, r, k));
+					if(k == 0)
+						singleButton.addMouseListener(new GridMouseAdapter(c, r, this));
 					buttons.add(singleButton);
 					playerPanel.add(singleButton);
 				}
@@ -299,6 +308,7 @@ public class BattleshipBoundary {
 	}
 	
 	public void disableShip(Ship s) {
+		this.lengthSelected = 0;
 		this.shipRadioButtons.get(s).setSelected(false);
 		this.shipRadioButtons.get(s).setEnabled(false);
 	}
@@ -310,4 +320,49 @@ public class BattleshipBoundary {
 	public void showAlert(String message) {
 		JOptionPane.showMessageDialog(null, message);
 	}
+
+	public void setLengthSelected(int lengthSelected) {
+		this.lengthSelected = lengthSelected;
+	}
+
+	public void setOrientationSelected(int orientationSelected) {
+		this.orientationSelected = orientationSelected;
+	}
+
+	public void addHighlight(int x, int y) {
+		if(lengthSelected > 0) {
+			synchronized (playersIcons) {
+				try {
+					for(int i = 0; i < this.lengthSelected; i++) {
+						if(x >= this.col)
+							break;
+						this.oldColors.add(this.playersIcons.get(0).get(getCoordinate(x, y)).getBackground());
+						this.highlightPositions.add(new Dimension(x, y));
+						this.playersIcons.get(0).get(getCoordinate(x, y)).setBackground(Green);
+						if(this.orientationSelected == Horizontal)
+							x++;
+						else
+							y++;
+					}
+				} catch (IndexOutOfBoundsException e) {
+					
+				}
+			}
+		}
+	}
+
+	public void removeHighlight() {
+		if(!highlightPositions.isEmpty()) {
+			synchronized (playersIcons) {
+				int i = highlightPositions.size();
+				for(; i > 0; i--) {
+					Dimension position = highlightPositions.removeFirst();
+					Color oldColor = this.oldColors.removeFirst();
+					this.playersIcons.get(0).get(getCoordinate(position.width, position.height)).setBackground(oldColor);
+				}
+			}
+		}
+	}
+	
+	
 }

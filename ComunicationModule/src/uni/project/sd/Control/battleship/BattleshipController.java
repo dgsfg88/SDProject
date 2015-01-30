@@ -311,9 +311,11 @@ public class BattleshipController implements FrontBoundary {
 
 	public void setShipSelected(Ship myShip) {
 		this.shipSelected = myShip;
+		this.myBoundary.setLengthSelected(myShip.getLength());
 	}
 
 	public void setOrientationSelected(int orientation) {
 		this.orientationSelected = orientation;
+		this.myBoundary.setOrientationSelected(orientation);
 	}
 }
