@@ -152,12 +152,12 @@ public class BattleshipController implements FrontBoundary {
 		boolean result = false;
 		LinkedList<OceanCoordinate> shipPos = new LinkedList<>();
 		if (orient == 0) {
-			if (x + ship.getLength() < d)
+			if (x + ship.getLength() <= d)
 				for (int i = x; i < x + ship.getLength(); i++) {
 					shipPos.add(new OceanCoordinate(i, y + offset, 0));
 				}
 		} else {
-			if (y + ship.getLength() < d)
+			if (y + ship.getLength() <= d)
 				for (int i = y + offset; i < y + offset + ship.getLength(); i++) {
 					shipPos.add(new OceanCoordinate(x, i, 0));
 				}
