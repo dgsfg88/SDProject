@@ -4,11 +4,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
 import uni.project.sd.Control.battleship.BattleshipController;
-import uni.project.sd.Entity.DummyFrontEntity;
 import uni.project.sd.Entity.battleship.Ocean;
-import uni.project.sd.comunications.ComunicationActions;
 import uni.project.sd.comunications.IncomingServer;
-import uni.project.sd.comunications.OutcomingClient;
+import uni.project.sd.comunications.PingRoutine;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;
 import uni.project.sd.event.EventCounter;
@@ -44,103 +42,29 @@ public class MainClass {
 				for (int k = 1; k < args.length; k += 2) {
 					book.addServer(args[k], args[k + 1]);
 				}
-				EventCounter.getInstance(book);
 
 				new MainClass();
-				new IncomingServer().doCustomRmiHandling(args[0]);;
+				new IncomingServer().doCustomRmiHandling(args[0]);
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
 				System.exit(0);
 			}
-
-			Thread sendPing = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					ServerAddress address = ServerAddress.getInstance();
-					boolean ready = false;
-					while (!ready) {
-						Integer result = 0;
-						for (int k = 0; k < address.serverNumber(); k++) {
-							OutcomingClient client = new OutcomingClient(
-									OutcomingClient.sendPing);
-							client.doCustomRmiHandling(address.getServer(k));
-							result += client.getResult();
-						}
-						if (result == address.serverNumber())
-							ready = true;
-						else {
-							try {
-								Thread.sleep(500);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-					DummyFrontEntity.getInstance().addMessage(
-							"All online, starting game");
-
-					boolean imfirst = true;
-
-					Integer me = Integer.parseInt(address.getMyAddress());
-					for (int k = 0; k < address.serverNumber(); k++) {
-						if (Integer.parseInt(address.getServer(k)) < me) {
-							imfirst = false;
-							break;
-						}
-					}
-
-					if (imfirst) {
-						new ComunicationActions().cicleToken();
-						// DummyFrontEntity.getInstance().setPlayerTurn(imfirst);
-					}
-					imfirst = true;
-					BattleshipController.getInstance(null, 0, 0).gameReady();
-					while (imfirst) {
-						try {
-							String k = address.getNextOnline();
-
-							OutcomingClient client = new OutcomingClient(
-									OutcomingClient.sendPing);
-							client.doCustomRmiHandling(k);
-							Integer result = client.getResult();
-							if (result == 0) {
-								// TODO Avvenuto crash di un nodo, avviare
-								// azione di recovery
-								new ComunicationActions().nodeDown(k);
-								address.setServerStatus(k, false);
-								DummyFrontEntity.getInstance().addMessage(
-										"Node " + k
-												+ " is down, token position: "
-												+ address.getTokenPosition());
-								DummyFrontEntity.getInstance().destroyPlayer(
-										address.getServerNID(k));
-							}
-						} catch (Exception e) {
-							DummyFrontEntity.getInstance().addMessage(
-									"I'm only online, I win");
-							imfirst = false;
-						}
-						try {
-							// TODO aggiungere controlli di terminazione
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			});
-			sendPing.start();
+		} else {
+			// TODO schermata di connessione al server!!
 		}
 	}
 
 	public MainClass() {
 		address = ServerAddress.getInstance();
+		EventCounter.getInstance(address);
 		BattleshipController controller = BattleshipController.getInstance(
 				this, address.getPlayerID(address.getMyAddress()),
 				address.serverNumber() + 1);
 		controller.setOcean(new Ocean(Ocean.splitted, BattleshipController.d,
 				address.serverNumber() + 1));
+		
+		Thread sendPing = new Thread(new PingRoutine());
+		sendPing.start();
 	}
 
 	public void releaseToken(int player, int row, int col) {
