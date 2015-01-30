@@ -5,6 +5,7 @@ import java.rmi.registry.LocateRegistry;
 
 import uni.project.sd.Control.battleship.BattleshipController;
 import uni.project.sd.Entity.battleship.Ocean;
+import uni.project.sd.boundary.battleship.LoginBoundary;
 import uni.project.sd.comunications.IncomingServer;
 import uni.project.sd.comunications.PingRoutine;
 import uni.project.sd.comunications.ServerAddress;
@@ -50,11 +51,7 @@ public class MainClass {
 				System.exit(0);
 			}
 		} else {
-			ServerAddress address = ServerAddress.getInstance();
-			address.setMyAddress(args[0]);
-			address.addServer("Server", "localhost");
-			EventCounter.getInstance(address);
-			new BattleshipActions().registerToServer("localhost", 1099);
+			new LoginBoundary();
 		}
 	}
 

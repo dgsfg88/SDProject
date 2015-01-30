@@ -99,7 +99,7 @@ public class OutcomingClient extends RmiStarter{
 	        
 		} catch (RemoteException | NotBoundException e) {
 			result = 0;
-	//		System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 	

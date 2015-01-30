@@ -16,7 +16,7 @@ public class RegisterPlayerTask extends MessageBase {
 	public Integer deliver() {
 		RegisterMessage message = (RegisterMessage)this.m;
 		
-		ServerAddress.getInstance().addServer(message.getMessage(), message.getIp(), message.getPort());
+		ServerAddress.getInstance().addServer(message.getName(), message.getIp(), message.getPort());
 		ServerController.getInstance().addPlayer(message.getName(), message.getIp(), message.getPort());
 		
 		return 1;
