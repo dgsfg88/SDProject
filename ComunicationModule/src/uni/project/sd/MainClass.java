@@ -12,7 +12,7 @@ import uni.project.sd.comunications.battleship.BattleshipActions;
 import uni.project.sd.event.EventCounter;
 
 /**
- * Classe di avvio, TODO aggiungere numerazione messaggi
+ * 
  * 
  * @author Andrea
  * 
