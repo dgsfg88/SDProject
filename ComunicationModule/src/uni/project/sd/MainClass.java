@@ -27,6 +27,7 @@ public class MainClass {
 	 *            dopo
 	 */
 	private ServerAddress address;
+	private static LoginBoundary login = null;
 
 	public static void main(String[] args) {
 		if (args.length > 2) {
@@ -51,11 +52,14 @@ public class MainClass {
 				System.exit(0);
 			}
 		} else {
-			new LoginBoundary();
+			login = new LoginBoundary();
 		}
 	}
 
 	public MainClass() {
+		if(login != null) {
+			login.setVisible(false);
+		}
 		address = ServerAddress.getInstance();
 		EventCounter.getNewInstance(address);
 		BattleshipController controller = BattleshipController.getInstance(

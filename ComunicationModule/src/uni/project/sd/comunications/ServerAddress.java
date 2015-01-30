@@ -68,8 +68,6 @@ public class ServerAddress {
 	public void setServerStatus(String server, boolean status) {
 		synchronized (lockServerOnline) {
 			serverOnline.put(server, status);
-			System.out.println("il server: " + server + " è passato in "
-					+ status);
 		}
 	}
 

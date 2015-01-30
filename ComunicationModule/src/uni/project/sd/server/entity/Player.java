@@ -63,7 +63,6 @@ public class Player implements Serializable {
 		int result = 1;
 		result = prime * result + ((ip == null) ? 0 : ip.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + port;
 		return result;
 	}
 
@@ -85,8 +84,6 @@ public class Player implements Serializable {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
-			return false;
-		if (port != other.port)
 			return false;
 		return true;
 	}

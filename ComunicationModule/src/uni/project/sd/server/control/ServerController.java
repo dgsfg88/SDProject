@@ -71,6 +71,8 @@ public class ServerController {
 			outClass.setMessageAndType(message, 0);
 			outClass.doCustomRmiHandling(this.playerOnline.getElementAt(i).getName());
 		}
+		
+		System.exit(0);
 	}
 
 }

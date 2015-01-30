@@ -20,6 +20,7 @@ public class LoginBoundary {
 	private JTextField userText;
 	private JTextField serverText;
 	private JFormattedTextField portField;
+	private JButton loginButton;
 	
 	public LoginBoundary() {
 		this.loginWindow = new JFrame("Login Battleship");
@@ -27,7 +28,6 @@ public class LoginBoundary {
 	}
 
 	public void addComponentsToPane(Container pane) {
-		JButton loginButton;
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		if (shouldFill) {
@@ -75,6 +75,7 @@ public class LoginBoundary {
 		pane.add(portLabel, c);
 
 		NumberFormat format = NumberFormat.getIntegerInstance();
+		format.setGroupingUsed(false);
 		NumberFormatter formatter = new NumberFormatter(format);
 		formatter.setValueClass(Integer.class);
 		formatter.setMinimum(1099);
@@ -130,5 +131,16 @@ public class LoginBoundary {
 		this.loginWindow.setResizable(false);
 		this.loginWindow.pack();
 		this.loginWindow.setVisible(true);
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.portField.setEnabled(enabled);
+		this.serverText.setEnabled(enabled);
+		this.userText.setEnabled(enabled);
+		this.loginButton.setEnabled(enabled);
+	}
+
+	public void setVisible(boolean b) {
+		this.loginWindow.setVisible(false);
 	}
 }

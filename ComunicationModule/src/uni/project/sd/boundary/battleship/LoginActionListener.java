@@ -20,6 +20,7 @@ public class LoginActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		loginBoundary.setEnabled(false);
 		int port = 1099;
 		boolean online = false;
 		ServerAddress serverAddress = ServerAddress.getInstance();
@@ -29,19 +30,17 @@ public class LoginActionListener implements ActionListener {
 		do{
 			try {
 				LocateRegistry.createRegistry(port);
-			} catch (RemoteException error) {
-				System.out.println("Warning: Port "+port+" already in use");
-			}
-			try {
 				online = new IncomingServer().startServer(this.loginBoundary.getUsername(),port);
 			} catch (RemoteException error) {
-				error.printStackTrace();
-				System.err.println("Error on starting server");
+				System.out.println("Warning: Port "+port+" already in use");
 			}
 			if(!online)
 				port++;
 		} while(!online);
-		new BattleshipActions().registerToServer(RmiStarter.getIP(), 1099);
+		if(online) {
+			new BattleshipActions().registerToServer(RmiStarter.getIP(), port);
+		}  else
+			loginBoundary.setEnabled(true);
 	}
 
 }

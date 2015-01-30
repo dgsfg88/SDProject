@@ -43,15 +43,11 @@ public class MainServerClass {
 		do{
 			try {
 				LocateRegistry.createRegistry(port);
+				online = new IncomingServer().startServer("Server",port);
 			} catch (RemoteException e) {
 				System.out.println("Warning: Port "+port+" already in use");
 			}
-			try {
-				online = new IncomingServer().startServer("Server",port);
-			} catch (RemoteException e) {
-//				e.printStackTrace();
-				System.err.println("Error on starting server");
-			}
+
 			if(!online)
 				port++;
 		} while(!online);

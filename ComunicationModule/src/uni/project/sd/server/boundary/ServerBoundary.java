@@ -54,7 +54,7 @@ public class ServerBoundary {
 		tmpPanel.add(addressPanel,BorderLayout.CENTER);
 		
 		JButton startGame = new JButton("Start Game");
-		startGame.addActionListener(new GameStarterListener(controller));
+		startGame.addActionListener(new GameStarterListener(controller,startGame));
 		tmpPanel.add(startGame,BorderLayout.LINE_END);
 		
 		mainView.getContentPane().add(tmpPanel, BorderLayout.PAGE_END);
