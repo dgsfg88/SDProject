@@ -24,6 +24,10 @@ public class EventCounter {
 			eventCounter = new EventCounter(book);
 		return eventCounter;
 	}
+	public static EventCounter getNewInstance(ServerAddress book) {
+		eventCounter = new EventCounter(book);
+		return eventCounter;
+	}
 	
 	protected EventCounter(ServerAddress book) {
 		this.myCounter = new EventTime(book.serverNumber(), book.getMyAddress());

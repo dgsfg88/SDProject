@@ -50,13 +50,17 @@ public class MainClass {
 				System.exit(0);
 			}
 		} else {
-			// TODO schermata di connessione al server!!
+			ServerAddress address = ServerAddress.getInstance();
+			address.setMyAddress(args[0]);
+			address.addServer("Server", "localhost");
+			EventCounter.getInstance(address);
+			new BattleshipActions().registerToServer("localhost", 1099);
 		}
 	}
 
 	public MainClass() {
 		address = ServerAddress.getInstance();
-		EventCounter.getInstance(address);
+		EventCounter.getNewInstance(address);
 		BattleshipController controller = BattleshipController.getInstance(
 				this, address.getPlayerID(address.getMyAddress()),
 				address.serverNumber() + 1);

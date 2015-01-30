@@ -130,16 +130,16 @@ public class ServerAddress {
 
 	private void findNextServer() {
 		synchronized (lockServerOnline) {
-			int me = Integer.parseInt(myAddress);
+			int me = getPlayerID(myAddress);
 			int k = 0;
 			while (!serverOnline.get(serverList.get(k)))
 				k++;
 			nextServer = k;
-			int d = Integer.parseInt(serverList.get(k)) - me;
+			int d = getPlayerID(serverList.get(k)) - me;
 
 			for (k++; k < serverList.size(); k++) {
 				if (serverOnline.get(serverList.get(k))) {
-					int dtemp = Integer.parseInt(serverList.get(k)) - me;
+					int dtemp = getPlayerID(serverList.get(k)) - me;
 					if (((dtemp < d || d < 0) && dtemp > 0)
 							|| (dtemp < 0 && d < 0 && dtemp < d)) {
 						nextServer = k;
