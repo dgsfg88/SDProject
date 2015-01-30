@@ -102,7 +102,6 @@ public class BattleshipController implements FrontBoundary {
 			if (addShip(x, y, orientationSelected, shipSelected)) {
 				// TODO da rivedere
 				this.ships.remove(shipSelected);
-
 				this.myBoundary.disableShip(shipSelected);
 				shipSelected = null;
 				this.shipToPlace--;
@@ -134,11 +133,16 @@ public class BattleshipController implements FrontBoundary {
 				int y = r.nextInt(d);
 				int or = r.nextInt(2);
 				result = addShip(x, y, or, c);
+				if(result){
+					this.myBoundary.disableShip(c);
+				}
 			} while (!result);
 		}
 		synchronized (sendOceanLock) {
 			this.oceanCompleted = true;
 		}
+		
+		
 
 		sendOcean();
 	}
