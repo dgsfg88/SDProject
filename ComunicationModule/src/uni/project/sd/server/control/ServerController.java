@@ -1,9 +1,12 @@
 package uni.project.sd.server.control;
 
+import java.util.ArrayList;
+
 import javax.swing.DefaultListModel;
 
 import uni.project.sd.server.boundary.ServerBoundary;
 import uni.project.sd.server.entity.Player;
+import uni.project.sd.server.entity.StartGameMessage;
 
 public class ServerController {
 
@@ -56,7 +59,20 @@ public class ServerController {
 	}
 
 	public void startGamePressed() {
+		myBoundary.setSelectorEnable(false);
+		ArrayList<Player> players = new ArrayList<>(this.playerOnline.size());
+		for(int i = 0; i < this.playerOnline.size(); i++){
+			players.add(this.playerOnline.getElementAt(i));
+		}
+		StartGameMessage message = new StartGameMessage(4,players);
 		
+		for(int i = 0; i < this.playerOnline.size(); i++){
+			ServerOutClass outClass = new ServerOutClass();
+			outClass.setMessageAndType(message, 0);
+			outClass.doCustomRmiHandling(this.playerOnline.getElementAt(i).getName());
+		}
+		
+		System.exit(0);
 	}
 
 }
