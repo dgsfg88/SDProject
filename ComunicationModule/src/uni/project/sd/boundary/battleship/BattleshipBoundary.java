@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Set;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -28,6 +29,8 @@ public class BattleshipBoundary {
 	public static final int Horizontal = 0;
 	public static final int Vertical = 1;
 
+	private static final int iconSize = 40;
+	
 	private static final Color Blue = new Color(0, 127, 255, 0);
 	private static final Color LightBlue = new Color(41, 189, 217, 150);
 	private static final Color Red = new Color(255, 0, 0, 180);
@@ -41,6 +44,8 @@ public class BattleshipBoundary {
 	private int col;
 	private JFrame mainWindow;
 	private ArrayList<ArrayList<JButton>> playersIcons;
+	private JPanel shipsPanel;
+	
 
 	private ArrayList<Color> shipColors = new ArrayList<>();
 	
@@ -61,33 +66,13 @@ public class BattleshipBoundary {
 		JPanel optionPanel = new JPanel(new GridLayout(0, 1));
 
 		optionPanel.setSize(250, 250 + 250 * ((playerNumber - 1) / 2));
-		ButtonGroup shipGroup = new ShipsButtonGroup();
+		
 		ButtonGroup orietationGroup = new ButtonGroup();
 
-		JPanel tempPanel = new JPanel(new GridLayout(0, 1));
+		generateShipsPanel(ships);
 		
-		this.playerControls = new ArrayList<>();
-		this.shipRadioButtons = new HashMap<>(ships.size());
-		for (Ship s: ships) {
-			ImageIcon icon = new ImageIcon(getClass().getResource(
-					"/texture/l" + s.getLength() + "/all.png"));
-			icon = new ImageIcon(icon.getImage().getScaledInstance(
-					20 + 20 * s.getLength(), 20, java.awt.Image.SCALE_SMOOTH));
-			ImageIcon iconSelected = new ImageIcon(getClass().getResource(
-					"/texture/l" + s.getLength() + "/allSelected.png"));
-			iconSelected = new ImageIcon(iconSelected.getImage().getScaledInstance(
-					20 + 20 * s.getLength(), 20, java.awt.Image.SCALE_SMOOTH));
-			JRadioButton ss = new JRadioButton();
-			ss.setIcon(icon);
-			ss.setSelectedIcon(iconSelected);
-			ss.addActionListener(new ShipActionListener(s));
-			this.shipRadioButtons.put(s, ss);
-			this.playerControls.add(ss);
-			shipGroup.add(ss);
-			tempPanel.add(ss);
-		}
-		optionPanel.add(new JScrollPane(tempPanel));
-		tempPanel = new JPanel(new GridLayout(0, 1));
+		optionPanel.add(new JScrollPane(shipsPanel));
+		JPanel tempPanel = new JPanel(new GridLayout(0, 1));
 		JPanel orietPanel = new JPanel(new GridLayout(6, 1));
 		
 		JRadioButton h = new JRadioButton("Horizontal",true);
@@ -172,7 +157,7 @@ public class BattleshipBoundary {
 		mainWindow.setResizable(false);
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.pack();
-		mainWindow.setSize(550, 250 + 250 * ((playerNumber - 1) / 2));
+		mainWindow.setSize(850, 400 + 400 * ((playerNumber - 1) / 2));
 		mainWindow.setVisible(true);
 	}
 
@@ -194,7 +179,7 @@ public class BattleshipBoundary {
 				icon = new ImageIcon(getClass().getResource(
 						texturePath + "p" + c + "h.png"));
 				c++;
-				icon = new ImageIcon(icon.getImage().getScaledInstance(20, 20,
+				icon = new ImageIcon(icon.getImage().getScaledInstance(iconSize, iconSize,
 						java.awt.Image.SCALE_SMOOTH));
 				b.setIcon(icon);
 				b.setDisabledIcon(icon);
@@ -206,7 +191,7 @@ public class BattleshipBoundary {
 				icon = new ImageIcon(getClass().getResource(
 						texturePath + "p" + c + ".png"));
 				c++;
-				icon = new ImageIcon(icon.getImage().getScaledInstance(20, 20,
+				icon = new ImageIcon(icon.getImage().getScaledInstance(iconSize, iconSize,
 						java.awt.Image.SCALE_SMOOTH));
 				b.setIcon(icon);
 				b.setDisabledIcon(icon);
@@ -233,7 +218,7 @@ public class BattleshipBoundary {
 				icon = new ImageIcon(getClass().getResource(
 						texturePath + "p" + c + "h.png"));
 				c++;
-				icon = new ImageIcon(icon.getImage().getScaledInstance(20, 20,
+				icon = new ImageIcon(icon.getImage().getScaledInstance(iconSize, iconSize,
 						java.awt.Image.SCALE_SMOOTH));
 				b.setIcon(icon);
 				b.setDisabledIcon(icon);
@@ -244,7 +229,7 @@ public class BattleshipBoundary {
 				icon = new ImageIcon(getClass().getResource(
 						texturePath + "p" + c + ".png"));
 				c++;
-				icon = new ImageIcon(icon.getImage().getScaledInstance(20, 20,
+				icon = new ImageIcon(icon.getImage().getScaledInstance(iconSize, iconSize,
 						java.awt.Image.SCALE_SMOOTH));
 				b.setIcon(icon);
 				b.setDisabledIcon(icon);
@@ -362,6 +347,47 @@ public class BattleshipBoundary {
 				}
 			}
 		}
+	}
+	
+	private void generateShipsPanel(ArrayList<Ship> ships) {
+		ButtonGroup shipGroup = new ShipsButtonGroup();
+		
+		if(!(this.playerControls == null)) {
+			Set<Ship> shipI = this.shipRadioButtons.keySet();
+			for(Ship s: shipI) {
+				JRadioButton component = this.shipRadioButtons.get(s);
+				this.shipsPanel.remove(component);
+				this.playerControls.remove(component);
+			}
+			this.shipRadioButtons.clear();
+		} else {
+			this.playerControls = new ArrayList<>();
+			shipsPanel = new JPanel(new GridLayout(0, 1));
+			this.shipRadioButtons = new HashMap<>(ships.size());
+		}
+		
+		for (Ship s: ships) {
+			ImageIcon icon = new ImageIcon(getClass().getResource(
+					"/texture/l" + s.getLength() + "/all.png"));
+			icon = new ImageIcon(icon.getImage().getScaledInstance(
+					20 + 20 * s.getLength(), 20, java.awt.Image.SCALE_SMOOTH));
+			ImageIcon iconSelected = new ImageIcon(getClass().getResource(
+					"/texture/l" + s.getLength() + "/allSelected.png"));
+			iconSelected = new ImageIcon(iconSelected.getImage().getScaledInstance(
+					20 + 20 * s.getLength(), 20, java.awt.Image.SCALE_SMOOTH));
+			JRadioButton ss = new JRadioButton();
+			ss.setIcon(icon);
+			ss.setSelectedIcon(iconSelected);
+			ss.addActionListener(new ShipActionListener(s));
+			this.shipRadioButtons.put(s, ss);
+			this.playerControls.add(ss);
+			shipGroup.add(ss);
+			shipsPanel.add(ss);
+		}
+	}
+
+	public void setShips(ArrayList<Ship> ships) {
+		generateShipsPanel(ships);
 	}
 	
 	

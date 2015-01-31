@@ -3,7 +3,6 @@ package uni.project.sd.server.boundary;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -77,5 +76,14 @@ public class ServerBoundary {
 	public synchronized void setAddress(String ip, int port) {
 		this.myIp.setText("Server IP: "+ip);
 		this.myPort.setText("Server port: "+port);
+	}
+	
+	public Integer[] getShipNumber() {
+		Integer[] shipNumber = new Integer[this.shipsSelectors.size()];
+		for(int i = 0; i < this.shipsSelectors.size(); i++) {
+			shipNumber[i] = (Integer)this.shipsSelectors.get(i).getSelectedItem();
+		}
+		
+		return shipNumber;
 	}
 }

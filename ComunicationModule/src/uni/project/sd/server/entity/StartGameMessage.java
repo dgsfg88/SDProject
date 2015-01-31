@@ -23,6 +23,11 @@ public class StartGameMessage extends Message {
 		this.players = new ArrayList<>(players);
 	}
 	
+	public StartGameMessage(Integer[] shipNumber2, ArrayList<Player> players2) {
+		this.shipNumber = shipNumber2;
+		this.players = players2;
+	}
+
 	public void setShipNumber(int shipIndex, int number) {
 		this.shipNumber[shipIndex] = number;
 	}

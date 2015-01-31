@@ -45,7 +45,8 @@ public class MainClass {
 					book.addServer(args[k], args[k + 1]);
 				}
 
-				new MainClass();
+				Integer[] ships = {3,2,1,1};
+				new MainClass(ships);
 				new IncomingServer().doCustomRmiHandling(args[0]);
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
@@ -56,7 +57,7 @@ public class MainClass {
 		}
 	}
 
-	public MainClass() {
+	public MainClass(Integer[] shipNumber) {
 		if(login != null) {
 			login.setVisible(false);
 		}
@@ -67,6 +68,7 @@ public class MainClass {
 				address.serverNumber() + 1);
 		controller.setOcean(new Ocean(Ocean.splitted, BattleshipController.d,
 				address.serverNumber() + 1));
+		controller.setShipNumber(shipNumber);
 		
 		Thread sendPing = new Thread(new PingRoutine());
 		sendPing.start();

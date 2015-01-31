@@ -76,7 +76,7 @@ public class BattleshipController implements FrontBoundary {
 		myBoundary.setPlayerButtonEnabled(false);
 		myEntity.addView(this);
 	}
-
+	
 	public void gameReady() {
 		myBoundary.setPlayerButtonEnabled(true);
 	}
@@ -321,5 +321,30 @@ public class BattleshipController implements FrontBoundary {
 	public void setOrientationSelected(int orientation) {
 		this.orientationSelected = orientation;
 		this.myBoundary.setOrientationSelected(orientation);
+	}
+
+	public void setShipNumber(Integer[] shipNumber) {
+		this.ships = new ArrayList<>(shipNumber.length);
+		for(int i = 0; i < 4; i++) {
+			switch (i) {
+			case 0:
+				for(int k=0; k < shipNumber[i]; k++)
+					ships.add(new PatrolBoat(myPlayer));
+				break;
+			case 1:
+				for(int k=0; k < shipNumber[i]; k++)
+					ships.add(new Destroyer(myPlayer));
+				break;
+			case 2:
+				for(int k=0; k < shipNumber[i]; k++)
+					ships.add(new Battleship(myPlayer));
+				break;
+			case 3:
+				for(int k=0; k < shipNumber[i]; k++)
+					ships.add(new AircraftCarrier(myPlayer));
+				break;
+			}
+		}
+		this.myBoundary.setShips(this.ships);
 	}
 }

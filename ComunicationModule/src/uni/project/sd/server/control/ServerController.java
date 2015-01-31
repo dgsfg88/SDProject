@@ -64,7 +64,7 @@ public class ServerController {
 		for(int i = 0; i < this.playerOnline.size(); i++){
 			players.add(this.playerOnline.getElementAt(i));
 		}
-		StartGameMessage message = new StartGameMessage(4,players);
+		StartGameMessage message = new StartGameMessage(myBoundary.getShipNumber(),players);
 		
 		for(int i = 0; i < this.playerOnline.size(); i++){
 			ServerOutClass outClass = new ServerOutClass();
