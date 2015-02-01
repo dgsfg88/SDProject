@@ -384,6 +384,10 @@ public class BattleshipBoundary {
 			shipGroup.add(ss);
 			shipsPanel.add(ss);
 		}
+		
+		this.shipsPanel.setVisible(false);
+		this.shipsPanel.repaint(0);
+		this.shipsPanel.setVisible(true);
 	}
 
 	public void setShips(ArrayList<Ship> ships) {
