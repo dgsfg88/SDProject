@@ -30,29 +30,28 @@ public class BattleshipBoundary {
 	public static final int Vertical = 1;
 
 	private static final int iconSize = 40;
-	
-	private static final Color Blue = new Color(0, 127, 255, 0);
-	private static final Color LightBlue = new Color(41, 189, 217, 150);
-	private static final Color Red = new Color(255, 0, 0, 180);
-	private static final Color Yellow = new Color(255, 255, 0, 180);
-	private static final Color Orange = new Color(255, 165, 0, 180);
-	private static final Color Green = new Color(0, 255, 0, 180);
-	private static final Color Magenta = new Color(255, 0, 255, 180);
-	private static final Color White = new Color(255, 255, 255, 180);
-	private static final Color Fog = new Color(128, 128, 128, 180);
+
+	public static final Color Blue = new Color(0, 127, 255, 0);
+	public static final Color LightBlue = new Color(41, 189, 217, 150);
+	public static final Color Red = new Color(255, 0, 0, 180);
+	public static final Color Yellow = new Color(255, 255, 0, 180);
+	public static final Color Orange = new Color(255, 165, 0, 180);
+	public static final Color Green = new Color(0, 255, 0, 180);
+	public static final Color Magenta = new Color(255, 0, 255, 180);
+	public static final Color White = new Color(255, 255, 255, 180);
+	public static final Color Fog = new Color(128, 128, 128, 180);
 	private int row;
 	private int col;
 	private JFrame mainWindow;
 	private ArrayList<ArrayList<JButton>> playersIcons;
 	private JPanel shipsPanel;
-	
 
 	private ArrayList<Color> shipColors = new ArrayList<>();
-	
+
 	ArrayList<JComponent> playerControls;
-	
+
 	private HashMap<Ship, JRadioButton> shipRadioButtons;
-	
+
 	private int lengthSelected = 0;
 	private int orientationSelected = 0;
 	private LinkedList<Dimension> highlightPositions = new LinkedList<>();
@@ -66,39 +65,40 @@ public class BattleshipBoundary {
 		JPanel optionPanel = new JPanel(new GridLayout(0, 1));
 
 		optionPanel.setSize(250, 250 + 250 * ((playerNumber - 1) / 2));
-		
+
 		ButtonGroup orietationGroup = new ButtonGroup();
 
 		generateShipsPanel(ships);
-		
+
 		optionPanel.add(new JScrollPane(shipsPanel));
 		JPanel tempPanel = new JPanel(new GridLayout(0, 1));
 		JPanel orietPanel = new JPanel(new GridLayout(6, 1));
-		
-		JRadioButton h = new JRadioButton("Horizontal",true);
+
+		JRadioButton h = new JRadioButton("Horizontal", true);
 		JRadioButton v = new JRadioButton("Vertical");
-		v.addActionListener(new OrientationActionListener(BattleshipBoundary.Vertical));
-		h.addActionListener(new OrientationActionListener(BattleshipBoundary.Horizontal));
+		v.addActionListener(new OrientationActionListener(
+				BattleshipBoundary.Vertical));
+		h.addActionListener(new OrientationActionListener(
+				BattleshipBoundary.Horizontal));
 		this.playerControls.add(v);
 		this.playerControls.add(h);
 		orietationGroup.add(v);
 		orietationGroup.add(h);
 		orietPanel.add(h);
 		orietPanel.add(v);
-		
+
 		tempPanel.add(orietPanel);
-		
+
 		JButton setShipRandom = new JButton("Random positions");
 		setShipRandom.addActionListener(new RandomShipPositionActionListener());
 		this.playerControls.add(setShipRandom);
 		tempPanel.add(setShipRandom);
 
 		optionPanel.add(tempPanel);
-		
+
 		this.row = col = d;
 
-		Color[] colors = { Orange, Green, Magenta,
-				White };
+		Color[] colors = { Orange, Green, Magenta, White };
 		for (Color c : colors) {
 			shipColors.add(c);
 		}
@@ -113,7 +113,7 @@ public class BattleshipBoundary {
 
 		String background = "/texture/sea" + (new Random().nextInt(4) + 1)
 				+ ".png";
-		
+
 		for (int k = 0; k < playerNumber; k++) {
 			playerHome = new JPanel(new BorderLayout());
 			if (k > 0)
@@ -125,7 +125,7 @@ public class BattleshipBoundary {
 						BorderLayout.PAGE_START);
 			GridLayout layout = new GridLayout(row, col);
 			playerPanel = new JPanelBackground(background, layout);
-			((GridLayout)playerPanel.getLayout()).setVgap(0);
+			((GridLayout) playerPanel.getLayout()).setVgap(0);
 			playerHome.add(playerPanel, BorderLayout.CENTER);
 			buttons = new ArrayList<JButton>(col * row);
 
@@ -137,10 +137,11 @@ public class BattleshipBoundary {
 					singleButton.setBackground(Blue);
 					singleButton.setContentAreaFilled(false);
 					singleButton
-								.addActionListener(new BattleshipJButtonActionListener(
-										controller, c, r, k));
-					if(k == 0)
-						singleButton.addMouseListener(new GridMouseAdapter(c, r, this));
+							.addActionListener(new BattleshipJButtonActionListener(
+									controller, c, r, k));
+					if (k == 0)
+						singleButton.addMouseListener(new GridMouseAdapter(c,
+								r, this));
 					buttons.add(singleButton);
 					playerPanel.add(singleButton);
 				}
@@ -153,7 +154,7 @@ public class BattleshipBoundary {
 
 		mainWindow.add(optionPanel, BorderLayout.LINE_START);
 		mainWindow.add(gamePanel, BorderLayout.CENTER);
-		
+
 		mainWindow.setResizable(false);
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.pack();
@@ -171,7 +172,7 @@ public class BattleshipBoundary {
 
 		ImageIcon icon = null;
 
-		Color shipColor = shipColors.get(length-2);
+		Color shipColor = shipColors.get(length - 2);
 		if (orient == Horizontal) {
 			for (; x < startX + length; x++) {
 				JButton b = playersIcons.get(0).get(getCoordinate(x, y));
@@ -179,8 +180,8 @@ public class BattleshipBoundary {
 				icon = new ImageIcon(getClass().getResource(
 						texturePath + "p" + c + "h.png"));
 				c++;
-				icon = new ImageIcon(icon.getImage().getScaledInstance(iconSize, iconSize,
-						java.awt.Image.SCALE_SMOOTH));
+				icon = new ImageIcon(icon.getImage().getScaledInstance(
+						iconSize, iconSize, java.awt.Image.SCALE_SMOOTH));
 				b.setIcon(icon);
 				b.setDisabledIcon(icon);
 			}
@@ -191,21 +192,22 @@ public class BattleshipBoundary {
 				icon = new ImageIcon(getClass().getResource(
 						texturePath + "p" + c + ".png"));
 				c++;
-				icon = new ImageIcon(icon.getImage().getScaledInstance(iconSize, iconSize,
-						java.awt.Image.SCALE_SMOOTH));
+				icon = new ImageIcon(icon.getImage().getScaledInstance(
+						iconSize, iconSize, java.awt.Image.SCALE_SMOOTH));
 				b.setIcon(icon);
 				b.setDisabledIcon(icon);
 			}
 		}
 	}
-	
-	public void showEnemyShip (int length, int startX, int startY, int orient, int playerN) {
+
+	public void showEnemyShip(int length, int startX, int startY, int orient,
+			int playerN) {
 		int x = startX;
 		int y = startY;
 
 		playerN++;
-		System.out.println("Il giocatore è il numero: "+playerN);
-		
+		System.out.println("Il giocatore è il numero: " + playerN);
+
 		String texturePath = "/texture/l" + length + "/";
 
 		int c = 1;
@@ -218,8 +220,8 @@ public class BattleshipBoundary {
 				icon = new ImageIcon(getClass().getResource(
 						texturePath + "p" + c + "h.png"));
 				c++;
-				icon = new ImageIcon(icon.getImage().getScaledInstance(iconSize, iconSize,
-						java.awt.Image.SCALE_SMOOTH));
+				icon = new ImageIcon(icon.getImage().getScaledInstance(
+						iconSize, iconSize, java.awt.Image.SCALE_SMOOTH));
 				b.setIcon(icon);
 				b.setDisabledIcon(icon);
 			}
@@ -229,8 +231,8 @@ public class BattleshipBoundary {
 				icon = new ImageIcon(getClass().getResource(
 						texturePath + "p" + c + ".png"));
 				c++;
-				icon = new ImageIcon(icon.getImage().getScaledInstance(iconSize, iconSize,
-						java.awt.Image.SCALE_SMOOTH));
+				icon = new ImageIcon(icon.getImage().getScaledInstance(
+						iconSize, iconSize, java.awt.Image.SCALE_SMOOTH));
 				b.setIcon(icon);
 				b.setDisabledIcon(icon);
 			}
@@ -241,15 +243,14 @@ public class BattleshipBoundary {
 		return y * col + x;
 	}
 
-
 	public void setPlayerButtonEnabled(boolean enabled) {
 		synchronized (playersIcons) {
 			enablePlayer(0, enabled);
 		}
-		for(JComponent component: this.playerControls)
+		for (JComponent component : this.playerControls)
 			component.setEnabled(enabled);
 	}
-	
+
 	public void setButtonEnabled(boolean enabled) {
 		synchronized (playersIcons) {
 			for (int k = 1; k < playersIcons.size(); k++) {
@@ -257,7 +258,7 @@ public class BattleshipBoundary {
 			}
 		}
 	}
-	
+
 	private void enablePlayer(int player, boolean enabled) {
 		for (JButton b : playersIcons.get(player))
 			if (enabled) {
@@ -285,13 +286,20 @@ public class BattleshipBoundary {
 
 	public void setValue(int iD, int x, int y, boolean result) {
 		Color c = Yellow;
+
+		if (result)
+			c = Red;
+		setColor(iD, x, y, c);
+
+	}
+
+	public void setColor(int iD, int x, int y, Color c) {
 		synchronized (playersIcons) {
-			if (result)
-				c = Red;
 			playersIcons.get(iD).get(getCoordinate(x, y)).setBackground(c);
+			playersIcons.get(iD).get(getCoordinate(x, y)).setEnabled(false);
 		}
 	}
-	
+
 	public void disableShip(Ship s) {
 		this.lengthSelected = 0;
 		this.shipRadioButtons.get(s).setSelected(false);
@@ -299,9 +307,9 @@ public class BattleshipBoundary {
 	}
 
 	public void showAlert(String message, int i) {
-		JOptionPane.showMessageDialog(null, message);		
+		JOptionPane.showMessageDialog(null, message);
 	}
-	
+
 	public void showAlert(String message) {
 		JOptionPane.showMessageDialog(null, message);
 	}
@@ -315,46 +323,51 @@ public class BattleshipBoundary {
 	}
 
 	public void addHighlight(int x, int y) {
-		if(lengthSelected > 0) {
+		if (lengthSelected > 0) {
 			synchronized (playersIcons) {
 				try {
-					for(int i = 0; i < this.lengthSelected; i++) {
-						if(x >= this.col)
+					for (int i = 0; i < this.lengthSelected; i++) {
+						if (x >= this.col)
 							break;
-						this.oldColors.add(this.playersIcons.get(0).get(getCoordinate(x, y)).getBackground());
+						this.oldColors.add(this.playersIcons.get(0)
+								.get(getCoordinate(x, y)).getBackground());
 						this.highlightPositions.add(new Dimension(x, y));
-						this.playersIcons.get(0).get(getCoordinate(x, y)).setBackground(Green);
-						if(this.orientationSelected == Horizontal)
+						this.playersIcons.get(0).get(getCoordinate(x, y))
+								.setBackground(Green);
+						if (this.orientationSelected == Horizontal)
 							x++;
 						else
 							y++;
 					}
 				} catch (IndexOutOfBoundsException e) {
-					
+
 				}
 			}
 		}
 	}
 
 	public void removeHighlight() {
-		if(!highlightPositions.isEmpty()) {
+		if (!highlightPositions.isEmpty()) {
 			synchronized (playersIcons) {
 				int i = highlightPositions.size();
-				for(; i > 0; i--) {
+				for (; i > 0; i--) {
 					Dimension position = highlightPositions.removeFirst();
 					Color oldColor = this.oldColors.removeFirst();
-					this.playersIcons.get(0).get(getCoordinate(position.width, position.height)).setBackground(oldColor);
+					this.playersIcons
+							.get(0)
+							.get(getCoordinate(position.width, position.height))
+							.setBackground(oldColor);
 				}
 			}
 		}
 	}
-	
+
 	private void generateShipsPanel(ArrayList<Ship> ships) {
 		ButtonGroup shipGroup = new ShipsButtonGroup();
-		
-		if(!(this.playerControls == null)) {
+
+		if (!(this.playerControls == null)) {
 			Set<Ship> shipI = this.shipRadioButtons.keySet();
-			for(Ship s: shipI) {
+			for (Ship s : shipI) {
 				JRadioButton component = this.shipRadioButtons.get(s);
 				this.shipsPanel.remove(component);
 				this.playerControls.remove(component);
@@ -365,16 +378,17 @@ public class BattleshipBoundary {
 			shipsPanel = new JPanel(new GridLayout(0, 1));
 			this.shipRadioButtons = new HashMap<>(ships.size());
 		}
-		
-		for (Ship s: ships) {
+
+		for (Ship s : ships) {
 			ImageIcon icon = new ImageIcon(getClass().getResource(
 					"/texture/l" + s.getLength() + "/all.png"));
 			icon = new ImageIcon(icon.getImage().getScaledInstance(
 					20 + 20 * s.getLength(), 20, java.awt.Image.SCALE_SMOOTH));
 			ImageIcon iconSelected = new ImageIcon(getClass().getResource(
 					"/texture/l" + s.getLength() + "/allSelected.png"));
-			iconSelected = new ImageIcon(iconSelected.getImage().getScaledInstance(
-					20 + 20 * s.getLength(), 20, java.awt.Image.SCALE_SMOOTH));
+			iconSelected = new ImageIcon(iconSelected.getImage()
+					.getScaledInstance(20 + 20 * s.getLength(), 20,
+							java.awt.Image.SCALE_SMOOTH));
 			JRadioButton ss = new JRadioButton();
 			ss.setIcon(icon);
 			ss.setSelectedIcon(iconSelected);
@@ -384,7 +398,7 @@ public class BattleshipBoundary {
 			shipGroup.add(ss);
 			shipsPanel.add(ss);
 		}
-		
+
 		this.shipsPanel.setVisible(false);
 		this.shipsPanel.repaint(0);
 		this.shipsPanel.setVisible(true);
@@ -393,6 +407,5 @@ public class BattleshipBoundary {
 	public void setShips(ArrayList<Ship> ships) {
 		generateShipsPanel(ships);
 	}
-	
-	
+
 }

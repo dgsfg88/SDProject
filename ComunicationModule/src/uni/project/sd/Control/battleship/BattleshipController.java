@@ -46,6 +46,8 @@ public class BattleshipController implements FrontBoundary {
 	private boolean oceanCompleted = false;
 	private Integer[] shipsRemaining;
 
+	private int hitNotUsed;
+
 	private Object sendOceanLock = new Object();
 
 	public synchronized static BattleshipController getInstance(MainClass main,
@@ -76,7 +78,7 @@ public class BattleshipController implements FrontBoundary {
 		myBoundary.setPlayerButtonEnabled(false);
 		myEntity.addView(this);
 	}
-	
+
 	public void gameReady() {
 		myBoundary.setPlayerButtonEnabled(true);
 	}
@@ -85,15 +87,32 @@ public class BattleshipController implements FrontBoundary {
 		if (player == 0) {
 			placeShip(x, y);
 		} else {
+			this.myBoundary.setColor(player, x, y, BattleshipBoundary.Fog);
 			player--;
-			myEntity.setPlayerTurn(false);
 			ServerAddress address = ServerAddress.getInstance();
-			updateGrid(address.getServer(player), this.myPlayer, x, y);
 			synchronized (eventList) {
 				eventList.add(new EventListItem(address.getMyAddress(), address
 						.getServer(player), x, y));
 			}
-			myMain.releaseToken(player, x, y);
+			myMain.sendRealTimeAction(player, x, y);
+			this.hitNotUsed--;
+			if (hitNotUsed <= 0) {
+				showLastMoves();
+				myEntity.setPlayerTurn(false);
+				this.myMain.releaseToken();
+			}
+		}
+	}
+
+	private void showLastMoves() {
+		synchronized (eventList) {
+			int i = this.eventList.size() - this.shipsRemaining[myPlayer]
+					+ this.hitNotUsed;
+			for (; i < this.eventList.size(); i++) {
+				updateGrid(this.eventList.get(i).getReceiver(), this.myPlayer,
+						this.eventList.get(i).getX(), this.eventList.get(i)
+								.getY());
+			}
 		}
 	}
 
@@ -133,7 +152,7 @@ public class BattleshipController implements FrontBoundary {
 				int y = r.nextInt(d);
 				int or = r.nextInt(2);
 				result = addShip(x, y, or, c);
-				if(result){
+				if (result) {
 					this.myBoundary.disableShip(c);
 				}
 			} while (!result);
@@ -141,8 +160,6 @@ public class BattleshipController implements FrontBoundary {
 		synchronized (sendOceanLock) {
 			this.oceanCompleted = true;
 		}
-		
-		
 
 		sendOcean();
 	}
@@ -251,6 +268,7 @@ public class BattleshipController implements FrontBoundary {
 					myMain.releaseToken();
 					myBoundary.setButtonEnabled(false);
 				} else {
+					this.hitNotUsed = this.shipsRemaining[this.myPlayer];
 					myBoundary.setButtonEnabled(enabled);
 				}
 			}
@@ -325,26 +343,31 @@ public class BattleshipController implements FrontBoundary {
 
 	public void setShipNumber(Integer[] shipNumber) {
 		this.ships = new ArrayList<>(shipNumber.length);
-		for(int i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			switch (i) {
 			case 0:
-				for(int k=0; k < shipNumber[i]; k++)
+				for (int k = 0; k < shipNumber[i]; k++)
 					ships.add(new PatrolBoat(myPlayer));
 				break;
 			case 1:
-				for(int k=0; k < shipNumber[i]; k++)
+				for (int k = 0; k < shipNumber[i]; k++)
 					ships.add(new Destroyer(myPlayer));
 				break;
 			case 2:
-				for(int k=0; k < shipNumber[i]; k++)
+				for (int k = 0; k < shipNumber[i]; k++)
 					ships.add(new Battleship(myPlayer));
 				break;
 			case 3:
-				for(int k=0; k < shipNumber[i]; k++)
+				for (int k = 0; k < shipNumber[i]; k++)
 					ships.add(new AircraftCarrier(myPlayer));
 				break;
 			}
 		}
+
+		for (int i = 0; i < this.shipsRemaining.length; i++) {
+			this.shipsRemaining[i] = ships.size();
+		}
+
 		this.myBoundary.setShips(this.ships);
 	}
 }

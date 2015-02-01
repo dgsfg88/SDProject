@@ -73,10 +73,9 @@ public class MainClass {
 		Thread sendPing = new Thread(new PingRoutine());
 		sendPing.start();
 	}
-
-	public void releaseToken(int player, int row, int col) {
+	
+	public void sendRealTimeAction(int player, int row, int col) {
 		new BattleshipActions().sendHit(player, row, col);
-		new BattleshipActions().relaseToken(BattleshipController.getInstance(null, 0, 0).getEventList());
 	}
 	
 	public void releaseToken(){
