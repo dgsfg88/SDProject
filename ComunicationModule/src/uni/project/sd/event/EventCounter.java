@@ -42,7 +42,6 @@ public class EventCounter {
 	public EventTime getNextEvent() {
 		synchronized (myCounter) {
 			this.myCounter.incrementMyCounter();
-			System.out.println("ho incrementato il mio contatore, ora è "+myCounter.getEventAtNode(myCounter.getYourID()));
 			return myCounter;
 		}
 	}

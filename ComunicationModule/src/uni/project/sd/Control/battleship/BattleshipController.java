@@ -31,6 +31,7 @@ public class BattleshipController implements FrontBoundary {
 	public static final int d = 10;
 	private MainClass myMain;
 	private Boolean gameOver = false;
+	private Boolean gameEnded = false;
 
 	private DummyFrontEntity myEntity;
 	private BattleshipBoundary myBoundary;
@@ -106,7 +107,7 @@ public class BattleshipController implements FrontBoundary {
 
 	private void showLastMoves() {
 		synchronized (eventList) {
-			int i = this.eventList.size() - this.shipsRemaining[myPlayer]
+			int i = this.eventList.size() - this.shipsRemaining[0]
 					+ this.hitNotUsed;
 			for (; i < this.eventList.size(); i++) {
 				updateGrid(this.eventList.get(i).getReceiver(), this.myPlayer,
@@ -265,10 +266,13 @@ public class BattleshipController implements FrontBoundary {
 		} else {
 			synchronized (this.gameOver) {
 				if (this.haveToken && this.gameOver) {
-					myMain.releaseToken();
+					synchronized (gameEnded) {
+						if(!gameEnded)
+							myMain.releaseToken();
+					}
 					myBoundary.setButtonEnabled(false);
 				} else {
-					this.hitNotUsed = this.shipsRemaining[this.myPlayer];
+					this.hitNotUsed = this.shipsRemaining[0];
 					myBoundary.setButtonEnabled(enabled);
 				}
 			}
@@ -327,13 +331,22 @@ public class BattleshipController implements FrontBoundary {
 			}
 		}
 		if (result) {
-			myBoundary.showAlert("Hai Vinto!");
+			synchronized (gameEnded) {
+				if(!this.gameEnded) {
+					if(!gameOver)
+						myBoundary.showAlert("You win!");
+					this.gameEnded = true;
+				}
+			}
 		}
 	}
 
 	public void setShipSelected(Ship myShip) {
 		this.shipSelected = myShip;
-		this.myBoundary.setLengthSelected(myShip.getLength());
+		if(myShip != null)
+			this.myBoundary.setLengthSelected(myShip.getLength());
+		else
+			this.myBoundary.setLengthSelected(0);
 	}
 
 	public void setOrientationSelected(int orientation) {

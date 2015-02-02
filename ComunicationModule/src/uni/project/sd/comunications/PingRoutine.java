@@ -33,10 +33,7 @@ public class PingRoutine implements Runnable {
 				if (result == 0) {
 					new ComunicationActions().nodeDown(k);
 					address.setServerStatus(k, false);
-					DummyFrontEntity.getInstance().addMessage(
-							"Node " + k
-									+ " is down, token position: "
-									+ address.getTokenPosition());
+
 					DummyFrontEntity.getInstance().destroyPlayer(
 							address.getServerNID(k));
 				}

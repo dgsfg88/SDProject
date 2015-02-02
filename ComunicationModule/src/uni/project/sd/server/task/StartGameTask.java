@@ -3,7 +3,6 @@ package uni.project.sd.server.task;
 import java.util.ArrayList;
 
 import saqib.rasul.Task;
-import uni.project.sd.MainClass;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.entity.Message;
 import uni.project.sd.comunications.task.MessageBase;
@@ -35,7 +34,7 @@ public class StartGameTask extends MessageBase implements Task<Integer> {
 				book.addServer(p.getName(), p.getIp(), p.getPort());
 		}
 		
-		new MainClass(message.getShipNumber());
+		new Thread(new StartGameThread(message.getShipNumber())).start();;
 		
 		return 1;
 	}

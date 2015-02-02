@@ -66,8 +66,6 @@ public class ComunicationActions {
 							new ComunicationActions().nodeDown(next);
 						}
 					} catch (IndexOutOfBoundsException e){
-						//TODO routine di terminazione
-						System.out.println("Ho vinto!");
 						result = 1;
 					}
 						
