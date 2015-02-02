@@ -218,6 +218,7 @@ public class BattleshipController implements FrontBoundary {
 								myMain.releaseToken();
 							}
 							this.gameOver = true;
+							myBoundary.disablePlayer(-1);
 							myBoundary.showAlert("Hai perso!");
 						}
 				}
@@ -315,9 +316,7 @@ public class BattleshipController implements FrontBoundary {
 	}
 
 	public ArrayList<EventListItem> getEventList() {
-		synchronized (eventList) {
-			return eventList;
-		}
+		return eventList;
 	}
 
 	@Override
