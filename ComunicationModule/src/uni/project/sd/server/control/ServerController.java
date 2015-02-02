@@ -35,17 +35,14 @@ public class ServerController {
 		this.myBoundary.setAddress(this.myIP, this.portNumber);
 	}
 	
-	public boolean addPlayer(String name, String ip, int port) {
+	public void addPlayer(String name, String ip, int port) {
 		synchronized (playerOnline) {
 			Player p = new Player(nextID, port, ip, name);
 			if(!playerOnline.contains(p)) {
 				playerOnline.addElement(p);
 				nextID++;
-				
-				return false;
 			}
 		}
-		return true;
 	}
 	
 	public void removePlayer(String name, String ip, int port) {
