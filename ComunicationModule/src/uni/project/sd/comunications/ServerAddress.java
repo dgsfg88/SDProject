@@ -11,7 +11,7 @@ import uni.project.sd.comunications.entity.ServerLocation;
  * aggiungere controlli thread-safe
  * 
  * @author Andrea
- *
+ * 
  */
 public class ServerAddress {
 	private static ServerAddress addressBook = null;
@@ -59,6 +59,7 @@ public class ServerAddress {
 	public void addServer(String server, String location) {
 		addServer(server, location, 1099);
 	}
+
 	public void addServer(String server, String location, int port) {
 		serverList.add(server);
 		serverOnline.put(server, true);
@@ -167,6 +168,7 @@ public class ServerAddress {
 	public String getLocation(String server) {
 		return serverLocation.get(server).getIp();
 	}
+
 	public int getServerPort(String server) {
 		return serverLocation.get(server).getPort();
 	}
@@ -179,7 +181,10 @@ public class ServerAddress {
 			LinkedList<String> pl = new LinkedList<>(this.serverList);
 			pl.add(myAddress);
 			String[] players = new String[pl.size()];
-			pl.toArray(players);
+			for (i = 0; i < pl.size(); i++) {
+				players[i] = pl.get(i) + "@" + getLocation(pl.get(i)) + ":"
+						+ getServerPort(pl.get(i));
+			}
 			Arrays.sort(players);
 			playerID = new HashMap<>(players.length);
 			for (i = 0; i < players.length; i++) {
