@@ -28,7 +28,7 @@ public class BattleshipController implements FrontBoundary {
 
 	private static BattleshipController controller;
 
-	public static final int d = 10;
+	private int d = 10;
 	private MainClass myMain;
 	private Boolean gameOver = false;
 	private Boolean gameEnded = false;
@@ -48,6 +48,7 @@ public class BattleshipController implements FrontBoundary {
 	private Integer[] shipsRemaining;
 
 	private int hitNotUsed;
+	private boolean oneShotPerShip = false;
 
 	private Object sendOceanLock = new Object();
 
@@ -75,7 +76,11 @@ public class BattleshipController implements FrontBoundary {
 			this.shipsRemaining[i] = ships.size();
 		}
 		myEntity = DummyFrontEntity.getInstance();
-		myBoundary = new BattleshipBoundary(this, playerNumber, d, this.ships);
+	}
+
+	public void startView() {
+		myBoundary = new BattleshipBoundary(this, shipsRemaining.length, d,
+				this.ships);
 		myBoundary.setPlayerButtonEnabled(false);
 		myEntity.addView(this);
 	}
@@ -107,8 +112,10 @@ public class BattleshipController implements FrontBoundary {
 
 	private void showLastMoves() {
 		synchronized (eventList) {
-			int i = this.eventList.size() - this.shipsRemaining[0]
-					+ this.hitNotUsed;
+			int hitNumber = 1;
+			if (oneShotPerShip)
+				hitNumber = this.shipsRemaining[0];
+			int i = this.eventList.size() - hitNumber + this.hitNotUsed;
 			for (; i < this.eventList.size(); i++) {
 				updateGrid(this.eventList.get(i).getReceiver(), this.myPlayer,
 						this.eventList.get(i).getX(), this.eventList.get(i)
@@ -207,35 +214,39 @@ public class BattleshipController implements FrontBoundary {
 		this.processedEvents.add(new EventListItem("", ID, x, y));
 
 		if (ID.equals(serverAdd.getMyAddress())) {
-			myBoundary.setValue(0, x, y, !hit.isEmpty());
-			Set<Ship> shipsHit = hit.keySet();
-			for (Ship s : shipsHit) {
-				if (s.getHealth() <= 0) {
-					shipsRemaining[0]--;
-					if (shipsRemaining[0] <= 0)
-						synchronized (this.gameOver) {
-							if (this.haveToken) {
-								myMain.releaseToken();
+			if (shipsRemaining[0] > 0) {
+				myBoundary.setValue(0, x, y, !hit.isEmpty());
+				Set<Ship> shipsHit = hit.keySet();
+				for (Ship s : shipsHit) {
+					if (s.getHealth() <= 0) {
+						shipsRemaining[0]--;
+						if (shipsRemaining[0] <= 0)
+							synchronized (this.gameOver) {
+								if (this.haveToken) {
+									myMain.releaseToken();
+								}
+								this.gameOver = true;
+								myBoundary.disablePlayer(-1);
+								myBoundary.showAlert("Hai perso!");
 							}
-							this.gameOver = true;
-							myBoundary.disablePlayer(-1);
-							myBoundary.showAlert("Hai perso!");
-						}
+					}
 				}
 			}
 		} else {
 			int enemyID = serverAdd.getServerNID(ID);
-			myBoundary.setValue(enemyID + 1, x, y, !hit.isEmpty());
-			Set<Ship> shipsHit = hit.keySet();
-			for (Ship s : shipsHit) {
-				if (s.getHealth() <= 0) {
-					shipsRemaining[enemyID + 1]--;
-					myBoundary.showEnemyShip(s.getLength(), s
-							.getFirstCoordinate().getX(), s
-							.getFirstCoordinate().getY(), s.getOrientation(),
-							enemyID);
-					if (shipsRemaining[enemyID + 1] <= 0) {
-						disablePlayer(enemyID);
+			if (shipsRemaining[enemyID + 1] > 0) {
+				myBoundary.setValue(enemyID + 1, x, y, !hit.isEmpty());
+				Set<Ship> shipsHit = hit.keySet();
+				for (Ship s : shipsHit) {
+					if (s.getHealth() <= 0) {
+						shipsRemaining[enemyID + 1]--;
+						myBoundary.showEnemyShip(s.getLength(), s
+								.getFirstCoordinate().getX(), s
+								.getFirstCoordinate().getY(), s
+								.getOrientation(), enemyID);
+						if (shipsRemaining[enemyID + 1] <= 0) {
+							disablePlayer(enemyID);
+						}
 					}
 				}
 			}
@@ -268,12 +279,15 @@ public class BattleshipController implements FrontBoundary {
 			synchronized (this.gameOver) {
 				if (this.haveToken && this.gameOver) {
 					synchronized (gameEnded) {
-						if(!gameEnded)
+						if (!gameEnded)
 							myMain.releaseToken();
 					}
 					myBoundary.setButtonEnabled(false);
 				} else {
-					this.hitNotUsed = this.shipsRemaining[0];
+					if (oneShotPerShip)
+						this.hitNotUsed = this.shipsRemaining[0];
+					else
+						this.hitNotUsed = 1;
 					myBoundary.setButtonEnabled(enabled);
 				}
 			}
@@ -331,8 +345,8 @@ public class BattleshipController implements FrontBoundary {
 		}
 		if (result) {
 			synchronized (gameEnded) {
-				if(!this.gameEnded) {
-					if(!gameOver)
+				if (!this.gameEnded) {
+					if (!gameOver)
 						myBoundary.showAlert("You win!");
 					this.gameEnded = true;
 				}
@@ -342,7 +356,7 @@ public class BattleshipController implements FrontBoundary {
 
 	public void setShipSelected(Ship myShip) {
 		this.shipSelected = myShip;
-		if(myShip != null)
+		if (myShip != null)
 			this.myBoundary.setLengthSelected(myShip.getLength());
 		else
 			this.myBoundary.setLengthSelected(0);
@@ -381,5 +395,13 @@ public class BattleshipController implements FrontBoundary {
 		}
 
 		this.myBoundary.setShips(this.ships);
+	}
+
+	public void setOneShotPerShip(boolean oneShotPerShip) {
+		this.oneShotPerShip = oneShotPerShip;
+	}
+
+	public void setDimension(int dimension) {
+		this.d = dimension;
 	}
 }

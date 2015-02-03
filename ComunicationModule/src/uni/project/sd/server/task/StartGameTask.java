@@ -34,7 +34,7 @@ public class StartGameTask extends MessageBase implements Task<Integer> {
 				book.addServer(p.getName(), p.getIp(), p.getPort());
 		}
 		
-		new Thread(new StartGameThread(message.getShipNumber())).start();;
+		new Thread(new StartGameThread(message.getShipNumber(), message.isOneShotPerShip(), message.getD())).start();;
 		
 		return 1;
 	}

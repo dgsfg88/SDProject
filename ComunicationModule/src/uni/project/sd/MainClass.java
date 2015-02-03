@@ -46,7 +46,7 @@ public class MainClass {
 				}
 
 				Integer[] ships = {3,2,1,1};
-				new MainClass(ships);
+				new MainClass(ships,false,10);
 				new IncomingServer().doCustomRmiHandling(args[0]);
 			} catch (RemoteException e1) {
 				e1.printStackTrace();
@@ -57,7 +57,7 @@ public class MainClass {
 		}
 	}
 
-	public MainClass(Integer[] shipNumber) {
+	public MainClass(Integer[] shipNumber, boolean oneShotPerShip, int dimension) {
 		if(login != null) {
 			login.setVisible(false);
 		}
@@ -66,8 +66,13 @@ public class MainClass {
 		BattleshipController controller = BattleshipController.getInstance(
 				this, address.getPlayerID(address.getMyAddress()),
 				address.serverNumber() + 1);
-		controller.setOcean(new Ocean(Ocean.splitted, BattleshipController.d,
+		controller.setOcean(new Ocean(Ocean.splitted, dimension,
 				address.serverNumber() + 1));
+		
+		controller.setOneShotPerShip(oneShotPerShip);
+		controller.setDimension(dimension);
+		controller.startView();
+		
 		controller.setShipNumber(shipNumber);
 		
 		Thread sendPing = new Thread(new PingRoutine());

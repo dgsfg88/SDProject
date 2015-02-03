@@ -12,6 +12,8 @@ public class StartGameMessage extends Message {
 	private static final long serialVersionUID = -5374513161557928658L;
 	private ArrayList<Player> players;
 	private Integer[] shipNumber;
+	private int d;
+	private boolean oneShotPerShip;
 	
 	public StartGameMessage(int shipTypes) {
 		this.shipNumber = new Integer[shipTypes];
@@ -43,4 +45,22 @@ public class StartGameMessage extends Message {
 	public Integer[] getShipNumber() {
 		return shipNumber;
 	}
+
+	public int getD() {
+		return d;
+	}
+
+	public void setD(int d) {
+		this.d = d;
+	}
+
+	public boolean isOneShotPerShip() {
+		return oneShotPerShip;
+	}
+
+	public void setOneShotPerShip(boolean oneShotPerShip) {
+		this.oneShotPerShip = oneShotPerShip;
+	}
+	
+	
 }

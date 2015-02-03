@@ -3,7 +3,9 @@ package uni.project.sd.server.boundary;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,6 +21,8 @@ public class ServerBoundary {
 	private JFrame mainView;
 	private JLabel myIp, myPort;
 	private ArrayList<JComboBox<Integer>> shipsSelectors;
+	private JComboBox<Integer> gridDimensions;
+	private JCheckBox checkBox;
 	
 	public ServerBoundary(ServerController controller) {
 		this.mainView = new JFrame("Battleship Server");
@@ -28,9 +32,12 @@ public class ServerBoundary {
 		
 		shipsSelectors = new ArrayList<>();
 		Integer[] items = {0,1,2,3,4,5,6,7,8,9};
+		
+		JPanel optionPanel = new JPanel(new GridLayout(0, 1));
+
 		for(int i = 0; i < 4; i++) {
 			JPanel cmbPanel = new JPanel(new BorderLayout());
-			JLabel label = new JLabel("Ship " + i);
+			JLabel label = new JLabel("Ship " + (i+2));
 			cmbPanel.add(label,BorderLayout.LINE_START);
 			JComboBox<Integer> shipNumbers = new JComboBox<>(items);
 			shipNumbers.setSelectedIndex(1);
@@ -39,7 +46,18 @@ public class ServerBoundary {
 			tmpPanel.add(cmbPanel);
 		}
 		
-		mainView.getContentPane().add(tmpPanel, BorderLayout.PAGE_START);
+		optionPanel.add(tmpPanel);
+		tmpPanel = new JPanel();
+		tmpPanel.add(new JLabel("One shot per ship: "));
+		checkBox = new JCheckBox();
+		
+		Integer[] items2 = {10,11,12,13,14,15,16,17,18,19,20};
+		gridDimensions = new JComboBox<>(items2);
+		tmpPanel.add(checkBox);
+		tmpPanel.add(new JLabel("Grid size: "));
+		tmpPanel.add(gridDimensions);
+		optionPanel.add(tmpPanel);
+		mainView.getContentPane().add(optionPanel, BorderLayout.PAGE_START);
 		
 		JList<Player> playersList = new JList<>(controller.getPlayerList());
 		mainView.getContentPane().add(new JScrollPane(playersList), BorderLayout.CENTER);
@@ -85,5 +103,13 @@ public class ServerBoundary {
 		}
 		
 		return shipNumber;
+	}
+	
+	public boolean getShotType() {
+		return checkBox.isSelected();
+	}
+	
+	public Integer getGridSize() {
+		return (Integer) this.gridDimensions.getSelectedItem();
 	}
 }

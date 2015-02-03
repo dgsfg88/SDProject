@@ -66,11 +66,15 @@ public class ServerController {
 		}
 		StartGameMessage message = new StartGameMessage(myBoundary.getShipNumber(),players);
 		
+		message.setOneShotPerShip(myBoundary.getShotType());
+		message.setD(myBoundary.getGridSize());
+		
 		for(int i = 0; i < this.playerOnline.size(); i++){
 			ServerOutClass outClass = new ServerOutClass();
 			outClass.setMessageAndType(message, 0);
 			outClass.doCustomRmiHandling(this.playerOnline.getElementAt(i).getName());
 		}
+		
 		
 		System.exit(0);
 	}

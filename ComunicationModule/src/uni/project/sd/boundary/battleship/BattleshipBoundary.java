@@ -287,8 +287,9 @@ public class BattleshipBoundary {
 
 	public void setColor(int iD, int x, int y, Color c) {
 		synchronized (playersIcons) {
-			playersIcons.get(iD).get(getCoordinate(x, y)).setBackground(c);
-			playersIcons.get(iD).get(getCoordinate(x, y)).setEnabled(false);
+				playersIcons.get(iD).get(getCoordinate(x, y)).setBackground(c);
+				playersIcons.get(iD).get(getCoordinate(x, y)).setEnabled(false);
+			
 		}
 	}
 
