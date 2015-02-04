@@ -14,6 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.NumberFormatter;
 
+import uni.project.sd.boundary.battleship.listener.LoginActionListener;
+
 public class LoginBoundary {
 	public final static boolean shouldFill = true;
 	private JFrame loginWindow;

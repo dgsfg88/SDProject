@@ -1,4 +1,4 @@
-package uni.project.sd.boundary.battleship;
+package uni.project.sd.boundary.battleship.listener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

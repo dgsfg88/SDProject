@@ -1,4 +1,4 @@
-package uni.project.sd.boundary.battleship;
+package uni.project.sd.boundary.battleship.listener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
 import saqib.rasul.RmiStarter;
+import uni.project.sd.boundary.battleship.LoginBoundary;
 import uni.project.sd.comunications.IncomingServer;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;

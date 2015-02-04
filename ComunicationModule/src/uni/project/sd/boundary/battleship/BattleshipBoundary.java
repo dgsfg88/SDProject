@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,6 +25,11 @@ import javax.swing.JScrollPane;
 
 import uni.project.sd.Control.battleship.BattleshipController;
 import uni.project.sd.Entity.battleship.Ship;
+import uni.project.sd.boundary.battleship.listener.AutoPlayListener;
+import uni.project.sd.boundary.battleship.listener.BattleshipJButtonActionListener;
+import uni.project.sd.boundary.battleship.listener.OrientationActionListener;
+import uni.project.sd.boundary.battleship.listener.RandomShipPositionActionListener;
+import uni.project.sd.boundary.battleship.listener.ShipActionListener;
 import uni.project.sd.comunications.ServerAddress;
 
 public class BattleshipBoundary {
@@ -94,9 +100,12 @@ public class BattleshipBoundary {
 
 		tempPanel.add(orietPanel);
 
+		JCheckBox autoPlay = new JCheckBox("Auto play");
+		autoPlay.addItemListener(new AutoPlayListener(controller));
 		JButton setShipRandom = new JButton("Random positions");
 		setShipRandom.addActionListener(new RandomShipPositionActionListener());
 		this.playerControls.add(setShipRandom);
+		tempPanel.add(autoPlay);
 		tempPanel.add(setShipRandom);
 
 		optionPanel.add(tempPanel);
