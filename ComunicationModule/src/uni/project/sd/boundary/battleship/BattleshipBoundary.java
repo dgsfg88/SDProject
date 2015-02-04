@@ -52,7 +52,8 @@ public class BattleshipBoundary {
 	private JPanel shipsPanel;
 
 	private ArrayList<Color> shipColors = new ArrayList<>();
-
+	private ArrayList<JLabel> shipRemaining;
+	
 	ArrayList<JComponent> playerControls;
 
 	private HashMap<Ship, JRadioButton> shipRadioButtons;
@@ -76,12 +77,6 @@ public class BattleshipBoundary {
 
 		ButtonGroup orietationGroup = new ButtonGroup();
 
-		generateShipsPanel(ships);
-		JScrollPane shipsScroller = new JScrollPane(shipsPanel);
-		shipsScroller
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-		optionPanel.add(shipsScroller);
 		JPanel tempPanel = new JPanel(new GridLayout(0, 1));
 		JPanel orietPanel = new JPanel(new GridLayout(6, 1));
 
@@ -108,8 +103,6 @@ public class BattleshipBoundary {
 		tempPanel.add(autoPlay);
 		tempPanel.add(setShipRandom);
 
-		optionPanel.add(tempPanel);
-
 		this.row = col = d;
 
 		Color[] colors = { Orange, Green, Magenta, White };
@@ -128,17 +121,20 @@ public class BattleshipBoundary {
 		String background = "/texture/sea" + (new Random().nextInt(4) + 1)
 				+ ".png";
 
-		gamePanel.setSize(400, 200 + 200 * (playerNumber-1)/2);
+		this.shipRemaining = new ArrayList<>(playerNumber);
 		
 		for (int k = 0; k < playerNumber; k++) {
 			playerHome = new JPanel(new BorderLayout());
+			JPanel playerHeader = new JPanel();
 			if (k > 0)
-				playerHome.add(new JLabel(address.getServer(k - 1) + "@"
-						+ address.getLocation(address.getServer(k - 1))),
-						BorderLayout.PAGE_START);
+				playerHeader.add(new JLabel(address.getServer(k - 1) + "@"
+						+ address.getLocation(address.getServer(k - 1))));
 			else
-				playerHome.add(new JLabel(address.getMyAddress()),
-						BorderLayout.PAGE_START);
+				playerHeader.add(new JLabel(address.getMyAddress()));
+			JLabel myShips = new JLabel("0");
+			this.shipRemaining.add(myShips);
+			playerHeader.add(myShips);
+			playerHome.add(playerHeader,BorderLayout.PAGE_START);
 			GridLayout layout = new GridLayout(row, col);
 			playerPanel = new JPanelBackground(background, layout);
 			((GridLayout) playerPanel.getLayout()).setVgap(0);
@@ -168,6 +164,14 @@ public class BattleshipBoundary {
 			playersIcons.add(buttons);
 		}
 
+		generateShipsPanel(ships);
+		JScrollPane shipsScroller = new JScrollPane(shipsPanel);
+		shipsScroller
+				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		optionPanel.add(shipsScroller);
+		optionPanel.add(tempPanel);
+		
 		mainWindow.add(optionPanel, BorderLayout.LINE_START);
 		JScrollPane gameScroller = new JScrollPane(gamePanel);
 		
@@ -176,7 +180,10 @@ public class BattleshipBoundary {
 		mainWindow.setResizable(false);
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		mainWindow.setSize(1024, 768);
+		if(playerNumber == 2)
+			mainWindow.setSize(1024, 500);
+		else
+			mainWindow.setSize(1024, 768);
 
 		mainWindow.setVisible(true);
 
@@ -280,6 +287,7 @@ public class BattleshipBoundary {
 	}
 
 	public void disablePlayer(int k) {
+		this.shipRemaining.get(k+1).setText("Remaining ships: 0");
 		synchronized (playersIcons) {
 			for (JButton b : playersIcons.get(k + 1)) {
 				b.setBackground(Fog);
@@ -416,10 +424,17 @@ public class BattleshipBoundary {
 		this.shipsPanel.setVisible(false);
 		this.shipsPanel.repaint(0);
 		this.shipsPanel.setVisible(true);
+		
+		for(JLabel l: shipRemaining) {
+			l.setText("Remaining ships: " + this.shipRadioButtons.size());
+		}
 	}
 
 	public void setShips(ArrayList<Ship> ships) {
 		generateShipsPanel(ships);
 	}
 
+	public void setShipRemaining(int player, Integer number) {
+		this.shipRemaining.get(player).setText("Remaining ships: " + number);
+	}
 }

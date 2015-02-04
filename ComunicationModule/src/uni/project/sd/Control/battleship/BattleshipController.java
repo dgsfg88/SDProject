@@ -238,6 +238,7 @@ public class BattleshipController implements FrontBoundary {
 								}
 						}
 					}
+					myBoundary.setShipRemaining(0, shipsRemaining[0]);
 				}
 			} else {
 				int enemyID = serverAdd.getServerNID(ID);
@@ -256,6 +257,7 @@ public class BattleshipController implements FrontBoundary {
 							}
 						}
 					}
+					myBoundary.setShipRemaining(enemyID + 1, shipsRemaining[enemyID + 1]);
 				}
 			}
 		}
