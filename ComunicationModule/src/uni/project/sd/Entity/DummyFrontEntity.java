@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import uni.project.sd.boundary.FrontBoundary;
 import uni.project.sd.comunications.ServerAddress;
+import uni.project.sd.comunications.entity.Token;
 
 public class DummyFrontEntity {
 	private static DummyFrontEntity entity = null;
@@ -58,6 +59,20 @@ public class DummyFrontEntity {
 		synchronized (lockViewList) {
 			for(FrontBoundary df: fronts) {
 				df.disablePlayer(serverNID);
+			}
+		}
+	}
+
+	public Token getToken() {
+		synchronized (lockViewList) {
+			return fronts.getFirst().getToken();
+		}
+	}
+
+	public void setToken(Token token) {
+		synchronized (lockViewList) {
+			for(FrontBoundary frontBoundary: fronts){
+				frontBoundary.setToken(token);
 			}
 		}
 	}

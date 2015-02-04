@@ -21,7 +21,9 @@ import uni.project.sd.boundary.FrontBoundary;
 import uni.project.sd.boundary.battleship.BattleshipBoundary;
 import uni.project.sd.comunications.ServerAddress;
 import uni.project.sd.comunications.battleship.BattleshipActions;
+import uni.project.sd.comunications.battleship.entity.BattleshipTokenContainer;
 import uni.project.sd.comunications.battleship.entity.EventListItem;
+import uni.project.sd.comunications.entity.Token;
 
 public class BattleshipController implements FrontBoundary {
 	private short oceanShared = 2;
@@ -453,5 +455,36 @@ public class BattleshipController implements FrontBoundary {
 			return !this.processedEvents.contains(event);
 		else
 			return true;
+	}
+
+	@Override
+	public Token getToken() {
+		BattleshipTokenContainer tokenContainer = null;
+		synchronized (sendOceanLock) {
+			if(oceanShared == 1) {
+				tokenContainer = new BattleshipTokenContainer(null, ocean);
+			} else {
+				if(oceanShared <= 0) {
+					tokenContainer = new BattleshipTokenContainer(this.eventList, null);
+				}
+			}
+		}
+		
+		return tokenContainer;
+	}
+
+	@Override
+	public void setToken(Token token) {
+		BattleshipTokenContainer container = (BattleshipTokenContainer) token;
+		if(oceanShared == 1) {
+			Ocean o = container.getOcean();
+			if(o != null) {
+				updateOcean(o);
+			}
+		} else {
+			if(oceanShared <= 0) {
+				setEventList(container.getEventList());
+			}
+		}
 	}
 }

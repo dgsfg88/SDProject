@@ -128,6 +128,8 @@ public class BattleshipBoundary {
 		String background = "/texture/sea" + (new Random().nextInt(4) + 1)
 				+ ".png";
 
+		gamePanel.setSize(400, 200 + 200 * (playerNumber-1)/2);
+		
 		for (int k = 0; k < playerNumber; k++) {
 			playerHome = new JPanel(new BorderLayout());
 			if (k > 0)
@@ -146,7 +148,7 @@ public class BattleshipBoundary {
 			for (int r = 0; r < row; r++) {
 				for (int c = 0; c < col; c++) {
 					singleButton = new JButtonBackground();
-					singleButton.setSize(5, 5);
+					
 					singleButton.setOpaque(false);
 					singleButton.setBackground(Blue);
 					singleButton.setContentAreaFilled(false);
@@ -160,19 +162,21 @@ public class BattleshipBoundary {
 					playerPanel.add(singleButton);
 				}
 			}
+
+			playerPanel.setPreferredSize(new Dimension(320, 320));
 			gamePanel.add(playerHome);
 			playersIcons.add(buttons);
 		}
 
-		gamePanel.setSize(500, 250 + 250 * ((playerNumber - 1) / 2));
-
 		mainWindow.add(optionPanel, BorderLayout.LINE_START);
-		mainWindow.add(gamePanel, BorderLayout.CENTER);
+		JScrollPane gameScroller = new JScrollPane(gamePanel);
+		
+		mainWindow.add(gameScroller, BorderLayout.CENTER);
 
 		mainWindow.setResizable(false);
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainWindow.pack();
-		mainWindow.setSize(850, 400 + 400 * ((playerNumber - 1) / 2));
+		
+		mainWindow.setSize(1024, 768);
 
 		mainWindow.setVisible(true);
 

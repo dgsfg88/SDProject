@@ -17,6 +17,7 @@ public class ComunicationActions {
 		m.setReceiver(ServerAddress.getInstance().getMyAddress());
 		m.setMessage(node);
 		m.setMessageType(ServerAddress.getInstance().getTokenLap());
+		m.setToken(DummyFrontEntity.getInstance().getToken());
 		ServerAddress.getInstance().setServerStatus(node, false);
 		DummyFrontEntity.getInstance().destroyPlayer(ServerAddress.getInstance().getServerNID(node));
 		sendMessage(OutcomingClient.nodeDown);

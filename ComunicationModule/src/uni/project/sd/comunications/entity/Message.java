@@ -21,6 +21,7 @@ public class Message implements Serializable{
 	private String receiver;
 	private String message;
 	private EventTime myTime;
+	private Token token;
 	
 	public int getMessageType() {
 		return messageType;
@@ -59,5 +60,13 @@ public class Message implements Serializable{
 	
 	public EventTime getMyTime() {
 		return myTime;
+	}
+	
+	public Token getToken() {
+		return token;
+	}
+	
+	public void setToken(Token token) {
+		this.token = token;
 	}
 }

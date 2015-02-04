@@ -21,6 +21,7 @@ public class NodeDown extends MessageBase {
 			int slpCounter = m.getMessageType();
 			if ((senderID < myID && lapCounter < slpCounter)
 					|| (senderID > myID && lapCounter == slpCounter)) {
+				DummyFrontEntity.getInstance().setToken(m.getToken());
 				new ComunicationActions().cicleToken();
 			}
 			m.setMessageType(-1);
