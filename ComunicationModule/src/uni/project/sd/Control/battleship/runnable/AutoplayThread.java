@@ -32,14 +32,15 @@ public class AutoplayThread implements Runnable {
 				int x = rand.nextInt(d);
 				int y = rand.nextInt(d);
 				EventListItem item = new EventListItem(address.getMyAddress(), address.getServer(player-1), x, y);
-				if(controller.isNewEvent(item))
+				if(controller.isNewEvent(item)) {
 					controller.buttonClicked(player, x, y);
-			}
+					
+					try {
+						Thread.sleep(rand.nextInt(maxTime-minTime)+minTime);
+					} catch (InterruptedException e) {
 			
-			try {
-				Thread.sleep(rand.nextInt(maxTime-minTime)+minTime);
-			} catch (InterruptedException e) {
-	
+					}
+				}
 			}
 		}
 	}
