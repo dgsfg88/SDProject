@@ -42,6 +42,7 @@ public class BattleshipController implements FrontBoundary {
 	private Ocean ocean;
 
 	private ArrayList<EventListItem> eventList;
+	private Object lockEventList = new Object();
 	private ArrayList<EventListItem> processedEvents;
 	private ArrayList<Ship> ships;
 	private Ship shipSelected;
@@ -101,7 +102,7 @@ public class BattleshipController implements FrontBoundary {
 			this.myBoundary.setColor(player, x, y, BattleshipBoundary.Fog);
 			player--;
 			ServerAddress address = ServerAddress.getInstance();
-			synchronized (eventList) {
+			synchronized (lockEventList) {
 				eventList.add(new EventListItem(address.getMyAddress(), address
 						.getServer(player), x, y));
 			}
@@ -116,7 +117,7 @@ public class BattleshipController implements FrontBoundary {
 	}
 
 	private void showLastMoves() {
-		synchronized (eventList) {
+		synchronized (lockEventList) {
 			int hitNumber = 1;
 			if (oneShotPerShip)
 				hitNumber = this.shipsRemaining[0];
@@ -330,7 +331,7 @@ public class BattleshipController implements FrontBoundary {
 	}
 
 	public void setEventList(ArrayList<EventListItem> eventList) {
-		synchronized (eventList) {
+		synchronized (lockEventList) {
 			this.eventList = eventList;
 			if (this.eventList != null) {
 				ServerAddress address = ServerAddress.getInstance();
