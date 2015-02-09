@@ -208,6 +208,15 @@ public class BattleshipController implements FrontBoundary {
 	}
 
 	public void destroyPlayer(int k) {
+		EventListItem item;
+		if(k > 0 )
+			item = new EventListItem(ServerAddress.getInstance().getMyAddress(), ServerAddress.getInstance().getServer(k-1), -1, -1);
+		else
+			item = new EventListItem(ServerAddress.getInstance().getMyAddress(), ServerAddress.getInstance().getMyAddress(), -1, -1);
+		synchronized (lockEventList) {
+			eventList.add(item);
+		}
+		this.processedEvents.add(item);
 		this.myBoundary.disablePlayer(k);
 	}
 
@@ -342,10 +351,17 @@ public class BattleshipController implements FrontBoundary {
 					if (item.getBreeder().equals(address.getMyAddress()))
 						eventList.remove(i);
 					else {
-						if (!this.processedEvents.contains(item))
+						if (!this.processedEvents.contains(item)) {
+							if(item.getX() > -1 && item.getY() > -1)
 							updateGrid(item.getReceiver(),
 									address.getPlayerID(item.getBreeder()),
 									item.getX(), item.getY());
+							else
+								if(item.getReceiver().equals(address.getMyAddress()))
+									destroyPlayer(0);
+								else
+									destroyPlayer(address.getServerNID(item.getReceiver())+1);
+						}
 					}
 				}
 			}
