@@ -83,6 +83,7 @@ Innanzitutto, bisogna distinguere il software sviluppato in tre sistemi separati
 \end{itemize}
 Dato che per questo progetto si è cercato di creare un forte disaccoppiamento dei componenti, passeremo ora a descrivere la struttura singolare di ogni sua parte.
 \subsection{Sistema di comunicazione}
+% TODO: dire che si tratta di un metodo per l'accesso a sezione critica
 Come già accennato in precedenza, la struttura di comunicazione ipotizzata e realizzata durante lo svolgimento del progetto è quella dell'anello con passaggio di token.\\
 Questo perché la strutturazione a turni rispecchia il passaggio del token per la modifica dello stato condiviso.\\
 La comunicazione ad anello è una tipologia di comunicazione molto comune nelle reti di computer, definito dallo standard IEEE 802.5 per le comunicazioni su rete locale LAN.\\
@@ -116,6 +117,7 @@ L'interfaccia deve tenere conto di eventuali crash da parte di altri nodi, disab
 Passiamo ora agli aspetti implementativi dell'architettura sviluppata, entrando più nel dettaglio della struttura del codice. Come nella parte precedente possiamo dividere la trattazione nelle tre parti sopra delineate.\\
 \subsection{Comunicazione}
 In questa parte ci occuperemo della descrizione dell'implementazione del sistema di comunicazione, di cui vediamo uno schema delle classi nel seguente diagramma.\\
+% TODO: Inserire il numero di figura e linkare quello
 \begin{figure}[H]
 \centering
     \includegraphics[width=12cm]{imgs/diagramma-delle-comunicazioni.png}
@@ -128,6 +130,7 @@ Come si può notare dal diagramma delle classi, tutto è collegato all'RMI start
 Ad ogni comunicazione viene inviato un messaggio con la classe di tipo \emph{Message}, che estende \emph{Message Base}, il quale viene consegnato al nodo successivo.\\
 Ad ogni messaggio il server successivo esegue un task ad esso associato, che corrisponde ad una determinata azione da compiere nello stato del gioco o per cambiare la topologia della rete di comunicazione.\\
 Come si può notare nel seguente diagramma esistono diverse tipologie di azione associate al messaggio:
+% TODO: Inserire il numero di figura e linkare quello
 \begin{figure}[H]
 \centering
     \includegraphics[width=12cm]{imgs/Task-diagram.png}
@@ -145,7 +148,9 @@ Ad ogni messaggio è associato un task specifico che può essere:
 Questi task permettono la comunicazione nell'anello e il gioco in condizioni normali.\\
 In caso però di caduta di un nodo bisogna attivare una serie di routine specifiche per effettuare la modifica trasparente della topologia dell'anello di comunicazione.\\
 Per controllare che tutti i nodi siano presenti all'interno della corrente sessione di gioco, si utilizza un messaggio temporizzato che viene dal nodo precedente nella lista al successivo. Quindi a cascata tutti i nodi della rete controllano se gli altri partecipanti sono ancora in gioco.\\
-Non appena uno di questi nodi non risponde nello slot di tempo concesso, vengono eseguiti i passi come visualizzato nel seguente diagramma di sequenza:
+Non appena uno di questi nodi non risponde nello slot di tempo concesso, vengono
+eseguiti i passi come visualizzato nel seguente diagramma di sequenza: 
+% TODO: Inserire il numero di figura e linkare quello 
 \begin{figure}[H]
 \centering
     \includegraphics[width=12cm]{imgs/Node-down-diagram.png}
@@ -159,6 +164,7 @@ Infine il nodo manda in avanti la notifica di nodo caduto all'interno della rete
 Passiamo ora più nel dettaglio a definire la struttura del core. Questa parte del software si occupa della logica di gioco utilizzando in maniera trasparente il canale di comunicazione e ignorando la topologia della rete.\\
 Di fatti l'unico collegamento con lo strato più basso del sistema è la lista dei giocatori, la quale serve solo per una disposizione delle informazioni all'interno della nostra memoria.\\
 Di seguito è stato introdotto un diagramma delle classi che si occupano della logica di gioco.
+% TODO: Inserire il numero di figura e linkare quello
 \begin{figure}[H]
 \centering
     \includegraphics[width=12cm]{imgs/BattleshipMessageDiagram.png}
