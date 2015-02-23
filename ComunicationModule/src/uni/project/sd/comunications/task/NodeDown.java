@@ -32,7 +32,7 @@ public class NodeDown extends MessageBase {
 			DummyFrontEntity.getInstance().destroyPlayer(
 					address.getServerNID(m.getMessage()));
 			new ComunicationActions().resendNodeDown(m);
-			new ComunicationActions().requestToken();
+//			new ComunicationActions().requestToken();
 		}
 		System.out.println("Ho ricevuto il seguente morto " + m.getMessage());
 		return 1;

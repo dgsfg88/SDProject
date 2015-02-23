@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.NumberFormat;
+import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -106,7 +107,15 @@ public class LoginBoundary {
 	}
 
 	public String getUsername() {
-		return this.userText.getText();
+		String user = this.userText.getText();
+		if(user.length() == 0)
+			return "User"+new Random().nextInt(99999);
+		else {
+			if(user.length() > 10){
+				user = user.substring(0, 9);
+			}
+			return user;
+		}
 	}
 
 	public String getServer() {

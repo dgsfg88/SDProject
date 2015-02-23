@@ -96,7 +96,7 @@ public class BattleshipBoundary {
 		tempPanel.add(orietPanel);
 
 		JCheckBox autoPlay = new JCheckBox("Auto play");
-		autoPlay.addItemListener(new AutoPlayListener(controller));
+		autoPlay.addItemListener(new AutoPlayListener(controller, autoPlay));
 		JButton setShipRandom = new JButton("Random positions");
 		setShipRandom.addActionListener(new RandomShipPositionActionListener());
 		this.playerControls.add(setShipRandom);
@@ -230,7 +230,6 @@ public class BattleshipBoundary {
 		int y = startY;
 
 		playerN++;
-		System.out.println("Il giocatore è il numero: " + playerN);
 
 		String texturePath = "/texture/l" + length + "/";
 

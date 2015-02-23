@@ -14,34 +14,41 @@ import uni.project.sd.event.EventCounter;
 
 public class LoginActionListener implements ActionListener {
 	private LoginBoundary loginBoundary;
-	
-	public LoginActionListener(LoginBoundary loginBoundary){
+
+	public LoginActionListener(LoginBoundary loginBoundary) {
 		this.loginBoundary = loginBoundary;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		loginBoundary.setEnabled(false);
-		int port = 1099;
-		boolean online = false;
-		ServerAddress serverAddress = ServerAddress.getInstance();
-		serverAddress.setMyAddress(this.loginBoundary.getUsername());
-		serverAddress.addServer("Server", this.loginBoundary.getServer(), this.loginBoundary.getServerPort());
-		EventCounter.getInstance(serverAddress);
-		do{
-			try {
-				LocateRegistry.createRegistry(port);
-				online = new IncomingServer().startServer(this.loginBoundary.getUsername(),port);
-			} catch (RemoteException error) {
-				System.out.println("Warning: Port "+port+" already in use");
-			}
-			if(!online)
-				port++;
-		} while(!online);
-		if(online) {
-			new BattleshipActions().registerToServer(RmiStarter.getIP(), port);
-		}  else
-			loginBoundary.setEnabled(true);
+		String server = this.loginBoundary.getServer();
+		if (server.length() > 0) {
+			String myUserName = this.loginBoundary.getUsername();
+			loginBoundary.setEnabled(false);
+			int port = 1099;
+			boolean online = false;
+			ServerAddress serverAddress = ServerAddress.getInstance();
+			serverAddress.setMyAddress(myUserName);
+			serverAddress.addServer("Server", this.loginBoundary.getServer(),
+					this.loginBoundary.getServerPort());
+			EventCounter.getInstance(serverAddress);
+			do {
+				try {
+					LocateRegistry.createRegistry(port);
+					online = new IncomingServer().startServer(myUserName, port);
+				} catch (RemoteException error) {
+					System.out.println("Warning: Port " + port
+							+ " already in use");
+				}
+				if (!online)
+					port++;
+			} while (!online);
+			if (online) {
+				new BattleshipActions().registerToServer(RmiStarter.getIP(),
+						port);
+			} else
+				loginBoundary.setEnabled(true);
+		}
 	}
 
 }
